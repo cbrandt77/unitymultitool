@@ -536,6 +536,8 @@ class MainWindow extends javax.swing.JFrame {
 
 		protected void setParticipants(JSONArray list)
 		{
+			eventDetailsPane1.clearParticipants();
+			
 			for (int i = 0, length = list.length(); i < length; i++)
 			{
 				JSONObject team = list.getJSONObject(i);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="com/nfhsnetwork/calebsunitytool/gui/|com/nfhsnetwork/calebsunitytool/nbui/ParticipantTemplate.java" kind="src" output="target/classes" path="src/main/java">
+	<classpathentry excluding="com/nfhsnetwork/calebsunitytool/gui/|com/nfhsnetwork/calebsunitytool/nbui/ParticipantTemplate.java|com/nfhsnetwork/calebsunitytool/nbui/MainWindowBak2.java" kind="src" output="target/classes" path="src/main/java">
 		<attributes>
 			<attribute name="optional" value="true"/>
 			<attribute name="maven.pomderived" value="true"/>

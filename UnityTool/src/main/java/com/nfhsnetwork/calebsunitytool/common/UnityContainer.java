@@ -23,7 +23,7 @@ public final class UnityContainer {
 	//TODO figure out why freaking netbeans hates this so much
 	private static UnityContainer container;
         
-    private static File pixellotCSV; //TODO
+    //private static File pixellotCSV; //TODO
 	
 	private static boolean containerMade = false;
 	

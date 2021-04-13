@@ -143,7 +143,7 @@ public class NFHSGameObject
 			e.printStackTrace();
 		}
 		
-		System.out.println("[DEBUG] game id detected: " + gID + "\n[DEBUG] bdc id detected: " + (bID == null ? "null" : bID[0]));
+		System.out.println("[DEBUG] game id detected: " + gID + "\n[DEBUG] bdc id detected: " + ((bID == null) ? "null" : bID[0]));
 		
 		
 		NFHSGameObject n;
@@ -151,7 +151,7 @@ public class NFHSGameObject
 			n = new NFHSGameObject(gID);
 		} catch (GameNotFoundException | NullFieldException | InvalidContentTypeException | IOException e) {
 			e.printStackTrace();
-			return null;
+			return new NullNFHSObject(gID);
 		} 
 		
 		n.setFocusDateTime(fDT);
@@ -261,7 +261,8 @@ public class NFHSGameObject
 		JSONObject stateJSON;
 		try {
 			stateJSON = Util.getBdcStateJSON(this.bdc_ids[0]);
-		} catch (JSONException | IOException e) {
+		} catch (Exception e) {
+			System.out.println("[DEBUG] {fetchAndSetBdcStateJSON} exception thrown for game " + this.game_id);
 			e.printStackTrace();
 			return;
 		}
@@ -273,7 +274,7 @@ public class NFHSGameObject
 	
 	
 	
-	private static final DateTimeFormatter dtf_focusDT = new DateTimeFormatterBuilder()
+	public static final DateTimeFormatter dtf_focusDT = new DateTimeFormatterBuilder()
 			.parseCaseInsensitive()
 			.appendPattern("M/d/yyyy h:mm:ss a")
 			.toFormatter(Locale.US);
@@ -330,6 +331,11 @@ public class NFHSGameObject
 		catch (JSONException e) {
 			throw new NullFieldException("broadcasts", e);
 		}
+	}
+	
+	public static JSONObject getFirstBroadcast(JSONObject game) throws JSONException
+	{
+		return game.getJSONArray("publishers").getJSONObject(0).getJSONArray("broadcasts").getJSONObject(0);
 	}
 	
 	public void setContentType(NFHSContentType n)

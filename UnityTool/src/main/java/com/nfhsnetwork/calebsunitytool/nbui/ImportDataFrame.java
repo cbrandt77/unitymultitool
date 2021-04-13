@@ -5,14 +5,17 @@
  */
 package com.nfhsnetwork.calebsunitytool.nbui;
 
+import java.util.concurrent.ExecutionException;
+
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import com.nfhsnetwork.calebsunitytool.FocusCompareScript;
 import com.nfhsnetwork.calebsunitytool.MultiviewerTagScript;
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer;
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer.ImportTypes;
+import com.nfhsnetwork.calebsunitytool.scripts.focuscompare.FocusCompareScript;
+import com.nfhsnetwork.calebsunitytool.scripts.focuscompare.FocusOutputFrame;
 
 /**
  *
@@ -278,14 +281,44 @@ public class ImportDataFrame extends javax.swing.JFrame {
     	});
     }//GEN-LAST:event_button_importActionPerformed
 
+    private FocusCompareScript fe;
+    
     private void button_focuscompareActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_focuscompareActionPerformed
         disableAllComponents();
         
-        FocusCompareScript fe = new FocusCompareScript();
+        fe = new FocusCompareScript();
         
-        int x = fe.setFocusData(placeholderTextArea1.getText());
-        
-        if (x == FocusCompareScript.FAILED)
+        executeFocusScript();
+    }//GEN-LAST:event_button_focuscompareActionPerformed
+    
+    
+	void executeFocusScript()
+	{
+        SwingWorker<Integer, Void> setDataWorker = new SwingWorker<>() {
+			@Override
+			protected Integer doInBackground() throws Exception {
+				return fe.setFocusData(ImportDataFrame.this.placeholderTextArea1.getText());
+			}
+			
+			@Override
+			protected void done()
+			{
+				System.out.println("W1 done");
+				try {
+					afterSetFocusData((Integer)get());
+				} catch (InterruptedException | ExecutionException e1) {
+					afterSetFocusData(FocusCompareScript.FAILED);
+				}
+			}
+        };
+        System.out.println("First worker executed");
+        setDataWorker.execute();
+	}
+	
+    private void afterSetFocusData(Integer x) 
+    {
+    	System.out.println("asfd");
+    	if (x == FocusCompareScript.FAILED)
         {
         	int res = JOptionPane.showOptionDialog(this, "Invalid data.", "ERROR", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
 					null, null, null);
@@ -297,43 +330,46 @@ public class ImportDataFrame extends javax.swing.JFrame {
         }
         else if (x == FocusCompareScript.SUCCESSFUL)
         {
-        	fe.addPropertyChangeListener((evt2) -> {
-        		if (evt2.getPropertyName().equals(FocusCompareScript.PC_DONE))
-        		{
-        			System.out.println("[DEBUG] {IDF} Property Changed");
-        			afterFocusScriptOperation();
-        			return;
-        		}
-        	});
-        	
-        	SwingWorker<Void, Void> sw = new SwingWorker<>() {
+        	SwingWorker<String, Void> compareWorker = new SwingWorker<>() {
         		@Override
-        		public Void doInBackground() {
+        		public String doInBackground() {
         			System.out.println("[DEBUG] [SW] Comparing focus");
-        			fe.compareFocus();
-        			return null;
+        			return fe.compareFocus();
+        		}
+        		
+        		@Override
+        		public void done()
+        		{
+        			System.out.println("fc done");
+        			String output = null;
+        			try {
+        				output = (String)get();
+        			}
+        			catch (ExecutionException | InterruptedException e)
+        			{
+        				e.printStackTrace();
+        				return;
+        			}
+        			afterFocusScriptOperation(output);
         		}
         	};
         	
-        	UnityContainer.getContainer().addActionListener((evt2) -> {
-        		sw.execute();
-    		});
+        	compareWorker.execute();
         	
-        	
+//        	fe.addPropertyChangeListener((e) -> {
+//        		afterFocusScriptOperation();
+//        	});
         }
-    }//GEN-LAST:event_button_focuscompareActionPerformed
+	}
     
-    private void afterFocusScriptOperation()
+
+	private void afterFocusScriptOperation(String s)
     {
     	//TODO display the output in a meaningful way
+    	SwingUtilities.invokeLater(() -> {
+    		new FocusOutputFrame(s).setVisible(true);
+    	});
     	
-    	int res = JOptionPane.showOptionDialog(this, "[debug] done", "done", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
-				null, null);
-    	
-    	
-		if (res != 4) {
-			System.exit(0);
-		}
     }
     
     

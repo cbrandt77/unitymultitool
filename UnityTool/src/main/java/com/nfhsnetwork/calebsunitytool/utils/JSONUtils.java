@@ -48,7 +48,7 @@ public final class JSONUtils
 				broadcasts = j.getJSONArray("publishers").getJSONObject(0).getJSONArray("broadcasts");
 			} 
 			catch (JSONException e) {
-				throw new NullFieldException("\"broadcasts\" field does not exist.", e);
+				throw new NullFieldException("\"broadcasts\" field does not exist for game " + j.getString("key"), e);
 			}
 			
 			String[] output = new String[broadcasts.length()];

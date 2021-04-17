@@ -430,7 +430,7 @@ public class MultiviewerTagScript {
 	private void alertActionListeners(String name)
 	{
 		failedToUpdate.forEach(System.out::println);
-		listeners.forEach(e -> e.propertyChange(new PropertyChangeEvent(this, FINISHED, 100, 100)));
+		listeners.forEach(e -> e.propertyChange(new PropertyChangeEvent(this, FINISHED, 100, 100))); //TODO progress bar and CHANGED
 	}
 	
 	

@@ -3,6 +3,7 @@ package com.nfhsnetwork.calebsunitytool.common;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -140,6 +141,8 @@ public final class UnityContainer {
 			System.out.println("[DEBUG] [UC] Added " + s + " to queue!"); //TODO debug
 		}
 		
+		
+		//TODO don't busy-wait
 		new Thread(
 				() -> {
 					while (true)
@@ -190,6 +193,13 @@ public final class UnityContainer {
 					e.printStackTrace();
 					n = new NullNFHSObject(input, e);
 				}
+				if (n.getGameID() == null)
+				{
+					//TODO figure out why I'm getting some fields with null game IDs...
+					System.out.println("[DEBUG] {UC run} game ID is null for line: " + "\n" + input);
+					counter.incrementAndGet();
+					return;
+				}
 				
 				eventMap.put(n.getGameID(), n);
 				counter.incrementAndGet();
@@ -224,6 +234,16 @@ public final class UnityContainer {
 	{
 		actionListeners.add(listener);
 		return this;
+	}
+	
+	private static String user_email;
+	
+	public static String getUserEmail() {
+		return user_email;
+	}
+
+	public static void setUserEmail(String email) {
+		user_email = email;
 	}
 	
 

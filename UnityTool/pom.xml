@@ -22,6 +22,12 @@
 			<artifactId>json</artifactId>
 			<version>20210307</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
+		<dependency>
+		    <groupId>com.google.protobuf</groupId>
+		    <artifactId>protobuf-java</artifactId>
+		    <version>4.0.0-rc-2</version>
+		</dependency>
     </dependencies>
     <name>Caleb's Unity Multitool</name>
     <description>Made by Caleb Brandt.</description>

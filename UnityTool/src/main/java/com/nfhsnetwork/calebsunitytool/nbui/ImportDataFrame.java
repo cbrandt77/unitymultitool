@@ -5,17 +5,26 @@
  */
 package com.nfhsnetwork.calebsunitytool.nbui;
 
+import java.awt.Dialog.ModalityType;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
 
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import com.nfhsnetwork.calebsunitytool.MultiviewerTagScript;
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer;
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer.ImportTypes;
+import com.nfhsnetwork.calebsunitytool.nbui.pixellotcsv.DragNDropCSV;
 import com.nfhsnetwork.calebsunitytool.scripts.focuscompare.FocusCompareScript;
 import com.nfhsnetwork.calebsunitytool.scripts.focuscompare.FocusOutputFrame;
+import com.nfhsnetwork.calebsunitytool.utils.Util;
 
 /**
  *
@@ -23,6 +32,7 @@ import com.nfhsnetwork.calebsunitytool.scripts.focuscompare.FocusOutputFrame;
  */
 public class ImportDataFrame extends javax.swing.JFrame {
 
+	public static boolean DEBUGMODE = false;
 	
 	private ImportTypes importType = ImportTypes.OTHER;
 	
@@ -30,7 +40,6 @@ public class ImportDataFrame extends javax.swing.JFrame {
      * Creates new form ImportDataFrame
      */
     public ImportDataFrame() {
-    	UnityContainer.makeNewContainer();
         initComponents();
     }
 
@@ -287,16 +296,44 @@ public class ImportDataFrame extends javax.swing.JFrame {
         disableAllComponents();
         
         fe = new FocusCompareScript();
-        
-        executeFocusScript();
+        importPxlCSV();
     }//GEN-LAST:event_button_focuscompareActionPerformed
     
+    private void importPxlCSV()
+    {
+    	Function<File, File> onFileSelected = (file) -> {
+			executeFocusScript(file);
+			if (file == null)
+				System.out.println("[DEBUG] Script executed with null csv.");
+			else
+				System.out.println("[DEBUG] Script executed with csv: " + file.getAbsolutePath());
+			return null;
+		};
+    	
+    	
+    	Function<Void, Void> onCancel = (obj) -> {
+    		enableAllComponents();
+    		return null;
+    	};
+    	
+    	SwingUtilities.invokeLater(() -> {
+			new DragNDropCSV(SwingUtilities.windowForComponent(ImportDataFrame.this), "Import Pixellot CSV", JDialog.DEFAULT_MODALITY_TYPE, onFileSelected, onCancel)
+					.setVisible(true);
+		});
+    }
     
-	void executeFocusScript()
+	private void executeFocusScript(File f)
 	{
+		if (f != null)
+		{
+			parseClubCsv(f); // parses clubcsv, then recurs once with null param
+			return;
+		}
+		
         SwingWorker<Integer, Void> setDataWorker = new SwingWorker<>() {
 			@Override
 			protected Integer doInBackground() throws Exception {
+				System.out.println("[DEBUG] {doInBackground} SetDataWorker executed");
 				return fe.setFocusData(ImportDataFrame.this.placeholderTextArea1.getText());
 			}
 			
@@ -311,13 +348,59 @@ public class ImportDataFrame extends javax.swing.JFrame {
 				}
 			}
         };
-        System.out.println("First worker executed");
-        setDataWorker.execute();
+        
+        SwingUtilities.invokeLater(() -> {
+    		ProgressBarDialogBox pbdb = new ProgressBarDialogBox(SwingUtilities.windowForComponent(ImportDataFrame.this));
+    		JProgressBar bar = pbdb.getProgressBar();
+    		
+    		pbdb.setLocationRelativeTo(ImportDataFrame.this);
+    		
+    		fe.addPropertyChangeListener((e) -> {
+        		if (e.getPropertyName().equals(FocusCompareScript.PC_PROGRESS))
+        		{
+        			//System.out.println("[DEBUG] {executeFocusScript} set value");
+        			bar.setValue((Integer)e.getNewValue() * 100 / (Integer)e.getOldValue());
+        		}
+        		else if (e.getPropertyName().equals(FocusCompareScript.PC_DONE))
+        		{
+        			SwingUtilities.invokeLater(() -> {
+						pbdb.setVisible(false);
+						pbdb.dispose();
+					});
+        		}
+        	});
+    		
+    		System.out.println("[DEBUG] {executeFocusScript} setDataWorker executed");
+		    setDataWorker.execute();
+    		pbdb.setVisible(true);
+		});
 	}
 	
-    private void afterSetFocusData(Integer x) 
+    private void parseClubCsv(File f) 
     {
-    	System.out.println("asfd");
+    	SwingWorker<Void, Void> parseClubCsvWorker = new SwingWorker<>() {
+			@Override
+			protected Void doInBackground() throws Exception {
+				fe.parseClubCSV(Arrays.asList(Util.readFromFile(f).split("\\r\\n|\\n")));
+				return null;
+			}
+			
+			@Override
+			protected void done()
+			{
+				System.out.println("[DEBUG] {parseclubcsv | done} club csv parse complete");
+				executeFocusScript(null);
+			}
+		};
+		
+		SwingUtilities.invokeLater(() -> {
+			parseClubCsvWorker.execute();
+		});
+	}
+
+	private void afterSetFocusData(Integer x) 
+    {
+    	System.out.println("[DEBUG] {afterSetFocusData} method call");
     	if (x == FocusCompareScript.FAILED)
         {
         	int res = JOptionPane.showOptionDialog(this, "Invalid data.", "ERROR", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
@@ -333,14 +416,14 @@ public class ImportDataFrame extends javax.swing.JFrame {
         	SwingWorker<String, Void> compareWorker = new SwingWorker<>() {
         		@Override
         		public String doInBackground() {
-        			System.out.println("[DEBUG] [SW] Comparing focus");
+        			System.out.println("[DEBUG] {afterSetFocusData} {doInBackground} Comparing focus");
         			return fe.compareFocus();
         		}
         		
         		@Override
         		public void done()
         		{
-        			System.out.println("fc done");
+        			System.out.println("[DEBUG] {afterSetFocusData} {done()} focus compare done");
         			String output = null;
         			try {
         				output = (String)get();
@@ -348,32 +431,26 @@ public class ImportDataFrame extends javax.swing.JFrame {
         			catch (ExecutionException | InterruptedException e)
         			{
         				e.printStackTrace();
-        				return;
+        				output = "Operation failed for some reason. Run this again through Powershell with the command \".\\UnityTool.exe --debug\" and send Caleb the generated log.";
         			}
         			afterFocusScriptOperation(output);
         		}
         	};
-        	
         	compareWorker.execute();
-        	
-//        	fe.addPropertyChangeListener((e) -> {
-//        		afterFocusScriptOperation();
-//        	});
         }
 	}
     
 
 	private void afterFocusScriptOperation(String s)
     {
-    	//TODO display the output in a meaningful way
+		fe.firePropertyChangeEvent(FocusCompareScript.PC_DONE, null, null);
     	SwingUtilities.invokeLater(() -> {
     		new FocusOutputFrame(s).setVisible(true);
     	});
     	
     }
-    
-    
-
+	
+	
     private void button_mviewerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_mviewerActionPerformed
         disableAllComponents();
         
@@ -451,7 +528,6 @@ public class ImportDataFrame extends javax.swing.JFrame {
     
     
     
-    
     /**
      * @param args the command line arguments
      */
@@ -478,7 +554,14 @@ public class ImportDataFrame extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(ImportDataFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
+        
+        if (args.length != 0)
+        {
+        	if (args[0].equals("--debug"))
+        		Util.isDebugMode = true;
+        		//TODO make a controller main class that starts everything instead of starting it all from this frame.
+        }
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override

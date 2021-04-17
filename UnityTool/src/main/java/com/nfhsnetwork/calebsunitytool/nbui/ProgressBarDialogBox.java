@@ -4,6 +4,8 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
+
 import javax.swing.JDialog;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
@@ -12,10 +14,15 @@ public class ProgressBarDialogBox extends JDialog
 {
 	private JProgressBar progressBar;
 	
-	public ProgressBarDialogBox(Component parent)
+	public ProgressBarDialogBox(Window parent)
 	{
-		super(SwingUtilities.getWindowAncestor(parent), "Loading...", DEFAULT_MODALITY_TYPE);
+		this(parent, "Loading...", DEFAULT_MODALITY_TYPE);
 		
+		
+	}
+	public ProgressBarDialogBox(Window parent, String title, ModalityType modalityType)
+	{
+		super(parent, title, modalityType);
 		progressBar = new JProgressBar();
 		setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();

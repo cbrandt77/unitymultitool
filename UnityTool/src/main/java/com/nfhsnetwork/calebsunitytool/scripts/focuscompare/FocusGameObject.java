@@ -3,11 +3,14 @@ package com.nfhsnetwork.calebsunitytool.scripts.focuscompare;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.nfhsnetwork.calebsunitytool.common.NFHSGameObject;
 import com.nfhsnetwork.calebsunitytool.common.UnityToolCommon;
 import com.nfhsnetwork.calebsunitytool.exceptions.GameNotFoundException;
 import com.nfhsnetwork.calebsunitytool.exceptions.InvalidContentTypeException;
+import com.nfhsnetwork.calebsunitytool.exceptions.NullFieldException;
 
 public class FocusGameObject {
 	
@@ -20,9 +23,6 @@ public class FocusGameObject {
 	private JSONObject gamejson = null;
 	private String title = null;
 	private String error = null;
-	private int pxlindex;
-	private String pxlstatus = null;
-	private boolean isDeleted = false;
 	
 	FocusGameObject()
 	{
@@ -109,31 +109,26 @@ public class FocusGameObject {
 		return this.unity_dt;
 	}
 
-	protected void setPxlIndex(int index) {
-		this.pxlindex = index;
+	protected String getPxlId()
+	{
+		try {
+			return NFHSGameObject.getFirstBroadcast(gamejson).getString("pixellot_id");
+		} catch (JSONException e) {
+			System.out.println("[DEBUG] {getPxlKey} pxlid is null for " + this.gameID);
+			return null;
+		}
 	}
 	
-	protected int getPxlIndex()
-	{
-		return this.pxlindex;
-	}
-	
-	protected void setPxlStatus(String status)
-	{
-		this.pxlstatus = status.toUpperCase();
-	}
-	
-	protected String getPxlStatus()
-	{
-		return this.pxlstatus;
+	protected boolean isPixellot() throws NullFieldException {
+		try {
+			return this.gamejson.getBoolean("is_pixellot");
+		} catch (JSONException e) {
+			throw new NullFieldException("is_pixellot", e);
+		}
 	}
 
 	protected boolean isDeleted() {
-		return isDeleted;
-	}
-
-	protected void setDeleted(boolean isDeleted) {
-		this.isDeleted = isDeleted;
+		return this.getGameJson().getBoolean("is_deleted");
 	}
 	
 }

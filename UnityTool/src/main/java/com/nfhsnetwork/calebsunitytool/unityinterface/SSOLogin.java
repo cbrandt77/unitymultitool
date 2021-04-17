@@ -18,6 +18,8 @@ import java.util.zip.GZIPInputStream;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+
+import com.nfhsnetwork.calebsunitytool.common.UnityContainer;
 import com.nfhsnetwork.calebsunitytool.utils.JSONUtils;
 
 public final class SSOLogin
@@ -141,6 +143,7 @@ public final class SSOLogin
 								.toString()
 									.substring("sso_access_token=".length());
 		
+		UnityContainer.setUserEmail(email);
 		
 		return authToken;
 	}

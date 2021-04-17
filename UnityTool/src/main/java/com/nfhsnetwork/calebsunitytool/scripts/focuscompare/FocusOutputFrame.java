@@ -15,7 +15,9 @@ public class FocusOutputFrame extends javax.swing.JFrame {
      * Creates new form FocusOutputFrame
      */
     public FocusOutputFrame(String s) {
+    	super("Focus Compare Results");
         initComponents();
+        jScrollPane5.setAutoscrolls(false);
         jTextArea1.setText(s);
     }
 

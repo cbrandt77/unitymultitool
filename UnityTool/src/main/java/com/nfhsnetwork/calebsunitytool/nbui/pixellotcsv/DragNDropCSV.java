@@ -5,18 +5,81 @@
  */
 package com.nfhsnetwork.calebsunitytool.nbui.pixellotcsv;
 
+import java.awt.Window;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.function.Function;
+
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.SwingUtilities;
+import javax.swing.TransferHandler;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
+
 /**
  *
  * @author impro_000
  */
-public class DragNDropCSV extends javax.swing.JFrame {
-
+public class DragNDropCSV extends javax.swing.JDialog {
+	
+	private final Function<File, File> fileCallback;
+	private final Function<Void, Void> cancelCallback;
+	private boolean shouldSkip = false;
+	private boolean fileSet = false;
+	
     /**
      * Creates new form DragNDropCSV
      */
-    public DragNDropCSV() {
+    public DragNDropCSV(Window parent, String title, ModalityType modalityType, Function<File, File> onFileChosen, Function<Void, Void> onCancel) {
+    	super(parent, title, modalityType);
+    	this.fileCallback = onFileChosen;
+    	this.cancelCallback = onCancel;
         initComponents();
+        initTransferHandler();
+        
+        this.addWindowListener(new WindowAdapter() {
+        	@Override public
+        	void windowClosed(WindowEvent e)
+        	{
+        		if (shouldSkip)
+        			fileCallback.apply(null);
+        		else if (fileSet)
+        			return;
+        		else
+        			cancelCallback.apply(null);
+        		
+        	}
+        });
     }
+    
+    public DragNDropCSV(Window parent, String title, ModalityType modalityType, Function<File, File> onFileChosen)
+    {
+    	this(parent, title, modalityType, onFileChosen, null);
+    }
+    
+    public DragNDropCSV(Window parent, Function<File, File> onFileChosen)
+    {
+    	this(parent, "Import Pixellot CSV", JDialog.DEFAULT_MODALITY_TYPE, onFileChosen, null);
+    }
+    
+    @SuppressWarnings("unused")
+	private DragNDropCSV()
+    {
+    	fileCallback = null;
+    	cancelCallback = null;
+    }
+    
+    
+    
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -27,45 +90,51 @@ public class DragNDropCSV extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
+        p_dropfilehere = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        skipButton = new javax.swing.JButton();
+        cancelbutton = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setAlwaysOnTop(true);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Import Pixellot CSV");
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-        jPanel1.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-			public void mouseReleased(java.awt.event.MouseEvent evt) {
-                jPanel1MouseReleased(evt);
+        p_dropfilehere.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        p_dropfilehere.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                p_dropfilehereMouseReleased(evt);
             }
         });
 
         jLabel1.setText("Drop File or Click");
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout p_dropfilehereLayout = new javax.swing.GroupLayout(p_dropfilehere);
+        p_dropfilehere.setLayout(p_dropfilehereLayout);
+        p_dropfilehereLayout.setHorizontalGroup(
+            p_dropfilehereLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, p_dropfilehereLayout.createSequentialGroup()
                 .addContainerGap(55, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addContainerGap(55, Short.MAX_VALUE))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        p_dropfilehereLayout.setVerticalGroup(
+            p_dropfilehereLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(p_dropfilehereLayout.createSequentialGroup()
                 .addContainerGap(81, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addContainerGap(81, Short.MAX_VALUE))
         );
 
-        jButton1.setText("CONFIRM");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+        skipButton.setText("SKIP");
+        skipButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                skipButtonActionPerformed(evt);
+            }
+        });
+
+        cancelbutton.setText("CANCEL");
+        cancelbutton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelbuttonActionPerformed(evt);
             }
         });
 
@@ -75,73 +144,154 @@ public class DragNDropCSV extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(p_dropfilehere, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(67, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addContainerGap(67, Short.MAX_VALUE))
+                .addGap(27, 27, 27)
+                .addComponent(skipButton)
+                .addGap(18, 18, 18)
+                .addComponent(cancelbutton)
+                .addGap(24, 24, 24))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton1)
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addComponent(p_dropfilehere, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(skipButton)
+                    .addComponent(cancelbutton))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    
+    private void initTransferHandler()
+    {
+    	TransferHandler handler = new TransferHandler() {
+    		@Override
+    		public boolean canImport(TransferHandler.TransferSupport support)
+    		{
+    			if (!support.isDataFlavorSupported(DataFlavor.javaFileListFlavor))
+    				return false;
+    			
+    			if ((COPY & support.getSourceDropActions()) == COPY)
+    			{
+    				support.setDropAction(COPY);
+    				return true;
+    			}
+    			
+    			return false;
+    		}
+    		
+    		@SuppressWarnings("unchecked")
+			@Override
+    		public boolean importData(TransferHandler.TransferSupport support)
+    		{
+    			if (!canImport(support))
+    				return false;
+    			
+    			Transferable t = support.getTransferable();
+    			
+    			try {
+    				java.util.List<File> list = (java.util.List<File>)t.getTransferData(DataFlavor.javaFileListFlavor);
+    				
+    				if (list.size() > 1) 
+    					return false;
+    				
+    				for (File f : list)
+    				{
+    					if (!f.getName().toLowerCase().endsWith(".csv"))
+    						return false;
+    				}
+    				
+    				onFileSelected(list.get(0));
+    				
+    				return true;
+    			}
+    			catch (UnsupportedFlavorException | IOException e)
+    			{
+    				return false;
+    			}
+    		}
+    	};
+    	
+    	p_dropfilehere.setTransferHandler(handler);
+    }
+    
 
-    private void jPanel1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseReleased
-        // TODO add your handling code here:
+    private void p_dropfilehereMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseReleased
+    	
+    	showFileChooser();
+    	
     }//GEN-LAST:event_jPanel1MouseReleased
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+    
+    
+    private void showFileChooser()
+    {
+    	SwingUtilities.invokeLater(() -> {
+    		JFileChooser fc = initCSVChooser();
+            
+            int res = fc.showOpenDialog(SwingUtilities.windowForComponent(this));
+            
+            if (res == JFileChooser.APPROVE_OPTION)
+            {
+            	File file = fc.getSelectedFile();
+            	onFileSelected(file);
+            }
+            
+    	});
+    }
+    
+    private JFileChooser initCSVChooser()
+    {
+    	JFileChooser fc = new javax.swing.JFileChooser();
+        fc.addChoosableFileFilter(new FileNameExtensionFilter("Comma Separated Values", "csv"));
+        fc.setCurrentDirectory(FileSystemView.getFileSystemView().getDefaultDirectory());
+        
+        return fc;
+    }
+    
+   
+    
+    private void skipButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    	shouldSkip = true;
+    	disposeThis();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(DragNDropCSV.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(DragNDropCSV.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(DragNDropCSV.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(DragNDropCSV.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-			public void run() {
-                new DragNDropCSV().setVisible(true);
-            }
-        });
+    private void cancelbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelbuttonActionPerformed
+        operationCancelled();
+    }//GEN-LAST:event_cancelbuttonActionPerformed
+    
+    private void onFileSelected(File f)
+    {
+    	fileSet = true;
+    	fileCallback.apply(f);
+		disposeThis();
+    	
     }
-
+    
+    private void operationCancelled()
+    {
+    	disposeThis();
+    }
+    
+    private void disposeThis()
+    {
+    	SwingUtilities.invokeLater(() -> {
+			this.setVisible(false);
+			this.dispose();
+		});
+    }
+   
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton cancelbutton;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel p_dropfilehere;
+    private javax.swing.JButton skipButton;
     // End of variables declaration//GEN-END:variables
+    
+    
 }

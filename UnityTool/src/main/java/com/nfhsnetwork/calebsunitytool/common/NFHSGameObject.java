@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.Locale;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.json.JSONArray;
@@ -14,6 +15,7 @@ import org.json.JSONObject;
 import com.nfhsnetwork.calebsunitytool.exceptions.GameNotFoundException;
 import com.nfhsnetwork.calebsunitytool.exceptions.InvalidContentTypeException;
 import com.nfhsnetwork.calebsunitytool.exceptions.NullFieldException;
+import com.nfhsnetwork.calebsunitytool.scripts.focuscompare.FocusCompareScript;
 import com.nfhsnetwork.calebsunitytool.utils.JSONUtils;
 import com.nfhsnetwork.calebsunitytool.utils.Util;
 
@@ -21,9 +23,9 @@ import com.nfhsnetwork.calebsunitytool.utils.Util;
 public class NFHSGameObject
 { 
 	
-	static final Pattern GAMEIDPATTERN = Pattern.compile("(?:gam){1}[a-f\\d]{10}");
-	static final Pattern BDCIDPATTERN = Pattern.compile("(?:bdc){1}[a-f\\d]{10}");
-	static final Pattern EVENTIDPATTERN = Pattern.compile("(?:evt){1}[a-f\\d]{10}");
+	public static final Pattern GAMEIDPATTERN = Pattern.compile("((?:gam){1}[a-f\\d]{10})");
+	public static final Pattern BDCIDPATTERN = Pattern.compile("((?:bdc){1}[a-f\\d]{10})");
+	public static final Pattern EVENTIDPATTERN = Pattern.compile("((?:evt){1}[a-f\\d]{10})");
 	
 	private static final int numDigitsInID = 13;
 	public static NFHSGameObject buildFromIdOrUrl(String in) throws InvalidContentTypeException, GameNotFoundException
@@ -45,7 +47,7 @@ public class NFHSGameObject
 				event_id = temp;
 				n = NFHSContentType.GAME;
 				
-				System.out.println("[DEBUG] game id detected: " + event_id);
+				//System.out.println("[DEBUG] game id detected: " + event_id);
 				
 				if (NFHSContentType.identify(event_id) != NFHSContentType.GAME)
 					throw new RuntimeException("[DEBUG] game id mismatch, bad substring | event id: " + event_id + " | input: " + in);
@@ -61,7 +63,7 @@ public class NFHSGameObject
 			{
 				event_id = temp;
 				n = NFHSContentType.EVENT;
-				System.out.println("[DEBUG] event id detected: " + event_id);
+				//System.out.println("[DEBUG] event id detected: " + event_id);
 			}
 		}
 		
@@ -72,7 +74,7 @@ public class NFHSGameObject
 			if (BDCIDPATTERN.matcher(temp).matches()) 
 			{
 				bdc_id = temp;
-				System.out.println("[DEBUG] bdc id detected: " + bdc_id);
+				//System.out.println("[DEBUG] bdc id detected: " + bdc_id);
 				if (event_id == null) 
 				{
 					try 
@@ -88,11 +90,12 @@ public class NFHSGameObject
 		}
 			
 		
-		if (event_id == null && bdc_id == null)
+		if (event_id == null && bdc_id == null) {
+			System.out.println("[DEBUG] {buildFromIdOrUrl} invalidcontenttypeexception thrown for " + in);
 			throw new InvalidContentTypeException(in, "gam/evt/bdc/vod");
+		}
 		
-		
-			
+		//TODO figure out when to fetch json and when not to
 		JSONObject jGet = null;
 		try {
 			jGet = UnityToolCommon.GetFromUnity.getGameFromUnity(event_id);
@@ -107,35 +110,86 @@ public class NFHSGameObject
 				n);
 	}
 	
-	
+	public static final Pattern FOCUS_DATE_PATTERN = Pattern.compile("((?:\\d{1,2})/(?:\\d{1,2})/(?:\\d{2,4}))");
+	public static final Pattern FOCUS_TIME_PATTERN = Pattern.compile("((?:\\d){1,2}:(?:\\d){1,2}:(?:\\d){1,2} (?:PM|AM|pm|am))");
 	
 	public static NFHSGameObject buildFromFocusSheetLine(String focusLine) throws InvalidContentTypeException, GameNotFoundException
 	{
-		String[] temp;
-		LocalDateTime fDT;
-		String gID;
+		String[] temp = focusLine.split("\\t", -1);
+		if (temp.length < FocusCompareScript.NUM_COLUMNS_FROM_FEL)
+		{
+			throw new InvalidContentTypeException(focusLine);
+		}
+		
+		Matcher m;
+		
+		String gameID;
+		m = GAMEIDPATTERN.matcher(focusLine);
+		
+		if (m.find()) 
+			gameID = m.group();
+		else {
+			m = EVENTIDPATTERN.matcher(focusLine);
+			if (m.find())
+				gameID = m.group();
+			else {
+				gameID = null;
+			}
+		}	
+		
+		
+		
+		String[] broadcastKey;
+		m = BDCIDPATTERN.matcher(focusLine);
+		if (m.find())
+			broadcastKey = new String[] { m.group() };
+		else {
+			System.out.println("[DEBUG] {buildFromFocusSheetLine} bdc key not found");
+			broadcastKey = null;
+		}
+
+		
+		String time;
+		m = FOCUS_TIME_PATTERN.matcher(focusLine);
+		if (m.find())
+			time = m.group();
+		else {	
+			System.out.println("[DEBUG] {buildFromFocusSheetLine} time not found");
+			time = null;
+		}
+		
+		String date;
+		m = FOCUS_DATE_PATTERN.matcher(focusLine);
+		if (m.find()) {
+			date = m.group();
+		} else {
+			date = null;
+			System.out.println("[DEBUG] {buildFromFocusSheetLine} date not found");
+		}
+		
+		if (time == null || date == null)
+			System.out.println("[DEBUG] {buildFromFocusSheetLine} null date or time for line:\n" + focusLine);
+		
+		LocalDateTime focusDateTime = LocalDateTime.parse(date + " " + time, dtf_focusDT);
+		
+		
 		String title;
-		String type;
-		String[] bID;
-		String status;
-		
-		
-		//TODO add more strict data validation here.  Need to use some regex.
-		
-		temp = focusLine.split("\\t", -1);
-		
-		fDT = LocalDateTime.parse(temp[0] + " " + temp[1], dtf_focusDT);
-		title = temp[2];
-		type = temp[3];
-		gID = temp[4];
-		
 		try {
-			bID = new String[] { temp[5] };
+			title = temp[2];
 		} catch (Exception e) {
-			bID = null;
+			title = null;
 			e.printStackTrace();
 		}
 		
+		String type;
+		try {
+			type = temp[3];
+		} catch (Exception e) {
+			type = null;
+			e.printStackTrace();
+		}
+		
+		String status;
 		try {
 			status = temp[6];
 		} catch (Exception e) {
@@ -143,18 +197,18 @@ public class NFHSGameObject
 			e.printStackTrace();
 		}
 		
-		System.out.println("[DEBUG] game id detected: " + gID + "\n[DEBUG] bdc id detected: " + ((bID == null) ? "null" : bID[0]));
+		System.out.println("[DEBUG] game id detected: " + gameID + "\n[DEBUG] bdc id detected: " + ((broadcastKey == null) ? "null" : broadcastKey[0]));
 		
 		
 		NFHSGameObject n;
 		try {
-			n = new NFHSGameObject(gID);
+			n = new NFHSGameObject(gameID);
 		} catch (GameNotFoundException | NullFieldException | InvalidContentTypeException | IOException e) {
 			e.printStackTrace();
-			return new NullNFHSObject(gID);
+			return new NullNFHSObject(gameID);
 		} 
 		
-		n.setFocusDateTime(fDT);
+		n.setFocusDateTime(focusDateTime);
 		n.setFocusTitle(title);
 		n.setFocusEventType(type);
 		if (status == null)

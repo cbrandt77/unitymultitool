@@ -5,14 +5,12 @@
  */
 package com.nfhsnetwork.calebsunitytool.nbui;
 
-import java.awt.Dialog.ModalityType;
+import java.awt.Dialog;
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
@@ -318,7 +316,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
     	};
     	
     	SwingUtilities.invokeLater(() -> {
-			new DragNDropCSV(SwingUtilities.windowForComponent(ImportDataFrame.this), "Import Pixellot CSV", JDialog.DEFAULT_MODALITY_TYPE, onFileSelected, onCancel)
+			new DragNDropCSV(SwingUtilities.windowForComponent(ImportDataFrame.this), "Import Pixellot CSV", Dialog.DEFAULT_MODALITY_TYPE, onFileSelected, onCancel)
 					.setVisible(true);
 		});
     }
@@ -343,7 +341,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
 			{
 				System.out.println("W1 done");
 				try {
-					afterSetFocusData((Integer)get());
+					afterSetFocusData(get());
 				} catch (InterruptedException | ExecutionException e1) {
 					afterSetFocusData(FocusCompareScript.FAILED);
 				}
@@ -427,7 +425,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
         			System.out.println("[DEBUG] {afterSetFocusData} {done()} focus compare done");
         			String output = null;
         			try {
-        				output = (String)get();
+        				output = get();
         			}
         			catch (ExecutionException | InterruptedException e)
         			{

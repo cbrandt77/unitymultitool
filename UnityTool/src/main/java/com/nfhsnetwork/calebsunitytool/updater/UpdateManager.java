@@ -18,7 +18,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.protobuf.ByteString;
-import com.nfhsnetwork.calebsunitytool.Bootstrapper;
 import com.nfhsnetwork.calebsunitytool.utils.Util;
 import com.nfhsnetwork.calebsunitytool.utils.Util.IOUtils;
 
@@ -27,6 +26,7 @@ public class UpdateManager {
 	private static final String VERSIONMODIFIERS = "snapshot";
 	public static final String FULLVERSIONNAME = CURRENTVERSION + " - " + VERSIONMODIFIERS;
 	
+	//TODO get token to fetch this
 	private static final String VERSION_URL = "https://raw.githubusercontent.com/ByThePowerOfScience/unitymultitool/master/version.json";
 	
 	private static final String DOWNLOADPATH; //TODO

@@ -7,7 +7,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.io.FileWriter;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -17,13 +16,11 @@ import java.io.IOException;
 import java.util.Collections;
 
 import org.eclipse.jdt.annotation.Nullable;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.protobuf.ByteString;
 import com.nfhsnetwork.calebsunitytool.Bootstrapper;
 import com.nfhsnetwork.calebsunitytool.common.NFHSGameObject;
-import com.nfhsnetwork.calebsunitytool.common.UnityContainer;
 import com.nfhsnetwork.calebsunitytool.exceptions.NullFieldException;
 import com.nfhsnetwork.calebsunitytool.utils.Util;
 import com.nfhsnetwork.calebsunitytool.utils.Util.StringUtils;
@@ -32,7 +29,6 @@ import com.nfhsnetwork.calebsunitytool.utils.Util.TimeUtils;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedList;
 
 //import java.util.regex.Matcher;

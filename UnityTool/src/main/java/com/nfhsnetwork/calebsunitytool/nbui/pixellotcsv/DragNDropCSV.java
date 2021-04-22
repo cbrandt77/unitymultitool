@@ -5,6 +5,7 @@
  */
 package com.nfhsnetwork.calebsunitytool.nbui.pixellotcsv;
 
+import java.awt.Dialog;
 import java.awt.Window;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -13,7 +14,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.function.Function;
 
 import javax.swing.JDialog;
@@ -66,7 +66,7 @@ public class DragNDropCSV extends javax.swing.JDialog {
     
     public DragNDropCSV(Window parent, Function<File, File> onFileChosen)
     {
-    	this(parent, "Import Pixellot CSV", JDialog.DEFAULT_MODALITY_TYPE, onFileChosen, null);
+    	this(parent, "Import Pixellot CSV", Dialog.DEFAULT_MODALITY_TYPE, onFileChosen, null);
     }
     
     @SuppressWarnings("unused")
@@ -100,7 +100,8 @@ public class DragNDropCSV extends javax.swing.JDialog {
 
         p_dropfilehere.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         p_dropfilehere.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
+            @Override
+			public void mouseReleased(java.awt.event.MouseEvent evt) {
                 p_dropfilehereMouseReleased(evt);
             }
         });
@@ -126,14 +127,16 @@ public class DragNDropCSV extends javax.swing.JDialog {
 
         skipButton.setText("SKIP");
         skipButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 skipButtonActionPerformed(evt);
             }
         });
 
         cancelbutton.setText("CANCEL");
         cancelbutton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelbuttonActionPerformed(evt);
             }
         });

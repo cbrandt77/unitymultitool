@@ -1,6 +1,5 @@
 package com.nfhsnetwork.calebsunitytool.nbui;
 
-import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -8,7 +7,6 @@ import java.awt.Window;
 
 import javax.swing.JDialog;
 import javax.swing.JProgressBar;
-import javax.swing.SwingUtilities;
 
 public class ProgressBarDialogBox extends JDialog 
 {

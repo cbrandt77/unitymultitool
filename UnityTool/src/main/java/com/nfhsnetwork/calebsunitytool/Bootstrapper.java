@@ -2,7 +2,6 @@ package com.nfhsnetwork.calebsunitytool;
 
 import com.nfhsnetwork.calebsunitytool.nbui.ImportDataFrame;
 import com.nfhsnetwork.calebsunitytool.updater.UpdateManager;
-import com.nfhsnetwork.calebsunitytool.utils.Util;
 
 public class Bootstrapper 
 {

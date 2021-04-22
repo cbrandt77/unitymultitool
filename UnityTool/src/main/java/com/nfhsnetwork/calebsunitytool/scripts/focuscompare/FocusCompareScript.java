@@ -19,7 +19,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.json.JSONObject;
 
 import com.google.protobuf.ByteString;
-import com.nfhsnetwork.calebsunitytool.Bootstrapper;
+import com.nfhsnetwork.calebsunitytool.Wrapper;
 import com.nfhsnetwork.calebsunitytool.common.NFHSGameObject;
 import com.nfhsnetwork.calebsunitytool.exceptions.NullFieldException;
 import com.nfhsnetwork.calebsunitytool.utils.Util;
@@ -227,7 +227,7 @@ public class FocusCompareScript
 							StringUtils.stripQuotes(items[csv_version_index])
 					};
 					
-					if (Bootstrapper.isDebugMode) {
+					if (Wrapper.isDebugMode) {
 						System.out.println("[DEBUG] {parseClubCSV} put " + StringUtils.stripQuotes(items[csv_sysid_index])
 								+ " into map.");
 						for (String s : details) {
@@ -241,7 +241,7 @@ public class FocusCompareScript
 				}
 			});
 			
-			if (Bootstrapper.isDebugMode) {
+			if (Wrapper.isDebugMode) {
 				System.out.println("[DEBUG] {csv_fetchHeaderIndices} sysname: " + csv_sysname_index + " | sysid: " + csv_sysid_index + " | status: " + csv_status_index + " | version: " + csv_version_index);
 			}
 		}
@@ -296,7 +296,7 @@ public class FocusCompareScript
 			
 	    	
 	    	//debug info:
-	    	if (Bootstrapper.isDebugMode) {
+	    	if (Wrapper.isDebugMode) {
 				String[] deets = clubInventoryMap.get(Util.hexStringToByteString(search));
 				if (deets == null) {
 					System.out.println("[DEBUG] {getSysIDDetails} details null for " + search + ". key exists: "
@@ -312,7 +312,7 @@ public class FocusCompareScript
 	    	
 	    	
 	    } catch (NullPointerException e) {
-	    	if (Bootstrapper.isDebugMode)
+	    	if (Wrapper.isDebugMode)
 	    		System.out.println("[DEBUG] {getSysIDDetails} NullPointerException for " + search);
 	    	
 	    	
@@ -386,7 +386,6 @@ public class FocusCompareScript
 		}
 		
 	}
-	
 	
 	private boolean isDeleted(FocusGameObject f)
 	{
@@ -644,7 +643,7 @@ public class FocusCompareScript
 	
 	
 	/**
-	 * //TODO
+	 * //TODO progress listener
 	 * @param name
 	 * @param total
 	 * @param newValue

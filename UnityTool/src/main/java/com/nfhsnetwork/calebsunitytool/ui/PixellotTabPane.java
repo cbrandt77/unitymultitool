@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.nfhsnetwork.calebsunitytool.nbui;
+package com.nfhsnetwork.calebsunitytool.ui;
 
 /**
  *
@@ -42,10 +42,10 @@ public class PixellotTabPane extends javax.swing.JPanel {
         tag_clubEventID = new javax.swing.JLabel();
         tag_clubEventStatus = new javax.swing.JLabel();
         tag_clubEventLink = new javax.swing.JLabel();
-        data_consoleEventID = new com.nfhsnetwork.calebsunitytool.nbui.components.EditableLabel();
-        data_clubEventID = new com.nfhsnetwork.calebsunitytool.nbui.components.EditableLabel();
-        data_clubEventStatus = new com.nfhsnetwork.calebsunitytool.nbui.components.EditableLabel();
-        data_clubEventLink = new com.nfhsnetwork.calebsunitytool.nbui.components.EditableLabel();
+        data_consoleEventID = new com.nfhsnetwork.calebsunitytool.ui.components.EditableLabel();
+        data_clubEventID = new com.nfhsnetwork.calebsunitytool.ui.components.EditableLabel();
+        data_clubEventStatus = new com.nfhsnetwork.calebsunitytool.ui.components.EditableLabel();
+        data_clubEventLink = new com.nfhsnetwork.calebsunitytool.ui.components.EditableLabel();
         p_sfinfo = new javax.swing.JPanel();
         tag_am = new javax.swing.JLabel();
         tag_sfinfo2 = new javax.swing.JLabel();
@@ -274,11 +274,11 @@ public class PixellotTabPane extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     javax.swing.JLabel data_acctmgr;
-    com.nfhsnetwork.calebsunitytool.nbui.components.EditableLabel data_clubEventID;
-    com.nfhsnetwork.calebsunitytool.nbui.components.EditableLabel data_clubEventLink;
-    com.nfhsnetwork.calebsunitytool.nbui.components.EditableLabel data_clubEventStatus;
+    com.nfhsnetwork.calebsunitytool.ui.components.EditableLabel data_clubEventID;
+    com.nfhsnetwork.calebsunitytool.ui.components.EditableLabel data_clubEventLink;
+    com.nfhsnetwork.calebsunitytool.ui.components.EditableLabel data_clubEventStatus;
     javax.swing.JLabel data_clubname;
-    com.nfhsnetwork.calebsunitytool.nbui.components.EditableLabel data_consoleEventID;
+    com.nfhsnetwork.calebsunitytool.ui.components.EditableLabel data_consoleEventID;
     javax.swing.JLabel data_lminame;
     javax.swing.JLabel data_prodname;
     javax.swing.JLabel data_sfname;

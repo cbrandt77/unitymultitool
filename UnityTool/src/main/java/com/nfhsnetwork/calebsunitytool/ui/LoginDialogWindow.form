@@ -95,7 +95,7 @@
             <Property name="text" type="java.lang.String" value="Password"/>
           </Properties>
         </Component>
-        <Component class="com.nfhsnetwork.calebsunitytool.nbui.components.PlaceholderTextField" name="field_email">
+        <Component class="com.nfhsnetwork.calebsunitytool.ui.components.PlaceholderTextField" name="field_email">
         </Component>
         <Component class="javax.swing.JLabel" name="l_email">
           <Properties>

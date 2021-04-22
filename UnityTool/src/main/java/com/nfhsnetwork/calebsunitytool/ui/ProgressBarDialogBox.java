@@ -1,4 +1,4 @@
-package com.nfhsnetwork.calebsunitytool.nbui;
+package com.nfhsnetwork.calebsunitytool.ui;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

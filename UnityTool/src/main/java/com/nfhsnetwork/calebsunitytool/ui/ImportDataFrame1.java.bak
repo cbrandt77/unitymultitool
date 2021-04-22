@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.nfhsnetwork.calebsunitytool.nbui;
+package com.nfhsnetwork.calebsunitytool.ui;
 
 /**
  *
@@ -28,7 +28,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane2 = new javax.swing.JScrollPane();
-        placeholderTextArea1 = new com.nfhsnetwork.calebsunitytool.nbui.components.PlaceholderTextArea();
+        placeholderTextArea1 = new com.nfhsnetwork.calebsunitytool.ui.components.PlaceholderTextArea();
         jPanel5 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jRadioButton1 = new javax.swing.JRadioButton();
@@ -289,6 +289,6 @@ public class ImportDataFrame extends javax.swing.JFrame {
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JScrollPane jScrollPane2;
-    private com.nfhsnetwork.calebsunitytool.nbui.components.PlaceholderTextArea placeholderTextArea1;
+    private com.nfhsnetwork.calebsunitytool.ui.components.PlaceholderTextArea placeholderTextArea1;
     // End of variables declaration//GEN-END:variables
 }

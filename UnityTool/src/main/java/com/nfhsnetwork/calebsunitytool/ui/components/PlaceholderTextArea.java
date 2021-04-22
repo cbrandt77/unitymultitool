@@ -1,4 +1,4 @@
-package com.nfhsnetwork.calebsunitytool.nbui.components;
+package com.nfhsnetwork.calebsunitytool.ui.components;
 
 
 // Credit: https://stackoverflow.com/questions/16213836/java-swing-jtextfield-set-placeholder

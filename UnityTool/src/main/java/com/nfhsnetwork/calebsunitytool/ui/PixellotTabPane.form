@@ -253,22 +253,22 @@
                 <Property name="text" type="java.lang.String" value="Club Event Link:"/>
               </Properties>
             </Component>
-            <Component class="com.nfhsnetwork.calebsunitytool.nbui.components.EditableLabel" name="data_consoleEventID">
+            <Component class="com.nfhsnetwork.calebsunitytool.ui.components.EditableLabel" name="data_consoleEventID">
               <Properties>
                 <Property name="text" type="java.lang.String" value="editableLabel1"/>
               </Properties>
             </Component>
-            <Component class="com.nfhsnetwork.calebsunitytool.nbui.components.EditableLabel" name="data_clubEventID">
+            <Component class="com.nfhsnetwork.calebsunitytool.ui.components.EditableLabel" name="data_clubEventID">
               <Properties>
                 <Property name="text" type="java.lang.String" value="editableLabel2"/>
               </Properties>
             </Component>
-            <Component class="com.nfhsnetwork.calebsunitytool.nbui.components.EditableLabel" name="data_clubEventStatus">
+            <Component class="com.nfhsnetwork.calebsunitytool.ui.components.EditableLabel" name="data_clubEventStatus">
               <Properties>
                 <Property name="text" type="java.lang.String" value="editableLabel3"/>
               </Properties>
             </Component>
-            <Component class="com.nfhsnetwork.calebsunitytool.nbui.components.EditableLabel" name="data_clubEventLink">
+            <Component class="com.nfhsnetwork.calebsunitytool.ui.components.EditableLabel" name="data_clubEventLink">
               <Properties>
                 <Property name="text" type="java.lang.String" value="editableLabel4"/>
               </Properties>

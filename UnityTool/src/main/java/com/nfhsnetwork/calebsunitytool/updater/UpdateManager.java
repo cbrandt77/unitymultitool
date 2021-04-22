@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 
@@ -18,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.protobuf.ByteString;
+import com.nfhsnetwork.calebsunitytool.Wrapper;
 import com.nfhsnetwork.calebsunitytool.utils.Util;
 import com.nfhsnetwork.calebsunitytool.utils.Util.IOUtils;
 
@@ -26,7 +28,8 @@ public class UpdateManager {
 	private static final String VERSIONMODIFIERS = "snapshot";
 	public static final String FULLVERSIONNAME = CURRENTVERSION + " - " + VERSIONMODIFIERS;
 	
-	//TODO get token to fetch this
+	//TODO hide token
+	private static final String token = "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";
 	private static final String VERSION_URL = "https://raw.githubusercontent.com/ByThePowerOfScience/unitymultitool/master/version.json";
 	
 	private static final String DOWNLOADPATH; //TODO
@@ -44,7 +47,6 @@ public class UpdateManager {
 	public static final int CURRENT = 2;
 	public static final int INTERRUPTED = 3;
 	public static final int OUTDATED = 4;
-	
 	
 	/**
 	 * 
@@ -73,22 +75,40 @@ public class UpdateManager {
 	private static int checkVersion()
 	{
 		try {
-			JSONObject version = IOUtils.readJSONFromURL(VERSION_URL);
+			//JSONObject version = IOUtils.readJSONFromURL(VERSION_URL);
+			
+			JSONObject version = new JSONObject(IOUtils.readFromURL(VERSION_URL, Map.of("Authorization", "token " + token)));
 			
 			if (CURRENTVERSION.equals(version.getString("current"))
 					&& VERSIONMODIFIERS.equals(version.getString("modifiers")))
+			{
+				if (Wrapper.isDebugMode) {
+					System.out.println("[DEBUG] {checkVersion} current version");
+					System.out.println("[DEBUG] {checkVersion} version json: " + version.toString());
+				}
+				
 				return CURRENT;
+			}
 			
 			source_checksum = Util.hexStringToByteString(version.getString("checksum"));
+			
+			if (Wrapper.isDebugMode) {
+				System.out.println("[DEBUG] {checkVersion} outdated");
+			}
 			
 			return OUTDATED;
 		} 
 		catch (JSONException e) {
+			e.printStackTrace();
 			throw new RuntimeException("Failed to get version from version JSON??", e);
 		} catch (IOException e) {
 			e.printStackTrace();
-			return INTERRUPTED;
 		}
+		if (Wrapper.isDebugMode) {
+			System.out.println("[DEBUG] {checkVersion} interrupted");
+		}
+		
+		return INTERRUPTED;
 	}
 	
 	

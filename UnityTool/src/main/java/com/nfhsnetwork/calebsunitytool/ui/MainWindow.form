@@ -41,7 +41,7 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="com.nfhsnetwork.calebsunitytool.nbui.components.PlaceholderTextField" name="field_email">
+        <Component class="com.nfhsnetwork.calebsunitytool.ui.components.PlaceholderTextField" name="field_email">
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_AddingCodePre" type="java.lang.String" value="field_email.setPlaceholder(&quot;Email Address&quot;);"/>
           </AuxValues>
@@ -265,7 +265,7 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
               <SubComponents>
-                <Component class="com.nfhsnetwork.calebsunitytool.nbui.EventDetailsPane" name="eventDetailsPane1">
+                <Component class="com.nfhsnetwork.calebsunitytool.ui.EventDetailsPane" name="eventDetailsPane1">
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
                   </AuxValues>
@@ -277,7 +277,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="com.nfhsnetwork.calebsunitytool.nbui.ProductionTabPane" name="productionTabPane1">
+                <Component class="com.nfhsnetwork.calebsunitytool.ui.ProductionTabPane" name="productionTabPane1">
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
                   </AuxValues>
@@ -289,7 +289,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="com.nfhsnetwork.calebsunitytool.nbui.PixellotTabPane" name="pixellotTabPane1">
+                <Component class="com.nfhsnetwork.calebsunitytool.ui.PixellotTabPane" name="pixellotTabPane1">
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_AddingCodePre" type="java.lang.String" value="pixellotTabPane1.setVisible(true);"/>
                     <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
@@ -350,9 +350,9 @@
             </Container>
           </SubComponents>
         </Container>
-        <Component class="com.nfhsnetwork.calebsunitytool.nbui.GameListContainer" name="gameListContainer">
+        <Component class="com.nfhsnetwork.calebsunitytool.ui.GameListContainer" name="gameListContainer">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.nfhsnetwork.calebsunitytool.nbui.GameListContainer(uic)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.nfhsnetwork.calebsunitytool.ui.GameListContainer(uic)"/>
           </AuxValues>
         </Component>
       </SubComponents>

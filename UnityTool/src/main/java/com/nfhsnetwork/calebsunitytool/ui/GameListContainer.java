@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.nfhsnetwork.calebsunitytool.nbui;
+package com.nfhsnetwork.calebsunitytool.ui;
 
 import java.util.List;
 import java.util.Set;
@@ -237,7 +237,7 @@ public class GameListContainer extends javax.swing.JPanel {
                                     labelText = nValue.getBdcIDs()[0];
                                     break;
                             case TITLE:
-                                    labelText = nValue.getTitle(); //TODO
+                                    labelText = nValue.getTitle(); //TODO actually hook this up to be a sort-by-title
                                     break;
                             default:
                                     labelText = "?"; //TODO

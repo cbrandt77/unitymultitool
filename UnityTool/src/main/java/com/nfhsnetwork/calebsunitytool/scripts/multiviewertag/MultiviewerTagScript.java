@@ -30,8 +30,8 @@ import com.nfhsnetwork.calebsunitytool.common.NFHSGameObject;
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer;
 import com.nfhsnetwork.calebsunitytool.exceptions.GameNotFoundException;
 import com.nfhsnetwork.calebsunitytool.exceptions.InvalidContentTypeException;
-import com.nfhsnetwork.calebsunitytool.nbui.ProgressBarDialogBox;
-import com.nfhsnetwork.calebsunitytool.nbui.LoginDialog;
+import com.nfhsnetwork.calebsunitytool.ui.LoginDialog;
+import com.nfhsnetwork.calebsunitytool.ui.ProgressBarDialogBox;
 
 public class MultiviewerTagScript {
 	

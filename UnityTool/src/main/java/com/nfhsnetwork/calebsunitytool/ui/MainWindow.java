@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.nfhsnetwork.calebsunitytool.nbui;
+package com.nfhsnetwork.calebsunitytool.ui;
 
 import com.nfhsnetwork.calebsunitytool.common.NullNFHSObject;
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer;
@@ -44,19 +44,19 @@ class MainWindow extends javax.swing.JFrame {
     private void initComponents() {
 
         loginDialog = new javax.swing.JDialog();
-        field_email = new com.nfhsnetwork.calebsunitytool.nbui.components.PlaceholderTextField();
+        field_email = new com.nfhsnetwork.calebsunitytool.ui.components.PlaceholderTextField();
         field_password = new javax.swing.JPasswordField();
         l_email = new javax.swing.JLabel();
         l_password = new javax.swing.JLabel();
         panel_main = new javax.swing.JPanel();
         container_eventSpecific = new javax.swing.JPanel();
         tabPanel = new javax.swing.JTabbedPane();
-        eventDetailsPane1 = new com.nfhsnetwork.calebsunitytool.nbui.EventDetailsPane();
-        productionTabPane1 = new com.nfhsnetwork.calebsunitytool.nbui.ProductionTabPane();
-        pixellotTabPane1 = new com.nfhsnetwork.calebsunitytool.nbui.PixellotTabPane();
+        eventDetailsPane1 = new com.nfhsnetwork.calebsunitytool.ui.EventDetailsPane();
+        productionTabPane1 = new com.nfhsnetwork.calebsunitytool.ui.ProductionTabPane();
+        pixellotTabPane1 = new com.nfhsnetwork.calebsunitytool.ui.PixellotTabPane();
         panel_title = new javax.swing.JPanel();
         label_gameTitle = new javax.swing.JLabel();
-        gameListContainer = new com.nfhsnetwork.calebsunitytool.nbui.GameListContainer(uic);
+        gameListContainer = new com.nfhsnetwork.calebsunitytool.ui.GameListContainer(uic);
         mb_topMenu = new javax.swing.JMenuBar();
         menu_file = new javax.swing.JMenu();
         menuItem_dologin = new javax.swing.JMenuItem();
@@ -344,10 +344,10 @@ class MainWindow extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel container_eventSpecific;
-    protected com.nfhsnetwork.calebsunitytool.nbui.EventDetailsPane eventDetailsPane1;
-    private com.nfhsnetwork.calebsunitytool.nbui.components.PlaceholderTextField field_email;
+    protected com.nfhsnetwork.calebsunitytool.ui.EventDetailsPane eventDetailsPane1;
+    private com.nfhsnetwork.calebsunitytool.ui.components.PlaceholderTextField field_email;
     private javax.swing.JPasswordField field_password;
-    private com.nfhsnetwork.calebsunitytool.nbui.GameListContainer gameListContainer;
+    private com.nfhsnetwork.calebsunitytool.ui.GameListContainer gameListContainer;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JLabel l_email;
     private javax.swing.JLabel l_password;
@@ -366,8 +366,8 @@ class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenu menu_view;
     private javax.swing.JPanel panel_main;
     private javax.swing.JPanel panel_title;
-    protected com.nfhsnetwork.calebsunitytool.nbui.PixellotTabPane pixellotTabPane1;
-    protected com.nfhsnetwork.calebsunitytool.nbui.ProductionTabPane productionTabPane1;
+    protected com.nfhsnetwork.calebsunitytool.ui.PixellotTabPane pixellotTabPane1;
+    protected com.nfhsnetwork.calebsunitytool.ui.ProductionTabPane productionTabPane1;
     private javax.swing.JTabbedPane tabPanel;
     private javax.swing.JRadioButtonMenuItem view_gameList_bdcID;
     private javax.swing.JRadioButtonMenuItem view_gameList_eventID;

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.nfhsnetwork.calebsunitytool.nbui;
+package com.nfhsnetwork.calebsunitytool.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,7 +48,7 @@ public class LoginDialog extends javax.swing.JDialog {
         jPanel1 = new javax.swing.JPanel();
         field_password = new javax.swing.JPasswordField();
         l_password = new javax.swing.JLabel();
-        field_email = new com.nfhsnetwork.calebsunitytool.nbui.components.PlaceholderTextField();
+        field_email = new com.nfhsnetwork.calebsunitytool.ui.components.PlaceholderTextField();
         l_email = new javax.swing.JLabel();
         button_submit = new javax.swing.JButton();
 
@@ -208,7 +208,7 @@ public class LoginDialog extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton button_submit;
-    private com.nfhsnetwork.calebsunitytool.nbui.components.PlaceholderTextField field_email;
+    private com.nfhsnetwork.calebsunitytool.ui.components.PlaceholderTextField field_email;
     private javax.swing.JPasswordField field_password;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel l_email;

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.nfhsnetwork.calebsunitytool.nbui;
+package com.nfhsnetwork.calebsunitytool.ui;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -51,7 +51,7 @@ public class EventDetailsPane extends javax.swing.JPanel {
         label_redirect_tag = new javax.swing.JLabel();
         label_redirect_data = new javax.swing.JTextField();
         tag_eventtags = new javax.swing.JLabel();
-        data_eventtags = new com.nfhsnetwork.calebsunitytool.nbui.components.EditableLabel();
+        data_eventtags = new com.nfhsnetwork.calebsunitytool.ui.components.EditableLabel();
         panel_competitionDetails = new javax.swing.JPanel();
         label_sport_tag = new javax.swing.JLabel();
         tag_comptype = new javax.swing.JLabel();
@@ -345,7 +345,7 @@ public class EventDetailsPane extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    com.nfhsnetwork.calebsunitytool.nbui.components.EditableLabel data_eventtags;
+    com.nfhsnetwork.calebsunitytool.ui.components.EditableLabel data_eventtags;
     javax.swing.JLabel l_gender_data;
     javax.swing.JLabel l_level_data;
     javax.swing.JLabel l_sport_data;

@@ -30,7 +30,7 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="com.nfhsnetwork.calebsunitytool.nbui.components.PlaceholderTextField" name="tf_emailField">
+        <Component class="com.nfhsnetwork.calebsunitytool.ui.components.PlaceholderTextField" name="tf_emailField">
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_AddingCodePre" type="java.lang.String" value="tf_emailField.setPlaceholder(&quot;Email Address&quot;);"/>
           </AuxValues>
@@ -215,7 +215,7 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
               <SubComponents>
-                <Component class="com.nfhsnetwork.calebsunitytool.nbui.EventDetailsPane" name="eventDetailsPane1">
+                <Component class="com.nfhsnetwork.calebsunitytool.ui.EventDetailsPane" name="eventDetailsPane1">
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
                       <JTabbedPaneConstraints tabName="Event">
@@ -224,7 +224,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="com.nfhsnetwork.calebsunitytool.nbui.ProductionTabPane" name="productionTabPane1">
+                <Component class="com.nfhsnetwork.calebsunitytool.ui.ProductionTabPane" name="productionTabPane1">
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
                       <JTabbedPaneConstraints tabName="Production">
@@ -233,7 +233,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="com.nfhsnetwork.calebsunitytool.nbui.PixellotTabPane" name="pixellotTabPane1">
+                <Component class="com.nfhsnetwork.calebsunitytool.ui.PixellotTabPane" name="pixellotTabPane1">
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_AddingCodePre" type="java.lang.String" value="pixellotTabPane1.setVisible(true);"/>
                   </AuxValues>
@@ -293,7 +293,7 @@
             </Container>
           </SubComponents>
         </Container>
-        <Component class="com.nfhsnetwork.calebsunitytool.nbui.GameListContainer" name="gameListContainer2">
+        <Component class="com.nfhsnetwork.calebsunitytool.ui.GameListContainer" name="gameListContainer2">
         </Component>
       </SubComponents>
     </Container>

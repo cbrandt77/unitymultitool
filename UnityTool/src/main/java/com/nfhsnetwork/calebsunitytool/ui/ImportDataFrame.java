@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.nfhsnetwork.calebsunitytool.nbui;
+package com.nfhsnetwork.calebsunitytool.ui;
 
 import java.awt.Dialog;
 import java.io.File;
@@ -16,13 +16,13 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import com.nfhsnetwork.calebsunitytool.Bootstrapper;
+import com.nfhsnetwork.calebsunitytool.Wrapper;
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer;
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer.ImportTypes;
-import com.nfhsnetwork.calebsunitytool.nbui.pixellotcsv.DragNDropCSV;
 import com.nfhsnetwork.calebsunitytool.scripts.focuscompare.FocusCompareScript;
 import com.nfhsnetwork.calebsunitytool.scripts.focuscompare.FocusOutputFrame;
 import com.nfhsnetwork.calebsunitytool.scripts.multiviewertag.MultiviewerTagScript;
+import com.nfhsnetwork.calebsunitytool.ui.pixellotcsv.DragNDropCSV;
 import com.nfhsnetwork.calebsunitytool.utils.Util.IOUtils;
 
 /**
@@ -52,7 +52,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         sp_textarea = new javax.swing.JScrollPane();
-        placeholderTextArea1 = new com.nfhsnetwork.calebsunitytool.nbui.components.PlaceholderTextArea();
+        placeholderTextArea1 = new com.nfhsnetwork.calebsunitytool.ui.components.PlaceholderTextArea();
         p_sidebar = new javax.swing.JPanel();
         p_importtypecontainer = new javax.swing.JPanel();
         rb_it_focus = new javax.swing.JRadioButton();
@@ -557,7 +557,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
         if (args.length != 0)
         {
         	if (args[0].equals("--debug"))
-        		Bootstrapper.isDebugMode = true;
+        		Wrapper.isDebugMode = true;
         		//TODO make a controller main class that starts everything instead of starting it all from this frame.
         }
         
@@ -580,7 +580,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
     private javax.swing.JPanel p_importtypecontainer;
     private javax.swing.JPanel p_quickactionscontainer;
     private javax.swing.JPanel p_sidebar;
-    private com.nfhsnetwork.calebsunitytool.nbui.components.PlaceholderTextArea placeholderTextArea1;
+    private com.nfhsnetwork.calebsunitytool.ui.components.PlaceholderTextArea placeholderTextArea1;
     private javax.swing.JRadioButton rb_it_focus;
     private javax.swing.JRadioButton rb_it_other;
     private javax.swing.JScrollPane sp_textarea;

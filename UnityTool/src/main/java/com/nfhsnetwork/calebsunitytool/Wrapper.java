@@ -1,9 +1,9 @@
 package com.nfhsnetwork.calebsunitytool;
 
-import com.nfhsnetwork.calebsunitytool.nbui.ImportDataFrame;
+import com.nfhsnetwork.calebsunitytool.ui.ImportDataFrame;
 import com.nfhsnetwork.calebsunitytool.updater.UpdateManager;
 
-public class Bootstrapper 
+public class Wrapper 
 {
 	public static final String OS = System.getProperty("os.name");
 	
@@ -43,7 +43,7 @@ public class Bootstrapper
 	
 	private static void restartProgram()
 	{
-		//TODO
+		//TODO make method
 		System.out.println("[DEBUG] {restartProgram} ");
 	}
 	

@@ -8,15 +8,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Map;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.protobuf.ByteString;
+import com.nfhsnetwork.calebsunitytool.Wrapper;
 
 /**
  * 
@@ -73,7 +78,9 @@ public final class Util
 	{
 		//System.out.println("[DEBUG] {hexStringToByteString} " + s);
 		if (s.length() % 2 != 0) {
-			System.out.println("[DEBUG] {parseClubCSV} not div by 2 for id " + s);
+			if (Wrapper.isDebugMode) {
+				System.out.println("[DEBUG] {parseClubCSV} not div by 2 for id " + s);
+			}
 			throw new NumberFormatException("String not divisible by 2.");
 		}
 		
@@ -134,6 +141,24 @@ public final class Util
 				String jsonText = readAllFromReader(rd);
 				return new JSONObject(jsonText);
 			}
+		}
+		
+		public static String readFromURL(String url, Map<String, String> headers) throws IOException
+		{
+			HttpURLConnection http = (HttpURLConnection)new URL(url).openConnection();
+			
+			if (headers != null)
+				headers.forEach(http::addRequestProperty);
+			
+			http.connect();
+			String out;
+			try (InputStream is = http.getInputStream();
+				 BufferedReader rd = new BufferedReader(new InputStreamReader(is)))
+			{
+				out = readAllFromReader(rd);
+			}
+			
+			return out;
 		}
 		
 	}

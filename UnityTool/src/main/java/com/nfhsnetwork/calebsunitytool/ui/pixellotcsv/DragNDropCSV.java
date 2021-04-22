@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.nfhsnetwork.calebsunitytool.nbui.pixellotcsv;
+package com.nfhsnetwork.calebsunitytool.ui.pixellotcsv;
 
 import java.awt.Dialog;
 import java.awt.Window;

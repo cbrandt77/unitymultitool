@@ -12,6 +12,7 @@ public class UIController
 	UIController(MainWindow mw)
 	{
 		this.mw = mw;
+		onNoneSelected();
 	}
 	
 	protected void onNoneSelected() 
@@ -40,24 +41,51 @@ public class UIController
 	
 	private void updateAllLabels(NFHSGameObject n) 
 	{
-		mw.mwf.setGender(n.getGender());
-		mw.mwf.setGameid(n.getGameID());
-		mw.mwf.setBdcid(n.getBdcIDs()[0]);
-		mw.mwf.setProdType(n.getProducerType());
-		mw.mwf.setEd_level(n.getCompLevel());
-		mw.mwf.setParticipants(n.getParticipants());
-		mw.mwf.setEd_sport(n.getSportType());
-		mw.mwf.setEd_location(n.getLocation());
-		mw.mwf.setEd_redirect(n.getRedirectID());
-		mw.mwf.setEd_type(n.getCompType());
-		mw.mwf.setProd_producer(n.getProducerName());
-		mw.mwf.setProd_mgr_name(n.getTerritoryMgrName());
-		mw.mwf.setProd_mgr_phone(n.getTerritoryMgrNumber());
-		mw.mwf.setOnairstatus(n.getOnAirStatus());
-		mw.mwf.setProd_hlsstatus(n.getHLSStatus());
-		mw.mwf.setStarttime(n.getDateTime());
-		mw.mwf.setTitle(n.getTitle());
-		mw.mwf.setEventTags(n.getEventTags());
+		if (n instanceof NullNFHSObject || n == null)
+		{
+			mw.mwf.setGender("");
+			mw.mwf.setGameid("");
+			mw.mwf.setBdcid("");
+			mw.mwf.setProdType("");
+			mw.mwf.setEd_level("");
+			mw.mwf.setParticipants(null);
+			mw.mwf.setEd_sport("");
+			mw.mwf.setEd_location("");
+			mw.mwf.setEd_redirect("");
+			mw.mwf.setEd_type("");
+			mw.mwf.setProd_producer("");
+			mw.mwf.setProd_mgr_name("");
+			mw.mwf.setProd_mgr_phone("");
+			mw.mwf.setOnairstatus("");
+			mw.mwf.setProd_hlsstatus("");
+			mw.mwf.setStarttime(null);
+			mw.mwf.setTitle("");
+			mw.mwf.setEventTags(null);
+		}
+		else
+		{
+			mw.mwf.setGender(n.getGender());
+			mw.mwf.setGameid(n.getGameID());
+			mw.mwf.setBdcid(n.getBdcIDs()[0]);
+			mw.mwf.setProdType(n.getProducerType());
+			mw.mwf.setEd_level(n.getCompLevel());
+			mw.mwf.setParticipants(n.getParticipants());
+			mw.mwf.setEd_sport(n.getSportType());
+			mw.mwf.setEd_location(n.getLocation());
+			mw.mwf.setEd_redirect(n.getRedirectID());
+			mw.mwf.setEd_type(n.getCompType());
+			mw.mwf.setProd_producer(n.getProducerName());
+			mw.mwf.setProd_mgr_name(n.getTerritoryMgrName());
+			mw.mwf.setProd_mgr_phone(n.getTerritoryMgrNumber());
+			mw.mwf.setOnairstatus(n.getOnAirStatus());
+			mw.mwf.setProd_hlsstatus(n.getHLSStatus());
+			mw.mwf.setStarttime(n.getDateTime());
+			mw.mwf.setTitle(n.getTitle());
+			mw.mwf.setEventTags(n.getEventTags());
+		}
+		
+		
+		
 		
 		//TODO 
 		

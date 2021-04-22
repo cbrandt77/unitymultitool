@@ -36,6 +36,11 @@ public enum NFHSContentType {
 		return id.startsWith(content_prefix);
 	}
 	
+	public static boolean isValidEventId(String id)
+	{
+		return GAME.is(id) || EVENT.is(id);
+	}
+	
 	public static NFHSContentType identify(String id) 
 	{
 		switch (id.substring(0, 3)) {

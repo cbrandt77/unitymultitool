@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,9 +17,9 @@ import org.json.JSONObject;
 import com.nfhsnetwork.calebsunitytool.exceptions.GameNotFoundException;
 import com.nfhsnetwork.calebsunitytool.exceptions.InvalidContentTypeException;
 import com.nfhsnetwork.calebsunitytool.exceptions.NullFieldException;
+import com.nfhsnetwork.calebsunitytool.io.UnityInterface;
 import com.nfhsnetwork.calebsunitytool.scripts.focuscompare.FocusCompareScript;
-import com.nfhsnetwork.calebsunitytool.utils.JSONUtils;
-import com.nfhsnetwork.calebsunitytool.utils.Util;
+import com.nfhsnetwork.calebsunitytool.utils.Util.TimeUtils;
 
 
 public class NFHSGameObject
@@ -28,6 +30,8 @@ public class NFHSGameObject
 	public static final Pattern EVENTIDPATTERN = Pattern.compile("((?:evt){1}[a-f\\d]{10})");
 	
 	private static final int numDigitsInID = 13;
+	
+	//TODO implement new regex and Builder method of initialization.
 	public static NFHSGameObject buildFromIdOrUrl(String in) throws InvalidContentTypeException, GameNotFoundException
 	{
 		if (in.length() < 13)
@@ -79,7 +83,7 @@ public class NFHSGameObject
 				{
 					try 
 					{
-						event_id = UnityToolCommon.Convert.getGameIDFromBroadcast(bdc_id, NFHSContentType.BROADCAST);
+						event_id = UnityToolCommon.IDConversion.fetchEventIDFromChild(bdc_id, NFHSContentType.BROADCAST);
 					} 
 					catch (IOException e) {
 						e.printStackTrace();
@@ -98,7 +102,7 @@ public class NFHSGameObject
 		//TODO figure out when to fetch json and when not to
 		JSONObject jGet = null;
 		try {
-			jGet = UnityToolCommon.GetFromUnity.getGameFromUnity(event_id);
+			jGet = UnityInterface.fetchEventFromUnity(event_id);
 		} catch (IOException e) {
 			throw new GameNotFoundException(event_id, e);
 		}
@@ -113,7 +117,7 @@ public class NFHSGameObject
 	public static final Pattern FOCUS_DATE_PATTERN = Pattern.compile("((?:\\d{1,2})/(?:\\d{1,2})/(?:\\d{2,4}))");
 	public static final Pattern FOCUS_TIME_PATTERN = Pattern.compile("((?:\\d){1,2}:(?:\\d){1,2}:(?:\\d){1,2} (?:PM|AM|pm|am))");
 	
-	public static NFHSGameObject buildFromFocusSheetLine(String focusLine) throws InvalidContentTypeException, GameNotFoundException
+	public static NFHSGameObject buildFromFocusSheetLine(String focusLine) throws InvalidContentTypeException
 	{
 		String[] temp = focusLine.split("\\t", -1);
 		if (temp.length < FocusCompareScript.NUM_COLUMNS_FROM_FEL)
@@ -202,17 +206,19 @@ public class NFHSGameObject
 		
 		NFHSGameObject n;
 		try {
-			n = new NFHSGameObject(gameID);
-		} catch (GameNotFoundException | NullFieldException | InvalidContentTypeException | IOException e) {
+			n = Builder.newBuilder()
+									  .setEventId(gameID)
+									  .addBroadcastKeys(broadcastKey)
+									  .setFocusDateTime(focusDateTime)
+									  .setFocusStatus(status)
+									  .setFocusTitle(title)
+									  .setFocusMonitoringType(type)
+									  .build();
+		} catch (GameNotFoundException | InvalidContentTypeException | IOException e) {
 			e.printStackTrace();
-			return new NullNFHSObject(gameID);
-		} 
+			return new NullNFHSObject(gameID, e);
+		}
 		
-		n.setFocusDateTime(focusDateTime);
-		n.setFocusTitle(title);
-		n.setFocusEventType(type);
-		if (status == null)
-			n.setFocusStatus("");
 		
 		return n;
 	}
@@ -224,14 +230,15 @@ public class NFHSGameObject
 	
 	
 	
-	private JSONObject game_json;
-	private String game_id;
-	private String[] bdc_ids;
-	private NFHSContentType content_type;
-	private TerritoryManagers terr_mgr;
+	private final JSONObject game_json;
+	private final String game_id;
+	private final String[] bdc_ids;
+	private final NFHSContentType content_type;
+	private final TerritoryManagers terr_mgr;
 	
 	
 	//Only initialized if created by focus data import
+	private boolean isFocusEvent = false;
 	private LocalDateTime focus_dateTime;
 	private String focus_title;
 	private String focus_status;
@@ -242,55 +249,6 @@ public class NFHSGameObject
 	
 	
 	//TODO figure out what should be cached and what can be fetched ad-hoc from the JSON
-	
-	public NFHSGameObject()
-	{
-		
-	}
-	
-	/*
-	 * Should I assume that only game IDs will be passed in?
-	 */
-	public NFHSGameObject(String gameID) throws GameNotFoundException, InvalidContentTypeException, IOException, NullFieldException
-	{
-		this(gameID, UnityToolCommon.GetFromUnity.getGameFromUnity(gameID));
-	}
-	
-	public NFHSGameObject(String game_id, String bdc_id) throws GameNotFoundException, InvalidContentTypeException, IOException
-	{
-		this(game_id,
-			 new String[] { bdc_id },
-			 UnityToolCommon.GetFromUnity.getGameFromUnity(game_id));
-	}
-	
-	public NFHSGameObject(String game_id, String[] bdc_ids) throws GameNotFoundException, InvalidContentTypeException, IOException
-	{
-		this(game_id,
-			 bdc_ids,
-			 UnityToolCommon.GetFromUnity.getGameFromUnity(game_id));
-	}
-	
-	public NFHSGameObject(String game_id, String bdc_id, JSONObject j)
-	{
-		this(game_id,
-			 new String[] { bdc_id },
-			 j);
-	}
-	
-	public NFHSGameObject(JSONObject j) throws GameNotFoundException, InvalidContentTypeException, NullFieldException, IOException, JSONException
-	{
-		this(j.getString(UnityToolCommon.DICTKEY_GAMEKEY), JSONUtils.ManipNFHSJSON.getBroadcastKeys(j), j);
-	}
-	
-	public NFHSGameObject(String game_id, JSONObject j) throws NullFieldException
-	{
-		this(game_id, JSONUtils.ManipNFHSJSON.getBroadcastKeys(j), j);
-	}
-	
-	public NFHSGameObject(String game_id, String[] bdc_ids, JSONObject j)
-	{
-		this(game_id, bdc_ids, j, NFHSContentType.identify(game_id));
-	}
 	
 	public NFHSGameObject(String game_id, String[] bdc_ids, JSONObject j, NFHSContentType n)
 	{
@@ -309,12 +267,11 @@ public class NFHSGameObject
 	}
 
 
-
 	private void fetchAndSetBdcStateJSON()
 	{
 		JSONObject stateJSON;
 		try {
-			stateJSON = Util.getBdcStateJSON(this.bdc_ids[0]);
+			stateJSON = UnityInterface.fetchBdcStateJSON(this.bdc_ids[0]);
 		} catch (Exception e) {
 			System.out.println("[DEBUG] {fetchAndSetBdcStateJSON} exception thrown for game " + this.game_id);
 			e.printStackTrace();
@@ -392,31 +349,11 @@ public class NFHSGameObject
 		return game.getJSONArray("publishers").getJSONObject(0).getJSONArray("broadcasts").getJSONObject(0);
 	}
 	
-	public void setContentType(NFHSContentType n)
-	{
-		this.content_type = n;
-	}
-	
-	public void setGameID(String newID)
-	{
-		this.game_id = newID;
-	}
-	
-	public void setBdcIDs(String[] bdc_ids)
-	{
-		this.bdc_ids = bdc_ids;
-	}
-	
-	public void setJSONObject(JSONObject j)
-	{
-		this.game_json = j;
-	}
-	
 	
 	
 	public LocalDateTime getDateTime()
 	{
-		return Util.convertDateTimeToEST(this.game_json.getString("start_time"));
+		return TimeUtils.convertDateTimeToEST(this.game_json.getString("start_time"));
 	}
 	
 	public NFHSContentType getContentType()
@@ -498,6 +435,16 @@ public class NFHSGameObject
 	 */
 	public void setFocusEventType(String focus_type) {
 		this.focus_type = focus_type;
+	}
+	
+	public void setFocusEvent(boolean isFocusEvent)
+	{
+		this.isFocusEvent = isFocusEvent;
+	}
+	
+	public boolean isFocusEvent()
+	{
+		return this.isFocusEvent;
 	}
 	
 	public String getGender() {
@@ -684,7 +631,6 @@ public class NFHSGameObject
 		return this.bdcstate_json;
 	}
 	
-	
 	public String getHLSStatus() {
 		return this.bdcstate_json.getString("BroadcastState");
 	}
@@ -692,9 +638,7 @@ public class NFHSGameObject
 	public JSONArray getEventTags() {
 		return this.game_json.getJSONArray("event_tags");
 	}
-
-
-
+	
 	public String getTitle() {
 		try {
 			return this.getFirstBroadcast().getString("headline") + " | " + this.getFirstBroadcast().getString("subheadline");
@@ -705,5 +649,195 @@ public class NFHSGameObject
 		}
 	}
 	
+	public static class Builder
+	{
+		private String eventId = null;
+		private List<String> childIds = null;
+		private JSONObject event_json = null;
+		
+		private boolean isFocusEvent = false;
+		private String focusTitle;
+		private LocalDateTime focusDateTime;
+		private String focusStatus;
+		private String focusType;
+		
+		
+		private Builder()
+		{
+			childIds = new ArrayList<>();
+		}
+		
+		public static Builder newBuilder()
+		{
+			return new Builder();
+		}
+		
+		public Builder addBroadcastKey(String key)
+		{
+			this.childIds.add(key);
+			return this;
+		}
+		
+		public Builder addBroadcastKeys(String[] keys)
+		{
+			for (String s : keys)
+			{
+				this.childIds.add(s);
+			}
+			return this;
+		}
+		
+		public Builder setEventId(String id)
+		{
+			eventId = id;
+			return this;
+		}
+		
+		public Builder setEventJson(JSONObject json)
+		{
+			this.event_json = json;
+			return this;
+		}
+		
+		public Builder setFocusMonitoringType(String type)
+		{
+			this.focusType = type;
+			return this;
+		}
+		
+		public Builder setFocusTitle(String title)
+		{
+			this.isFocusEvent = true;
+			
+			this.focusTitle = title;
+			
+			return this;
+		}
+		
+		public Builder setFocusDateTime(LocalDateTime focusDateTime)
+		{
+			this.isFocusEvent = true;
+			
+			this.focusDateTime = focusDateTime;
+			
+			return this;
+		}
+		
+		public Builder setFocusStatus(String status)
+		{
+			this.isFocusEvent = true;
+			
+			this.focusStatus = status;
+			
+			return this;
+		}
+		
+		public NFHSGameObject build() throws GameNotFoundException, InvalidContentTypeException, IOException
+		{
+			if (eventId == null) 
+			{
+				if (childIds == null)
+				{
+					if (event_json != null)
+					{
+						String key;
+						try {
+							 key = event_json.getString("key");
+						} catch (JSONException e) {
+							throw new GameNotFoundException("No information given in building.");
+						}
+						
+						switch (NFHSContentType.identify(key)) {
+							case EVENT:
+							case GAME:
+								eventId = key;
+								break;
+							case BROADCAST:
+							case VOD:
+								childIds.add(key);
+								return build();
+							default:
+								throw new InvalidContentTypeException(key, "gam/evt/bdc/vod");
+						}
+					}
+					else
+						throw new InvalidContentTypeException("No information given in building.");
+				}
+				else // if childIds != null
+				{
+					for (String s : childIds)
+					{
+						String get;
+						try {
+							get = UnityToolCommon.IDConversion.fetchEventIDIfNeeded(s);
+						} catch (GameNotFoundException e) {
+							continue;
+						} catch (InvalidContentTypeException e) {
+							continue;
+						} catch (IOException e) {
+							throw new IOException("Issue contacting Unity broadcast server.", e);
+						}
+						
+						eventId = get;
+						break;
+					}
+					throw new GameNotFoundException("Unable to find broadcast.");
+				}
+			}
+			
+			assert(eventId != null);
+			
+			
+			if (event_json == null)
+			{
+				event_json = UnityInterface.fetchEventFromUnity(eventId);
+			}
+			else 
+			{
+				String key;
+				try {
+					 key = event_json.getString("key");
+				} catch (JSONException e) {
+					throw new GameNotFoundException("Not enough information given in building.");
+				}
+				
+				switch (NFHSContentType.identify(key)) {
+					case EVENT:
+					case GAME:
+						if (!eventId.equals(key)) {
+							System.out.println("[DEBUG] {Builder} {build} eventId " + eventId + " does not equal JSON key " + key + ", conforming to json");
+							eventId = key;
+							childIds.clear();
+							childIds.add(NFHSGameObject.getFirstBroadcast(event_json).getString("key"));
+						}
+						break;
+					case BROADCAST:
+					case VOD:
+					default:
+						event_json = UnityInterface.fetchEventFromUnity(eventId);
+				}
+			}
+			
+			NFHSGameObject n = new NFHSGameObject(eventId, childIds.toArray(new String[childIds.size()]), event_json, NFHSContentType.identify(eventId));
+			
+			if (isFocusEvent)
+			{
+				n.setFocusEvent(true);
+				
+				if (this.focusDateTime != null)
+					n.setFocusDateTime(focusDateTime);
+				if (this.focusStatus != null)
+					n.setFocusStatus(focusStatus);
+				if (this.focusTitle != null)
+					n.setFocusTitle(focusTitle);
+				if (this.focusType != null)
+					n.setFocusEventType(focusType);
+			}
+			
+			return n;
+		}
+		
+		
+	}
 	
 }

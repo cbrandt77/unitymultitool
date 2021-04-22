@@ -404,10 +404,10 @@ class MainWindow extends javax.swing.JFrame {
         
         // [DEBUG]
         UnityContainer.makeNewContainer();
-        UnityContainer.getContainer().getEventMap().put("gam1234567890", new NullNFHSObject());
-        UnityContainer.getContainer().getEventMap().put("gam1234567890", new NullNFHSObject());
-        UnityContainer.getContainer().getEventMap().put("gam1234567890", new NullNFHSObject());
-        UnityContainer.getContainer().getEventMap().put("gam1234567890", new NullNFHSObject());
+        UnityContainer.getContainer().getEventMap().put("gam1234567890", new NullNFHSObject("gam1234567890"));
+        UnityContainer.getContainer().getEventMap().put("gam1234567890", new NullNFHSObject("gam1234567890"));
+        UnityContainer.getContainer().getEventMap().put("gam1234567890", new NullNFHSObject("gam1234567890"));
+        UnityContainer.getContainer().getEventMap().put("gam1234567890", new NullNFHSObject("gam1234567890"));
         
         
         /* Create and display the form */
@@ -479,6 +479,11 @@ class MainWindow extends javax.swing.JFrame {
 
     	protected void setEventTags(JSONArray eventTags)
     	{
+    		if (eventTags == null)
+    		{
+    			eventDetailsPane1.data_eventtags.setText("");
+    		}
+    		
     		StringBuilder sb = new StringBuilder();
     		sb.append("[ ");
     		for (int i = 0, length = eventTags.length(); i < length; i++)
@@ -521,6 +526,12 @@ class MainWindow extends javax.swing.JFrame {
 		}
 		
 		protected void setStarttime(LocalDateTime localDateTime) {
+			if (localDateTime == null)
+			{
+				eventDetailsPane1.label_startTime_data.setText("");
+				return;
+			}
+			
 			this.starttime = localDateTime;
 			
 			DateTimeFormatter dtf = DateTimeFormatter.ofPattern(startTimeDTFPattern);
@@ -537,6 +548,9 @@ class MainWindow extends javax.swing.JFrame {
 		protected void setParticipants(JSONArray list)
 		{
 			eventDetailsPane1.clearParticipants();
+			
+			if (list == null)
+				return;
 			
 			for (int i = 0, length = list.length(); i < length; i++)
 			{

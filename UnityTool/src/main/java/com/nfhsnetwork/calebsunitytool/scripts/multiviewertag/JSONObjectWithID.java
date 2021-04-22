@@ -1,4 +1,4 @@
-package com.nfhsnetwork.calebsunitytool;
+package com.nfhsnetwork.calebsunitytool.scripts.multiviewertag;
 
 import org.json.JSONObject;
 

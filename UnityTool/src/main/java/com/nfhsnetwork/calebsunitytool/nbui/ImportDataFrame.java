@@ -18,13 +18,14 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import com.nfhsnetwork.calebsunitytool.MultiviewerTagScript;
+import com.nfhsnetwork.calebsunitytool.Bootstrapper;
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer;
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer.ImportTypes;
 import com.nfhsnetwork.calebsunitytool.nbui.pixellotcsv.DragNDropCSV;
 import com.nfhsnetwork.calebsunitytool.scripts.focuscompare.FocusCompareScript;
 import com.nfhsnetwork.calebsunitytool.scripts.focuscompare.FocusOutputFrame;
-import com.nfhsnetwork.calebsunitytool.utils.Util;
+import com.nfhsnetwork.calebsunitytool.scripts.multiviewertag.MultiviewerTagScript;
+import com.nfhsnetwork.calebsunitytool.utils.Util.IOUtils;
 
 /**
  *
@@ -381,7 +382,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
     	SwingWorker<Void, Void> parseClubCsvWorker = new SwingWorker<>() {
 			@Override
 			protected Void doInBackground() throws Exception {
-				fe.parseClubCSV(Arrays.asList(Util.readFromFile(f).split("\\r\\n|\\n")));
+				fe.parseClubCSV(Arrays.asList(IOUtils.readFromFile(f).split("\\r\\n|\\n")));
 				return null;
 			}
 			
@@ -558,7 +559,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
         if (args.length != 0)
         {
         	if (args[0].equals("--debug"))
-        		Util.isDebugMode = true;
+        		Bootstrapper.isDebugMode = true;
         		//TODO make a controller main class that starts everything instead of starting it all from this frame.
         }
         

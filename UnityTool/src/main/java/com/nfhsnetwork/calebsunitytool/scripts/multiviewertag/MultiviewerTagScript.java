@@ -1,4 +1,4 @@
-package com.nfhsnetwork.calebsunitytool;
+package com.nfhsnetwork.calebsunitytool.scripts.multiviewertag;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

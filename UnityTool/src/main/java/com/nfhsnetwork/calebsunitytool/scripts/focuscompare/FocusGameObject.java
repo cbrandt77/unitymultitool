@@ -7,10 +7,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.nfhsnetwork.calebsunitytool.common.NFHSGameObject;
-import com.nfhsnetwork.calebsunitytool.common.UnityToolCommon;
 import com.nfhsnetwork.calebsunitytool.exceptions.GameNotFoundException;
 import com.nfhsnetwork.calebsunitytool.exceptions.InvalidContentTypeException;
 import com.nfhsnetwork.calebsunitytool.exceptions.NullFieldException;
+import com.nfhsnetwork.calebsunitytool.io.UnityInterface;
 
 public class FocusGameObject {
 	
@@ -36,7 +36,7 @@ public class FocusGameObject {
 	protected void setGameID(String gameID) {
 		this.gameID = gameID;
 		try {
-			gamejson = UnityToolCommon.GetFromUnity.getGameFromUnity(gameID);
+			gamejson = UnityInterface.fetchEventFromUnity(gameID);
 		} catch (GameNotFoundException | InvalidContentTypeException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

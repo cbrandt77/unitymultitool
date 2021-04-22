@@ -21,10 +21,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.protobuf.ByteString;
+import com.nfhsnetwork.calebsunitytool.Bootstrapper;
 import com.nfhsnetwork.calebsunitytool.common.NFHSGameObject;
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer;
 import com.nfhsnetwork.calebsunitytool.exceptions.NullFieldException;
 import com.nfhsnetwork.calebsunitytool.utils.Util;
+import com.nfhsnetwork.calebsunitytool.utils.Util.StringUtils;
+import com.nfhsnetwork.calebsunitytool.utils.Util.TimeUtils;
 
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
@@ -217,19 +220,19 @@ public class FocusCompareScript
 					
 					ByteString systemID; 
 					try {
-						systemID = Util.hexStringToByteString(Util.stripQuotes(items[csv_sysid_index]));
+						systemID = Util.hexStringToByteString(StringUtils.stripQuotes(items[csv_sysid_index]));
 					} catch (NumberFormatException e){
 						return;
 					}
 					
 					String[] details = new String[] {
-							Util.stripQuotes(items[csv_sysname_index]),
-							Util.stripQuotes(items[csv_status_index]),
-							Util.stripQuotes(items[csv_version_index])
+							StringUtils.stripQuotes(items[csv_sysname_index]),
+							StringUtils.stripQuotes(items[csv_status_index]),
+							StringUtils.stripQuotes(items[csv_version_index])
 					};
 					
-					if (Util.isDebugMode) {
-						System.out.println("[DEBUG] {parseClubCSV} put " + Util.stripQuotes(items[csv_sysid_index])
+					if (Bootstrapper.isDebugMode) {
+						System.out.println("[DEBUG] {parseClubCSV} put " + StringUtils.stripQuotes(items[csv_sysid_index])
 								+ " into map.");
 						for (String s : details) {
 							System.out.println("[DEBUG] {parseClubCSV} \t-" + s);
@@ -242,7 +245,7 @@ public class FocusCompareScript
 				}
 			});
 			
-			if (Util.isDebugMode) {
+			if (Bootstrapper.isDebugMode) {
 				System.out.println("[DEBUG] {csv_fetchHeaderIndices} sysname: " + csv_sysname_index + " | sysid: " + csv_sysid_index + " | status: " + csv_status_index + " | version: " + csv_version_index);
 			}
 		}
@@ -297,7 +300,7 @@ public class FocusCompareScript
 			
 	    	
 	    	//debug info:
-	    	if (Util.isDebugMode) {
+	    	if (Bootstrapper.isDebugMode) {
 				String[] deets = clubInventoryMap.get(Util.hexStringToByteString(search));
 				if (deets == null) {
 					System.out.println("[DEBUG] {getSysIDDetails} details null for " + search + ". key exists: "
@@ -313,7 +316,7 @@ public class FocusCompareScript
 	    	
 	    	
 	    } catch (NullPointerException e) {
-	    	if (Util.isDebugMode)
+	    	if (Bootstrapper.isDebugMode)
 	    		System.out.println("[DEBUG] {getSysIDDetails} NullPointerException for " + search);
 	    	
 	    	
@@ -363,7 +366,7 @@ public class FocusCompareScript
 	
 	private boolean compareDateTime(FocusGameObject f)
 	{
-		LocalDateTime unityDT = Util.convertDateTimeToEST(f.getGameJson().getString("start_time"));
+		LocalDateTime unityDT = TimeUtils.convertDateTimeToEST(f.getGameJson().getString("start_time"));
 		//System.out.println("[DEBUG] unityDT for " + f.getGameID() + ": " + unityDT.toString() + ", focus: " + f.getDt().toString());
 		f.setUnityDT(unityDT);
 		//System.out.println("[DEBUG] unityDT = focusDT for " + f.getGameID() + ": " + unityDT.equals(f.getDt()));
@@ -603,7 +606,7 @@ public class FocusCompareScript
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm-ss");
 		LocalDateTime now = LocalDateTime.now();
 		
-		String fileName = getCurrentDirectory() + "/outputs/";
+		String fileName = Util.getCurrentDirectory() + "/outputs/";
 		File file = new File(fileName);
 		
 		if (!file.exists())
@@ -631,11 +634,6 @@ public class FocusCompareScript
 			e.printStackTrace();
 			return false;
 		}
-	}
-	
-	private String getCurrentDirectory()
-	{
-		return new File("").getAbsolutePath();
 	}
 	
 	List<PropertyChangeListener> pclisteners = new LinkedList<>();

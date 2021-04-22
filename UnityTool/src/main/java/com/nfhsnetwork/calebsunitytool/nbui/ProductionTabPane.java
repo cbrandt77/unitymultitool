@@ -8,7 +8,7 @@ package com.nfhsnetwork.calebsunitytool.nbui;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import com.nfhsnetwork.calebsunitytool.utils.Util;
+import com.nfhsnetwork.calebsunitytool.utils.Util.TimeUtils;
 
 /**
  *
@@ -268,7 +268,7 @@ public class ProductionTabPane extends javax.swing.JPanel {
         
         public ProdHistoryEntry(long epoch, String status, String email) 
         {
-            LocalDateTime date = Util.convertEpochSecondToEST(epoch);
+            LocalDateTime date = TimeUtils.convertEpochSecondToEST(epoch);
             
         	l_date = new javax.swing.JLabel();
             l_time = new javax.swing.JLabel();

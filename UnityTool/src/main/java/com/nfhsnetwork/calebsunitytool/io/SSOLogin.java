@@ -1,4 +1,4 @@
-package com.nfhsnetwork.calebsunitytool.unityinterface;
+package com.nfhsnetwork.calebsunitytool.io;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,7 +20,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer;
-import com.nfhsnetwork.calebsunitytool.utils.JSONUtils;
+import com.nfhsnetwork.calebsunitytool.utils.Util.IOUtils;
 
 public final class SSOLogin
 {
@@ -123,7 +123,7 @@ public final class SSOLogin
 		
 		try (InputStream is = http.getInputStream())
 		{
-			System.out.println("\n\n[DEBUG] Login Response:\n" + JSONUtils.JSONReader.readAllFromReader(new BufferedReader(new InputStreamReader(is))) + "\n\n");
+			System.out.println("\n\n[DEBUG] Login Response:\n" + IOUtils.readAllFromReader(new BufferedReader(new InputStreamReader(is))) + "\n\n");
 		}
 		
 		http.disconnect();
@@ -161,12 +161,12 @@ public final class SSOLogin
 				if ("gzip".equals(http.getContentEncoding())) 
 				{
 					try (GZIPInputStream g = new GZIPInputStream(is)) {
-						siteBody = JSONUtils.JSONReader.readAllFromReader(new BufferedReader(new InputStreamReader(g)));
+						siteBody = IOUtils.readAllFromReader(new BufferedReader(new InputStreamReader(g)));
 					}
 				}
 				else
 				{
-					siteBody = JSONUtils.JSONReader.readAllFromReader(new BufferedReader(new InputStreamReader(is)));
+					siteBody = IOUtils.readAllFromReader(new BufferedReader(new InputStreamReader(is)));
 				}
 			}
 		}

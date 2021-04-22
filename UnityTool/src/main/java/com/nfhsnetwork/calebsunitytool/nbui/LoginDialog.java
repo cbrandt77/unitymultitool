@@ -15,7 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer;
-import com.nfhsnetwork.calebsunitytool.unityinterface.SSOLogin;
+import com.nfhsnetwork.calebsunitytool.io.SSOLogin;
 
 /**
  *

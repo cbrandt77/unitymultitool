@@ -1,5 +1,6 @@
 {
   current: "v1.0.0",
   modifiers: "snapshot",
-  previous: undefined
+  previous: undefined,
+  checksum: undefined
 }

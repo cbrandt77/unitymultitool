@@ -143,7 +143,7 @@ public final class Util
 			}
 		}
 		
-		public static String readFromURL(String url, Map<String, String> headers) throws IOException
+		public static String httpGET(String url, Map<String, String> headers) throws IOException
 		{
 			HttpURLConnection http = (HttpURLConnection)new URL(url).openConnection();
 			

@@ -6,3 +6,4 @@
 .env
 /outputs/**
 /outputs/
+.DS_Store

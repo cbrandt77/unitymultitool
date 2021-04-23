@@ -4,10 +4,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -31,8 +30,10 @@ public class UpdateManager {
 	//TODO hide token
 	private static final String token = "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";
 	private static final String VERSION_URL = "https://raw.githubusercontent.com/ByThePowerOfScience/unitymultitool/master/version.json";
+	private static final String DOWNLOAD_URL = "https://api.github.com/repos/unitymultitool/releases/latest"; //TODO
 	
-	private static final String DOWNLOADPATH; //TODO
+	
+	private static final String DOWNLOADPATH;
 	
 	static {
 		DOWNLOADPATH = Util.getCurrentDirectory();
@@ -75,12 +76,11 @@ public class UpdateManager {
 	private static int checkVersion()
 	{
 		try {
-			//JSONObject version = IOUtils.readJSONFromURL(VERSION_URL);
-			
-			JSONObject version = new JSONObject(IOUtils.readFromURL(VERSION_URL, Map.of("Authorization", "token " + token)));
-			
-			if (CURRENTVERSION.equals(version.getString("current"))
-					&& VERSIONMODIFIERS.equals(version.getString("modifiers")))
+			JSONObject version = new JSONObject(IOUtils.httpGET(VERSION_URL, makeAuthMap()));
+			String versionString = version.getString("current");
+			String modifierString = version.getString("modifiers");
+			if (CURRENTVERSION.equals(versionString)
+					&& VERSIONMODIFIERS.equals(modifierString))
 			{
 				if (Wrapper.isDebugMode) {
 					System.out.println("[DEBUG] {checkVersion} current version");
@@ -89,14 +89,38 @@ public class UpdateManager {
 				
 				return CURRENT;
 			}
-			
-			source_checksum = Util.hexStringToByteString(version.getString("checksum"));
-			
-			if (Wrapper.isDebugMode) {
-				System.out.println("[DEBUG] {checkVersion} outdated");
+			else
+			{
+				String[] versionarr = versionString.split("[.|-]");
+				String[] current = CURRENTVERSION.split("[.|-]");
+				
+				boolean isGreater = false;
+				for (int i = 0, l = versionarr.length - 1; i < l; i++) 
+				{
+					try {
+						if (Integer.valueOf(versionarr[i]) > Integer.valueOf(current[i]) && modifierString.equals(""))
+						{
+							isGreater = true; // still need to check for modifiers
+							continue;
+						}
+					} catch (NumberFormatException e) {
+						// assume this is the modifiers?
+						return CURRENT;
+					}
+				}
+				if (isGreater)
+				{
+					source_checksum = Util.hexStringToByteString(version.getString("checksum"));
+					
+					if (Wrapper.isDebugMode) {
+						System.out.println("[DEBUG] {checkVersion} outdated");
+					}
+					
+					return OUTDATED;
+				}
+				
+				return CURRENT;
 			}
-			
-			return OUTDATED;
 		} 
 		catch (JSONException e) {
 			e.printStackTrace();
@@ -124,7 +148,7 @@ public class UpdateManager {
 				{
 					return true;
 				}
-			} catch (NoSuchAlgorithmException | IOException e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} while (requestRetry());
@@ -162,30 +186,51 @@ public class UpdateManager {
 	 * @throws NoSuchAlgorithmException
 	 * @throws IOException
 	 */
-	private static byte[] downloadFile() throws IOException, NoSuchAlgorithmException
+	private static byte[] downloadFile() throws IOException
 	{
 		URL url;
 		try {
-			url = new URL(VERSION_URL);
+			url = new URL(DOWNLOAD_URL);
 		} catch (MalformedURLException e1) {
 			e1.printStackTrace();
 			return null;
 		}
 		
-		MessageDigest md = MessageDigest.getInstance("MD5");
+		HttpURLConnection http = (HttpURLConnection)url.openConnection();
+		http.addRequestProperty("Authorization", "token " + token);
 		
-		try (InputStream is = Files.newInputStream(Paths.get(url.getPath()));
+		if (Wrapper.isDebugMode) {
+			System.out.println("[DEBUG] {downloadFile} downloading file.");
+		}
+		
+		MessageDigest md;
+		try {
+			md = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		try (InputStream is = http.getInputStream();
 		     DigestInputStream dis = new DigestInputStream(is, md);
 				FileOutputStream fos = new FileOutputStream(new File(DOWNLOADPATH))) 
 		{
 			dis.transferTo(fos);
-		} 
+		}
+		
+		
+		
+		
 		
 		return md.digest();
 	}
 	
 	
 	
+	private static Map<String, String> makeAuthMap()
+	{
+		return Map.of("Authorization", "token " + token);
+	}
 	
 	
 	

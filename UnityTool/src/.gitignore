@@ -1,8 +1,0 @@
-/bin/
-/target/
-/outputs/
-/test/
-/test/**
-.env
-/outputs/**
-/outputs/

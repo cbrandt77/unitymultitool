@@ -8,7 +8,6 @@ package com.nfhsnetwork.calebsunitytool.ui;
 import java.awt.Dialog;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 

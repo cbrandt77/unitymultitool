@@ -9,7 +9,6 @@ import com.nfhsnetwork.calebsunitytool.exceptions.GameNotFoundException;
 import com.nfhsnetwork.calebsunitytool.exceptions.InvalidContentTypeException;
 import com.nfhsnetwork.calebsunitytool.types.NFHSContentType;
 import com.nfhsnetwork.calebsunitytool.utils.Util.IOUtils;
-import com.nfhsnetwork.calebsunitytool.utils.Util.IOUtils.FetchID;
 
 public class UnityInterface 
 {

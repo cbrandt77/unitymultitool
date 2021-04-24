@@ -1,25 +1,19 @@
 package com.nfhsnetwork.calebsunitytool.scripts.focuscompare;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
-import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
-import java.io.FileWriter;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Collections;
 
 import org.eclipse.jdt.annotation.Nullable;
 import org.json.JSONObject;
 
-import com.google.protobuf.ByteString;
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer.ClubInventory;
 import com.nfhsnetwork.calebsunitytool.common.UnityToolCommon;
 import com.nfhsnetwork.calebsunitytool.exceptions.NullFieldException;

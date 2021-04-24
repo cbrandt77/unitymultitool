@@ -1,9 +1,5 @@
 package com.nfhsnetwork.calebsunitytool.common;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 public final class UnityToolCommon 
 {
 	public static final String DICTKEY_GAMEKEY = "key";

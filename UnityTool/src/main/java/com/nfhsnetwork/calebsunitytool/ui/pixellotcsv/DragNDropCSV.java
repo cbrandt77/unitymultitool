@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.function.Function;
 
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;

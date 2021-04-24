@@ -1,8 +1,11 @@
 package com.nfhsnetwork.calebsunitytool;
 
+import java.io.File;
+
 import com.nfhsnetwork.calebsunitytool.common.UnityToolCommon;
 import com.nfhsnetwork.calebsunitytool.ui.ImportDataFrame;
 import com.nfhsnetwork.calebsunitytool.updater.UpdateManager;
+import com.nfhsnetwork.calebsunitytool.utils.Util;
 
 public class Wrapper 
 {
@@ -11,7 +14,6 @@ public class Wrapper
 		if (UnityToolCommon.isDebugMode) {
 			System.out.println("[DEBUG] {main} Debug mode active.");
 		}
-		
 		
 		UpdateManager.deleteUpdateScriptIfPresent();
         
@@ -23,7 +25,9 @@ public class Wrapper
 			UpdateManager.printAndRunUpdateScript();
 		}
 		
-		
+		//createFiles(); //TODO check if required folders exist and, if not, create them (e.g. outputs and other potential folders)
+				//TODO make config.json that saves configuration settings between sessions
+				//TODO hide token better
 		
 		setLookAndFeel();
 		
@@ -34,6 +38,18 @@ public class Wrapper
                 new ImportDataFrame().setVisible(true);
             }
         });
+	}
+	
+	private static void createFiles()
+	{
+		File outputsfolder = new File(Util.getCurrentDirectory() + File.separator + "outputs");
+		
+		assert(outputsfolder.isDirectory());
+		
+		if (!outputsfolder.exists())
+			outputsfolder.mkdir();
+		
+		//TODO
 	}
 	
 	private static void setLookAndFeel()

@@ -26,8 +26,11 @@ public class Wrapper
 		UpdateManager.deleteUpdateScriptIfPresent();
         
 		if (UpdateManager.checkAndGetUpdates()) {
-			//UpdateManager.printAndRunUpdateScript(); //TODO uncomment
+			if (UnityToolCommon.isDebugMode) {
+				System.out.println("[DEBUG] {main} Update downloaded, executing update script.");
+			}
 			
+			UpdateManager.printAndRunUpdateScript();
 		}
 		
 		

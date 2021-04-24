@@ -6,11 +6,11 @@ import java.time.LocalDateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.nfhsnetwork.calebsunitytool.common.NFHSGameObject;
 import com.nfhsnetwork.calebsunitytool.exceptions.GameNotFoundException;
 import com.nfhsnetwork.calebsunitytool.exceptions.InvalidContentTypeException;
 import com.nfhsnetwork.calebsunitytool.exceptions.NullFieldException;
 import com.nfhsnetwork.calebsunitytool.io.UnityInterface;
+import com.nfhsnetwork.calebsunitytool.types.NFHSGameObject;
 
 public class FocusGameObject {
 	

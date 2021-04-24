@@ -18,7 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.protobuf.ByteString;
-import com.nfhsnetwork.calebsunitytool.Wrapper;
+import com.nfhsnetwork.calebsunitytool.common.UnityToolCommon;
 import com.nfhsnetwork.calebsunitytool.utils.Util;
 import com.nfhsnetwork.calebsunitytool.utils.Util.IOUtils;
 
@@ -27,16 +27,19 @@ public class UpdateManager {
 	private static final String VERSIONMODIFIERS = "snapshot";
 	public static final String FULLVERSIONNAME = CURRENTVERSION + " - " + VERSIONMODIFIERS;
 	
-	//TODO hide token
-	private static final String token = "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";
+	private static final String token = System.getenv("token");
 	private static final String VERSION_URL = "https://raw.githubusercontent.com/ByThePowerOfScience/unitymultitool/master/version.json";
 	private static final String DOWNLOAD_URL = "https://api.github.com/repos/unitymultitool/releases/latest"; //TODO
 	
+	public static final String NEWFILENAME = ".UnityTool.exe";
+	public static final String OLDFILENAME = "UnityTool.exe";
 	
 	private static final String DOWNLOADPATH;
 	
+	public static final String SCRIPTNAME = ((UnityToolCommon.ISWINDOWS) ? ".update.bat" : ".update.sh");
+	
 	static {
-		DOWNLOADPATH = Util.getCurrentDirectory();
+		DOWNLOADPATH = Util.getCurrentDirectory() + File.separator + NEWFILENAME;
 	}
 	
 	private static ByteString source_checksum;
@@ -82,7 +85,7 @@ public class UpdateManager {
 			if (CURRENTVERSION.equals(versionString)
 					&& VERSIONMODIFIERS.equals(modifierString))
 			{
-				if (Wrapper.isDebugMode) {
+				if (UnityToolCommon.isDebugMode) {
 					System.out.println("[DEBUG] {checkVersion} current version");
 					System.out.println("[DEBUG] {checkVersion} version json: " + version.toString());
 				}
@@ -104,7 +107,7 @@ public class UpdateManager {
 							continue;
 						}
 					} catch (NumberFormatException e) {
-						// assume this is the modifiers?
+						// assume this is the modifiers? I don't think I'm scanning the mods tbh
 						return CURRENT;
 					}
 				}
@@ -112,7 +115,7 @@ public class UpdateManager {
 				{
 					source_checksum = Util.hexStringToByteString(version.getString("checksum"));
 					
-					if (Wrapper.isDebugMode) {
+					if (UnityToolCommon.isDebugMode) {
 						System.out.println("[DEBUG] {checkVersion} outdated");
 					}
 					
@@ -124,11 +127,11 @@ public class UpdateManager {
 		} 
 		catch (JSONException e) {
 			e.printStackTrace();
-			throw new RuntimeException("Failed to get version from version JSON??", e);
+			throw new RuntimeException("Failed to get version from version JSON?", e);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		if (Wrapper.isDebugMode) {
+		if (UnityToolCommon.isDebugMode) {
 			System.out.println("[DEBUG] {checkVersion} interrupted");
 		}
 		
@@ -146,6 +149,9 @@ public class UpdateManager {
 				filesum = ByteString.copyFrom(downloadFile());
 				if (filesum != null && filesum.equals(source_checksum))
 				{
+					if (UnityToolCommon.isDebugMode) {
+						System.out.println("[DEBUG] {doUpdate} return true");
+					}
 					return true;
 				}
 			} catch (IOException e) {
@@ -199,7 +205,7 @@ public class UpdateManager {
 		HttpURLConnection http = (HttpURLConnection)url.openConnection();
 		http.addRequestProperty("Authorization", "token " + token);
 		
-		if (Wrapper.isDebugMode) {
+		if (UnityToolCommon.isDebugMode) {
 			System.out.println("[DEBUG] {downloadFile} downloading file.");
 		}
 		
@@ -218,22 +224,102 @@ public class UpdateManager {
 			dis.transferTo(fos);
 		}
 		
-		
-		
-		
-		
 		return md.digest();
 	}
-	
-	
 	
 	private static Map<String, String> makeAuthMap()
 	{
 		return Map.of("Authorization", "token " + token);
 	}
+
+
 	
 	
+	//Print update script and run it, then delete update script
+	//TODO merge download process into update script?
+		//No, cause then I can't do the checksum
+
+	public static final String UPDATESCRIPT = (UnityToolCommon.ISWINDOWS) 
+	? "taskkill /F /IM " + OLDFILENAME 
+			+ "\n" + "rm " + Util.getCurrentDirectory() + File.separator + OLDFILENAME
+			+ "\n" + "rename " + Util.getCurrentDirectory() + File.separator + NEWFILENAME + " " + Util.getCurrentDirectory() + File.separator + OLDFILENAME
+			+ "\n" + Util.getCurrentDirectory() + File.separator + OLDFILENAME
+	: "echo 'script executed'" 
+			+ "\n" + "currentprocess=$(pgrep '" + OLDFILENAME + "')" //TODO see if this works
+			+ "\n" + "kill -s SIGINT $currentprocess"
+			+ "\n" + "rm " + Util.getCurrentDirectory() + File.separator + OLDFILENAME
+			+ "\n" + "mv " + Util.getCurrentDirectory() + File.separator + NEWFILENAME + " " + Util.getCurrentDirectory() + File.separator + OLDFILENAME
+			+ "\n" + Util.getCurrentDirectory() + File.separator + OLDFILENAME;
 	
 	
+	public static void printAndRunUpdateScript()
+	{
+		// Write a script file, call it, and make it delete itself?
+		try 
+		{
+			File f = new File(Util.getCurrentDirectory().toString() + File.separator + UpdateManager.SCRIPTNAME);
+			
+			if (f.exists())
+				executeUpdateCleanScript();
+			else
+				Util.IOUtils.printToFile(UpdateManager.UPDATESCRIPT, f);
+		}
+		catch (IOException e) {
+			showFailedToCleanUpdateWindow();
+			e.printStackTrace();
+		}
+	}
+	
+	private static void executeUpdateCleanScript()
+	{
+		ProcessBuilder pb = new ProcessBuilder()
+				.directory(Util.getCurrentDirectory().toFile());
+		
+		
+		if (UnityToolCommon.ISWINDOWS)
+		{
+			pb.command("cmd", Util.getCurrentDirectory() + File.separator + UpdateManager.SCRIPTNAME);
+			if (UnityToolCommon.isDebugMode) {
+				System.out.println("[DEBUG] {executePostUpdateScript} is windows");
+			}
+		}
+		else
+		{
+			pb.command("sh", Util.getCurrentDirectory() + File.separator + UpdateManager.SCRIPTNAME);
+			if (UnityToolCommon.isDebugMode) {
+				System.out.println("[DEBUG] {executePostUpdateScript} is not windows");
+			}
+		}
+		
+		try {
+			if (UnityToolCommon.isDebugMode) {
+				System.out.println("[DEBUG] {executePostUpdateScript} executing");
+			}
+			pb.start();
+		} catch (IOException e) {
+			showFailedToCleanUpdateWindow();
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public static void deleteUpdateScriptIfPresent() {
+		File updatescript = new File(Util.getCurrentDirectory() + File.separator + UpdateManager.SCRIPTNAME);
+		
+		if (updatescript.exists())
+		{
+			if (UnityToolCommon.isDebugMode) {
+				System.out.println("[DEBUG] {deleteUpdateScriptIfPresent} update script exists, deleting");
+			}
+			if (!updatescript.delete())
+				showFailedToCleanUpdateWindow();
+		}
+	}
+	
+	private static void showFailedToCleanUpdateWindow()
+	{
+		JOptionPane.showOptionDialog(null, "Failed to clean update files.", "Update failed", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
+				null, null, null);
+	}
 	
 }

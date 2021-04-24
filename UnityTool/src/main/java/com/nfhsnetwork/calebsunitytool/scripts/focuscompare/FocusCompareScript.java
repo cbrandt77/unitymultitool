@@ -3,7 +3,7 @@ package com.nfhsnetwork.calebsunitytool.scripts.focuscompare;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
@@ -13,17 +13,18 @@ import java.beans.PropertyChangeListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 
 import org.eclipse.jdt.annotation.Nullable;
 import org.json.JSONObject;
 
 import com.google.protobuf.ByteString;
-import com.nfhsnetwork.calebsunitytool.Wrapper;
-import com.nfhsnetwork.calebsunitytool.common.NFHSGameObject;
+import com.nfhsnetwork.calebsunitytool.common.UnityContainer.ClubInventory;
+import com.nfhsnetwork.calebsunitytool.common.UnityToolCommon;
 import com.nfhsnetwork.calebsunitytool.exceptions.NullFieldException;
+import com.nfhsnetwork.calebsunitytool.types.NFHSGameObject;
 import com.nfhsnetwork.calebsunitytool.utils.Util;
-import com.nfhsnetwork.calebsunitytool.utils.Util.StringUtils;
 import com.nfhsnetwork.calebsunitytool.utils.Util.TimeUtils;
 
 import java.time.format.DateTimeFormatter;
@@ -46,10 +47,6 @@ public class FocusCompareScript
 	public static final int NUM_COLUMNS_FROM_FEL = 7;
 	public static final int NUM_RELEVANT_COLUMNS = 5; // handling more data being used potentially; want to minimize used space.
 	
-	public static final int SUCCESSFUL = 0;
-	public static final int FAILED = 1;
-	
-	
 	public FocusCompareScript()
 	{
 		gameQueue = new LinkedBlockingQueue<>();
@@ -66,7 +63,7 @@ public class FocusCompareScript
 		
 		if (focusData_splitOnce[0].split("\\t", -1).length < NUM_COLUMNS_FROM_FEL ||
 				focusData_raw.charAt(0) == ' ') {
-			return FAILED;
+			return UnityToolCommon.FAILED;
 		}
 		
 		for (int i = 0, length = focusData_splitOnce.length; i < length; i++)
@@ -173,119 +170,11 @@ public class FocusCompareScript
 		
 		System.out.println("[DEBUG] gamequeue size: " + gameQueue.size());
 		
-		return SUCCESSFUL;
+		return UnityToolCommon.SUCCESSFUL;
 	}
 	
 	
 	
-	/**
-	 * 
-	 */
-	private Map<ByteString, String[]> clubInventoryMap = null;
-	
-	private int csv_sysname_index = -1;
-	private int csv_sysid_index = -1;
-	private int csv_status_index = -1;
-	private int csv_version_index = -1;
-	
-	private static final String CSV_SYSNAME_HEADER = "System Name";
-	private static final String CSV_SYSID_HEADER = "System ID";
-	private static final String CSV_STATUS_HEADER = "VPU Status";
-	private static final String CSV_VERSION_HEADER = "Version";
-	private static final int CSVINDEX_SYSNAME = 0;
-	private static final int CSVINDEX_STATUS = 1;
-	private static final int CSVINDEX_VERSION = 2;
-	
-	
-	public Integer parseClubCSV(List<String> csv)
-	{
-		this.clubInventoryMap = new ConcurrentHashMap<>();
-		
-		if (!csv_fetchHeaderIndices(csv.get(0)))
-		{
-			return FAILED;
-		}
-		else
-		{
-			int largestIndex = Integer.max(Integer.max(csv_sysname_index, csv_sysid_index),
-					Integer.max(csv_status_index, csv_version_index));
-			
-			csv.parallelStream().forEach(line -> {
-				try {
-					String[] items = line.split("\",\"", largestIndex + 3); // don't need to go through the entire thing
-					
-					ByteString systemID; 
-					try {
-						systemID = Util.hexStringToByteString(StringUtils.stripQuotes(items[csv_sysid_index]));
-					} catch (NumberFormatException e){
-						return;
-					}
-					
-					String[] details = new String[] {
-							StringUtils.stripQuotes(items[csv_sysname_index]),
-							StringUtils.stripQuotes(items[csv_status_index]),
-							StringUtils.stripQuotes(items[csv_version_index])
-					};
-					
-					if (Wrapper.isDebugMode) {
-						System.out.println("[DEBUG] {parseClubCSV} put " + StringUtils.stripQuotes(items[csv_sysid_index])
-								+ " into map.");
-						for (String s : details) {
-							System.out.println("[DEBUG] {parseClubCSV} \t-" + s);
-						}
-					}
-					
-					this.clubInventoryMap.put(systemID, details);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			});
-			
-			if (Wrapper.isDebugMode) {
-				System.out.println("[DEBUG] {csv_fetchHeaderIndices} sysname: " + csv_sysname_index + " | sysid: " + csv_sysid_index + " | status: " + csv_status_index + " | version: " + csv_version_index);
-			}
-		}
-		
-		return SUCCESSFUL;
-	}
-	
-	private boolean csv_fetchHeaderIndices(String headerLine)
-	{
-		// headers
-		String[] headers = headerLine.split(",");
-		
-		headers:
-		for (int i = 0, l = headers.length; i < l; i++) {
-			switch (headers[i])
-			{
-				case CSV_SYSNAME_HEADER:
-					csv_sysname_index = i;
-					continue headers;
-				case CSV_SYSID_HEADER:
-					csv_sysid_index = i;
-					continue headers;
-				case CSV_STATUS_HEADER:
-					csv_status_index = i;
-					continue headers;
-				case CSV_VERSION_HEADER:
-					csv_version_index = i;
-					continue headers;
-			}
-		}
-		
-		
-		if (csv_sysname_index == -1
-			 || csv_sysid_index == -1
-			 || csv_status_index == -1
-			 || csv_version_index == -1) 
-		{
-			return false;
-		}
-		
-		
-		
-		return true;
-	}
 	
 	@Nullable
 	private String[] getSysIDDetails(String search) {
@@ -296,23 +185,23 @@ public class FocusCompareScript
 			
 	    	
 	    	//debug info:
-	    	if (Wrapper.isDebugMode) {
-				String[] deets = clubInventoryMap.get(Util.hexStringToByteString(search));
+	    	if (UnityToolCommon.isDebugMode) {
+				String[] deets = ClubInventory.get(Util.hexStringToByteString(search));
 				if (deets == null) {
 					System.out.println("[DEBUG] {getSysIDDetails} details null for " + search + ". key exists: "
-							+ clubInventoryMap.containsKey(Util.hexStringToByteString(search)));
+							+ ClubInventory.containsKey(Util.hexStringToByteString(search)));
 					return null;
 				}
 				return deets;
 			} 
 	    	else 
 	    	{
-				return clubInventoryMap.get(Util.hexStringToByteString(search));
+				return ClubInventory.get(Util.hexStringToByteString(search));
 			}
 	    	
 	    	
 	    } catch (NullPointerException e) {
-	    	if (Wrapper.isDebugMode)
+	    	if (UnityToolCommon.isDebugMode)
 	    		System.out.println("[DEBUG] {getSysIDDetails} NullPointerException for " + search);
 	    	
 	    	
@@ -333,7 +222,7 @@ public class FocusCompareScript
 			return true;
 		
 		// Unneeded?
-		if (clubInventoryMap == null)
+		if (!ClubInventory.exists())
 			return false;
 		
 		
@@ -344,7 +233,7 @@ public class FocusCompareScript
 				return true;
 			
 			
-			String pixellotStatus = details[CSVINDEX_STATUS];
+			String pixellotStatus = details[ClubInventory.STATUS];
 			
 			if (pixellotStatus.toUpperCase().equals("OFFLINE") || pixellotStatus.toUpperCase().equals("RESET")) 
 			{
@@ -392,7 +281,7 @@ public class FocusCompareScript
 		return f.isDeleted();
 	}
 	
-	public String compareFocus()
+	public String compareFocus() throws IOException
 	{
 //		gameQueue.forEach(e -> System.out.println(e.getGameID()));
 		
@@ -430,7 +319,7 @@ public class FocusCompareScript
 //		System.out.println("[DEBUG] gamesWithAlteredDatesOrTimes:");
 //		gamesWithAlteredDatesOrTimes.forEach(e -> System.out.println(e.getGameID()));
 		
-		if (clubInventoryMap != null) 
+		if (ClubInventory.exists()) 
 		{
 			gamesWithBadPixellots = filteredGameList.parallelStream()
 											 .filter(e -> !e.isDeleted())
@@ -448,7 +337,7 @@ public class FocusCompareScript
 		
 		String output = buildOutputText();
 		
-		printOutputToFile(output);
+		printOutputToFile(output); //TODO show "failed to print" window
 		
 		firePropertyChangeEvent(PC_DONE, null, null);
 		
@@ -539,7 +428,7 @@ public class FocusCompareScript
 		sb.append("\n");
 		sb.append("\n");
 		
-		if (clubInventoryMap != null) {
+		if (ClubInventory.exists()) {
 			if (gamesWithBadPixellots.size() == 0)
 			{
 				sb.append("All Focus Pixellots are online.");
@@ -559,10 +448,10 @@ public class FocusCompareScript
 					
 					
 					l.add("\n" + game.getGameID() + " | " + game.getBdcID()
-							+ "\n\t-Club Name: " + details[CSVINDEX_SYSNAME]
+							+ "\n\t-Club Name: " + details[ClubInventory.SYSNAME]
 							+ "\n\t-Producer name: " + NFHSGameObject.getFirstBroadcast(game.getGameJson()).getString("producer_name")
-							+ "\n\t-Unit Status: " + details[CSVINDEX_STATUS]
-							+ "\n\t-Version: " + details[CSVINDEX_VERSION]);
+							+ "\n\t-Unit Status: " + details[ClubInventory.STATUS]
+							+ "\n\t-Version: " + details[ClubInventory.VERSION]);
 				});
 				
 				Collections.sort(l, new Comparator<String>() {
@@ -594,41 +483,19 @@ public class FocusCompareScript
 //		return (s.length() >= 4) && (s.substring(0, 3).equals("gam"));
 //	}
 	
-	private boolean printOutputToFile(String s)
+	private boolean printOutputToFile(String s) throws IOException
 	{
 		System.out.println("[DEBUG] {printOutputToFile} Print output");
 		
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm-ss");
 		LocalDateTime now = LocalDateTime.now();
 		
-		String fileName = Util.getCurrentDirectory() + "/outputs/";
+		String fileName = Util.getCurrentDirectory() + File.separator + "outputs";
 		File file = new File(fileName);
 		
-		if (!file.exists())
-		{
-			file.mkdir();
-		}
+		fileName = "Output " + dtf.format(now).toString() + ".txt";
 		
-		fileName += "Output " + dtf.format(now).toString() + ".txt";
-		
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName)))
-		{
-			for (int i = 0, l = s.length(); i < l; i++)
-			{
-				char c;
-				if ((c = s.charAt(i)) == '\n')
-					writer.newLine();
-				else
-					writer.write(c);
-			}
-			
-			return true;
-		} 
-		catch (IOException e)
-		{
-			e.printStackTrace();
-			return false;
-		}
+		return Util.IOUtils.createFolderPrintFile(s, file, fileName);
 	}
 	
 	List<PropertyChangeListener> pclisteners = new LinkedList<>();

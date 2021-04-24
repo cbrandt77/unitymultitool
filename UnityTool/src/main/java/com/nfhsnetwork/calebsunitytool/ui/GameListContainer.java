@@ -13,8 +13,10 @@ import javax.swing.JList;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
-import com.nfhsnetwork.calebsunitytool.common.NFHSGameObject;
+
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer;
+import com.nfhsnetwork.calebsunitytool.types.NFHSGameObject;
+
 import java.awt.Component;
 import java.awt.Dimension;
 
@@ -156,7 +158,7 @@ public class GameListContainer extends javax.swing.JPanel {
     	
     	UnityListModel() 
     	{
-    		Set<String> keys = UnityContainer.getContainer().getEventMap().keySet();
+    		Set<String> keys = UnityContainer.getInstance().getEventMap().keySet();
     		strings = keys.toArray(new String[keys.size()]);
     	}
     	
@@ -167,7 +169,7 @@ public class GameListContainer extends javax.swing.JPanel {
 
     	@Override
     	public NFHSGameObject getElementAt(int index) {
-    		return UnityContainer.getContainer().getEventMap().get(strings[index]);
+    		return UnityContainer.getInstance().getEventMap().get(strings[index]);
     	}
 
     }

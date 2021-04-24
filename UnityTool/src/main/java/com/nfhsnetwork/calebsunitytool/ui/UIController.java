@@ -2,8 +2,8 @@ package com.nfhsnetwork.calebsunitytool.ui;
 
 import java.util.List;
 
-import com.nfhsnetwork.calebsunitytool.common.NFHSGameObject;
-import com.nfhsnetwork.calebsunitytool.common.NullNFHSObject;
+import com.nfhsnetwork.calebsunitytool.types.NFHSGameObject;
+import com.nfhsnetwork.calebsunitytool.types.NullNFHSObject;
 
 public class UIController 
 {

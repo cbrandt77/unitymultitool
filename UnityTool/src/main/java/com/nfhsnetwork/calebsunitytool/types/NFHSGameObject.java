@@ -1,4 +1,4 @@
-package com.nfhsnetwork.calebsunitytool.common;
+package com.nfhsnetwork.calebsunitytool.types;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -19,6 +19,7 @@ import com.nfhsnetwork.calebsunitytool.exceptions.InvalidContentTypeException;
 import com.nfhsnetwork.calebsunitytool.exceptions.NullFieldException;
 import com.nfhsnetwork.calebsunitytool.io.UnityInterface;
 import com.nfhsnetwork.calebsunitytool.scripts.focuscompare.FocusCompareScript;
+import com.nfhsnetwork.calebsunitytool.utils.Util.IOUtils;
 import com.nfhsnetwork.calebsunitytool.utils.Util.TimeUtils;
 
 
@@ -83,7 +84,7 @@ public class NFHSGameObject
 				{
 					try 
 					{
-						event_id = UnityToolCommon.IDConversion.fetchEventIDFromChild(bdc_id, NFHSContentType.BROADCAST);
+						event_id = IOUtils.FetchID.fetchEventIDFromChild(bdc_id, NFHSContentType.BROADCAST);
 					} 
 					catch (IOException e) {
 						e.printStackTrace();
@@ -769,7 +770,7 @@ public class NFHSGameObject
 					{
 						String get;
 						try {
-							get = UnityToolCommon.IDConversion.fetchEventIDIfNeeded(s);
+							get = IOUtils.FetchID.fetchEventIDIfNeeded(s);
 						} catch (GameNotFoundException e) {
 							continue;
 						} catch (InvalidContentTypeException e) {

@@ -5,18 +5,18 @@ import java.io.IOException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.nfhsnetwork.calebsunitytool.common.NFHSContentType;
-import com.nfhsnetwork.calebsunitytool.common.UnityToolCommon.IDConversion;
 import com.nfhsnetwork.calebsunitytool.exceptions.GameNotFoundException;
 import com.nfhsnetwork.calebsunitytool.exceptions.InvalidContentTypeException;
+import com.nfhsnetwork.calebsunitytool.types.NFHSContentType;
 import com.nfhsnetwork.calebsunitytool.utils.Util.IOUtils;
+import com.nfhsnetwork.calebsunitytool.utils.Util.IOUtils.FetchID;
 
 public class UnityInterface 
 {
 	public static JSONObject fetchEventFromUnity(String contentID) throws GameNotFoundException, IOException, InvalidContentTypeException
 	{
 		if (!NFHSContentType.isValidEventId(contentID))
-			contentID = IDConversion.fetchEventIDIfNeeded(contentID);
+			contentID = IOUtils.FetchID.fetchEventIDIfNeeded(contentID);
 		
 		try 
 		{

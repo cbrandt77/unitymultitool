@@ -7,6 +7,7 @@ package com.nfhsnetwork.calebsunitytool.ui;
 
 import java.awt.Dialog;
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
@@ -16,12 +17,14 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import com.nfhsnetwork.calebsunitytool.Wrapper;
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer;
+import com.nfhsnetwork.calebsunitytool.common.UnityContainer.ClubInventory;
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer.ImportTypes;
+import com.nfhsnetwork.calebsunitytool.common.UnityToolCommon;
 import com.nfhsnetwork.calebsunitytool.scripts.focuscompare.FocusCompareScript;
 import com.nfhsnetwork.calebsunitytool.scripts.focuscompare.FocusOutputFrame;
 import com.nfhsnetwork.calebsunitytool.scripts.multiviewertag.MultiviewerTagScript;
+import com.nfhsnetwork.calebsunitytool.ui.components.ProgressBarDialogBox;
 import com.nfhsnetwork.calebsunitytool.ui.pixellotcsv.DragNDropCSV;
 import com.nfhsnetwork.calebsunitytool.utils.Util.IOUtils;
 
@@ -266,12 +269,12 @@ public class ImportDataFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_rb_it_focusActionPerformed
 
     private void button_importActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_importActionPerformed
-    	UnityContainer.makeNewContainer();
+    	UnityContainer.makeOrGetInstance();
     	
     	SwingWorker<Void, Void> importWorker = new SwingWorker<>() {
 			@Override
 			protected Void doInBackground() throws Exception {
-				UnityContainer.getContainer().importData(placeholderTextArea1.getText(), ImportDataFrame.this.importType);
+				UnityContainer.getInstance().importData(placeholderTextArea1.getText(), ImportDataFrame.this.importType);
 				return null;
 			}
     	};
@@ -279,7 +282,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
     	SwingUtilities.invokeLater(() -> {
     		disableAllComponents();
     		
-    		UnityContainer.getContainer().addActionListener((e) -> {
+    		UnityContainer.getInstance().addActionListener((e) -> {
     			ImportDataFrame.this.setVisible(false);
     			new MainWindow().setVisible(true);
     			ImportDataFrame.this.dispose();
@@ -343,7 +346,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
 				try {
 					afterSetFocusData(get());
 				} catch (InterruptedException | ExecutionException e1) {
-					afterSetFocusData(FocusCompareScript.FAILED);
+					afterSetFocusData(UnityToolCommon.FAILED);
 				}
 			}
         };
@@ -380,7 +383,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
     	SwingWorker<Void, Void> parseClubCsvWorker = new SwingWorker<>() {
 			@Override
 			protected Void doInBackground() throws Exception {
-				fe.parseClubCSV(Arrays.asList(IOUtils.readFromFile(f).split("\\r\\n|\\n")));
+				ClubInventory.parse(IOUtils.readFromFile(f));
 				return null;
 			}
 			
@@ -400,7 +403,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
 	private void afterSetFocusData(Integer x) 
     {
     	System.out.println("[DEBUG] {afterSetFocusData} method call");
-    	if (x == FocusCompareScript.FAILED)
+    	if (x == UnityToolCommon.FAILED)
         {
         	int res = JOptionPane.showOptionDialog(this, "Invalid data.", "ERROR", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
 					null, null, null);
@@ -410,11 +413,11 @@ public class ImportDataFrame extends javax.swing.JFrame {
 				return;
 			}
         }
-        else if (x == FocusCompareScript.SUCCESSFUL)
+        else if (x == UnityToolCommon.SUCCESSFUL)
         {
         	SwingWorker<String, Void> compareWorker = new SwingWorker<>() {
         		@Override
-        		public String doInBackground() {
+        		public String doInBackground() throws IOException {
         			System.out.println("[DEBUG] {afterSetFocusData} {doInBackground} Comparing focus");
         			return fe.compareFocus();
         		}
@@ -423,14 +426,15 @@ public class ImportDataFrame extends javax.swing.JFrame {
         		public void done()
         		{
         			System.out.println("[DEBUG] {afterSetFocusData} {done()} focus compare done");
-        			String output = null;
+        			String output;
         			try {
         				output = get();
         			}
         			catch (ExecutionException | InterruptedException e)
         			{
         				e.printStackTrace();
-        				output = "Operation failed for some reason. Run this again through Powershell with the command \".\\UnityTool.exe --debug\" and send Caleb the generated log.";
+        				output = e.getStackTrace().toString();
+        				//output = "Operation failed for some reason. Run this again through Powershell with the command \".\\UnityTool.exe --debug\" and send Caleb the generated log.";
         			}
         			afterFocusScriptOperation(output);
         		}
@@ -554,12 +558,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
         }
         //</editor-fold>
         
-        if (args.length != 0)
-        {
-        	if (args[0].equals("--debug"))
-        		Wrapper.isDebugMode = true;
-        		//TODO make a controller main class that starts everything instead of starting it all from this frame.
-        }
+        
         
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {

@@ -26,12 +26,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.nfhsnetwork.calebsunitytool.common.NFHSGameObject;
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer;
 import com.nfhsnetwork.calebsunitytool.exceptions.GameNotFoundException;
 import com.nfhsnetwork.calebsunitytool.exceptions.InvalidContentTypeException;
+import com.nfhsnetwork.calebsunitytool.types.NFHSGameObject;
 import com.nfhsnetwork.calebsunitytool.ui.LoginDialog;
-import com.nfhsnetwork.calebsunitytool.ui.ProgressBarDialogBox;
+import com.nfhsnetwork.calebsunitytool.ui.components.ProgressBarDialogBox;
 
 public class MultiviewerTagScript {
 	

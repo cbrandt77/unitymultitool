@@ -1,35 +1,38 @@
 package com.nfhsnetwork.calebsunitytool;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.JOptionPane;
+
+import com.nfhsnetwork.calebsunitytool.common.UnityToolCommon;
 import com.nfhsnetwork.calebsunitytool.ui.ImportDataFrame;
 import com.nfhsnetwork.calebsunitytool.updater.UpdateManager;
+import com.nfhsnetwork.calebsunitytool.utils.Util;
 
 public class Wrapper 
 {
-	public static final String OS = System.getProperty("os.name");
-	
-	
-	// TODO set to false
-	// also maybe use a logger instead of sysout?
-	public static boolean isDebugMode = true;
-	
-	
 	public static void main(String[] args) 
 	{
-		setLookAndFeel();
-		
-		boolean hasUpdated = UpdateManager.checkAndGetUpdates();
-		
-		if (hasUpdated)
-		{
-			restartProgram();
+		if (UnityToolCommon.isDebugMode) {
+			System.out.println("[DEBUG] {main} Debug mode active.");
 		}
 		
-		if (args.length != 0)
-        {
-        	if (args[0].equals("--debug")) //TODO figure out how args are parsed
-        		isDebugMode = true;
-        }
+		
+		UpdateManager.deleteUpdateScriptIfPresent();
         
+		if (UpdateManager.checkAndGetUpdates()) {
+			//UpdateManager.printAndRunUpdateScript(); //TODO uncomment
+			
+		}
+		
+		
+		
+		setLookAndFeel();
 		
 		
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -39,14 +42,6 @@ public class Wrapper
             }
         });
 	}
-	
-	
-	private static void restartProgram()
-	{
-		//TODO make method
-		System.out.println("[DEBUG] {restartProgram} ");
-	}
-	
 	
 	private static void setLookAndFeel()
 	{

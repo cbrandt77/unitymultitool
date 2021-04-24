@@ -1,4 +1,4 @@
-package com.nfhsnetwork.calebsunitytool.common;
+package com.nfhsnetwork.calebsunitytool.types;
 
 /**
  * 

@@ -62,7 +62,7 @@ public final class SSOLogin
 //			getbuilder.header("Accept-Language", "en-US,en;q=0.9");
 //			getbuilder.header("Accept-Encoding", "gzip, deflate");
 //			getbuilder.header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
-//			getbuilder.header("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36");
+//			getbuilder.header("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac ISWINDOWS X 11_2_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36");
 //			getbuilder.header("Content-Type", "application/x-www-form-urlencoded");
 //			getbuilder.header("Origin", "http://sso.nfhsnetwork.com");
 //			getbuilder.header("Upgrade-Insecure-Requests", "1");
@@ -193,7 +193,7 @@ public final class SSOLogin
 		http.addRequestProperty("Accept-Language", "en-US,en;q=0.9");
 		http.addRequestProperty("Accept-Encoding", "gzip, deflate");
 		http.addRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
-		http.addRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36");
+		http.addRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac ISWINDOWS X 11_2_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36");
 		http.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 		http.addRequestProperty("Origin", "http://sso.nfhsnetwork.com");
 		http.addRequestProperty("Upgrade-Insecure-Requests", "1");

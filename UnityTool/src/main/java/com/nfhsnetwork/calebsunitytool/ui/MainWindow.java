@@ -5,8 +5,9 @@
  */
 package com.nfhsnetwork.calebsunitytool.ui;
 
-import com.nfhsnetwork.calebsunitytool.common.NullNFHSObject;
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer;
+import com.nfhsnetwork.calebsunitytool.types.NullNFHSObject;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -403,11 +404,11 @@ class MainWindow extends javax.swing.JFrame {
         //</editor-fold>
         
         // [DEBUG]
-        UnityContainer.makeNewContainer();
-        UnityContainer.getContainer().getEventMap().put("gam1234567890", new NullNFHSObject("gam1234567890"));
-        UnityContainer.getContainer().getEventMap().put("gam1234567890", new NullNFHSObject("gam1234567890"));
-        UnityContainer.getContainer().getEventMap().put("gam1234567890", new NullNFHSObject("gam1234567890"));
-        UnityContainer.getContainer().getEventMap().put("gam1234567890", new NullNFHSObject("gam1234567890"));
+        UnityContainer.makeOrGetInstance();
+        UnityContainer.getInstance().getEventMap().put("gam1234567890", new NullNFHSObject("gam1234567890"));
+        UnityContainer.getInstance().getEventMap().put("gam1234567890", new NullNFHSObject("gam1234567890"));
+        UnityContainer.getInstance().getEventMap().put("gam1234567890", new NullNFHSObject("gam1234567890"));
+        UnityContainer.getInstance().getEventMap().put("gam1234567890", new NullNFHSObject("gam1234567890"));
         
         
         /* Create and display the form */

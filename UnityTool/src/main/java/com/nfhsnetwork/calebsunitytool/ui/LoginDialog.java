@@ -124,7 +124,7 @@ public class LoginDialog extends javax.swing.JDialog {
     }// </editor-fold>
 
     private void button_submitActionPerformed(java.awt.event.ActionEvent evt) {
-        javax.swing.SwingWorker<String, String> s = new javax.swing.SwingWorker<>() {
+        javax.swing.SwingWorker<String, String> s = new javax.swing.SwingWorker<String, String>() {
             @Override
             public String doInBackground()
             {

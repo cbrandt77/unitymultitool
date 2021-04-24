@@ -270,7 +270,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
     private void button_importActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_importActionPerformed
     	UnityContainer.makeOrGetInstance();
     	
-    	SwingWorker<Void, Void> importWorker = new SwingWorker<>() {
+    	SwingWorker<Void, Void> importWorker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
 				UnityContainer.getInstance().importData(placeholderTextArea1.getText(), ImportDataFrame.this.importType);
@@ -331,7 +331,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
 			return;
 		}
 		
-        SwingWorker<Integer, Void> setDataWorker = new SwingWorker<>() {
+        SwingWorker<Integer, Void> setDataWorker = new SwingWorker<Integer, Void>() {
 			@Override
 			protected Integer doInBackground() throws Exception {
 				System.out.println("[DEBUG] {doInBackground} SetDataWorker executed");
@@ -379,7 +379,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
 	
     private void parseClubCsv(File f) 
     {
-    	SwingWorker<Void, Void> parseClubCsvWorker = new SwingWorker<>() {
+    	SwingWorker<Void, Void> parseClubCsvWorker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
 				ClubInventory.parse(IOUtils.readFromFile(f));
@@ -414,7 +414,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
         }
         else if (x == UnityToolCommon.SUCCESSFUL)
         {
-        	SwingWorker<String, Void> compareWorker = new SwingWorker<>() {
+        	SwingWorker<String, Void> compareWorker = new SwingWorker<String, Void>() {
         		@Override
         		public String doInBackground() throws IOException {
         			System.out.println("[DEBUG] {afterSetFocusData} {doInBackground} Comparing focus");

@@ -50,7 +50,9 @@ public class PixellotTabPane extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         p_unitinfo = new javax.swing.JPanel();
         tag_unitStatus = new javax.swing.JLabel();
-        data_unityStatus = new javax.swing.JLabel();
+        data_unitStatus = new javax.swing.JLabel();
+        tag_version = new javax.swing.JLabel();
+        data_version = new javax.swing.JLabel();
 
         panel_pixellotInfo.setBorder(javax.swing.BorderFactory.createTitledBorder("Names"));
 
@@ -125,7 +127,7 @@ public class PixellotTabPane extends javax.swing.JPanel {
 
         data_clubEventID.setText("Req. CSV Import");
 
-        data_clubEventStatus.setText("Req. CSV Import");
+        data_clubEventStatus.setText("Coming soon!");
 
         data_clubEventLink.setText("Coming soon!");
 
@@ -196,7 +198,11 @@ public class PixellotTabPane extends javax.swing.JPanel {
 
         tag_unitStatus.setText("Unit Status:");
 
-        data_unityStatus.setText("Req. CSV Import");
+        data_unitStatus.setText("Req. CSV Import");
+
+        tag_version.setText("Version:");
+
+        data_version.setText("v");
 
         javax.swing.GroupLayout p_unitinfoLayout = new javax.swing.GroupLayout(p_unitinfo);
         p_unitinfo.setLayout(p_unitinfoLayout);
@@ -204,9 +210,13 @@ public class PixellotTabPane extends javax.swing.JPanel {
             p_unitinfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(p_unitinfoLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tag_unitStatus)
+                .addGroup(p_unitinfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(tag_unitStatus)
+                    .addComponent(tag_version))
                 .addGap(39, 39, 39)
-                .addComponent(data_unityStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(p_unitinfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(data_unitStatus, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
+                    .addComponent(data_version, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         p_unitinfoLayout.setVerticalGroup(
@@ -215,8 +225,12 @@ public class PixellotTabPane extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(p_unitinfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tag_unitStatus)
-                    .addComponent(data_unityStatus))
-                .addContainerGap(59, Short.MAX_VALUE))
+                    .addComponent(data_unitStatus))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(p_unitinfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tag_version)
+                    .addComponent(data_version))
+                .addContainerGap(36, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout tab_pixellotDetailsLayout = new javax.swing.GroupLayout(tab_pixellotDetails);
@@ -273,7 +287,8 @@ public class PixellotTabPane extends javax.swing.JPanel {
     javax.swing.JLabel data_lminame;
     javax.swing.JLabel data_prodname;
     javax.swing.JLabel data_sfname;
-    javax.swing.JLabel data_unityStatus;
+    javax.swing.JLabel data_unitStatus;
+    javax.swing.JLabel data_version;
     javax.swing.JLabel jLabel2;
     javax.swing.JLabel l_lmiName_tag;
     javax.swing.JPanel p_eventInfo;
@@ -289,5 +304,6 @@ public class PixellotTabPane extends javax.swing.JPanel {
     javax.swing.JLabel tag_prodname;
     javax.swing.JLabel tag_sfname;
     javax.swing.JLabel tag_unitStatus;
+    javax.swing.JLabel tag_version;
     // End of variables declaration//GEN-END:variables
 }

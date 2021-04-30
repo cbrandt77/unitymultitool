@@ -24,7 +24,7 @@ import com.nfhsnetwork.calebsunitytool.scripts.focuscompare.FocusCompareScript;
 import com.nfhsnetwork.calebsunitytool.scripts.focuscompare.FocusOutputFrame;
 import com.nfhsnetwork.calebsunitytool.scripts.multiviewertag.MultiviewerTagScript;
 import com.nfhsnetwork.calebsunitytool.ui.components.ProgressBarDialogBox;
-import com.nfhsnetwork.calebsunitytool.ui.pixellotcsv.ImportCSVDialog;
+import com.nfhsnetwork.calebsunitytool.ui.pixellotcsv.DragNDropCSV;
 import com.nfhsnetwork.calebsunitytool.utils.Util.IOUtils;
 
 /**
@@ -343,7 +343,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
     	};
     	
     	SwingUtilities.invokeLater(() -> {
-			new ImportCSVDialog(SwingUtilities.windowForComponent(ImportDataFrame.this), "Import Pixellot CSV", Dialog.DEFAULT_MODALITY_TYPE, onFileSelected, onCancel)
+			new DragNDropCSV(SwingUtilities.windowForComponent(ImportDataFrame.this), "Import Pixellot CSV", Dialog.DEFAULT_MODALITY_TYPE, onFileSelected, onCancel)
 					.setVisible(true);
 		});
     }

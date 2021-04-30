@@ -2,6 +2,7 @@ package com.nfhsnetwork.calebsunitytool.ui;
 
 import java.util.List;
 
+import com.nfhsnetwork.calebsunitytool.common.UnityContainer.ClubInventory;
 import com.nfhsnetwork.calebsunitytool.types.NFHSGameObject;
 import com.nfhsnetwork.calebsunitytool.types.NullNFHSObject;
 
@@ -12,7 +13,7 @@ public class UIController //TODO merge UIController and MainWindowFields
 	UIController(MainWindow mw)
 	{
 		this.mw = mw;
-		onNoneSelected();
+		
 	}
 	
 	protected void onNoneSelected() 
@@ -80,6 +81,13 @@ public class UIController //TODO merge UIController and MainWindowFields
 			mw.mwf.setStarttime(n.getDateTime());
 			mw.mwf.setTitle(n.getTitle());
 			mw.mwf.setEventTags(n.getEventTags());
+		}
+		
+		if (n.isPixellot())
+		{
+			mw.mwf.setPxl_status(ClubInventory.get(n.getPixellot())[ClubInventory.STATUS]);
+			mw.mwf.setPxl_clubname(ClubInventory.get(n.getPixellot())[ClubInventory.SYSNAME]);
+			mw.mwf.setPxl_version(ClubInventory.get(n.getPixellot())[ClubInventory.VERSION]);
 		}
 		
 		

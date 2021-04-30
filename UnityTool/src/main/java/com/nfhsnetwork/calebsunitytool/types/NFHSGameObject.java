@@ -14,11 +14,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.protobuf.ByteString;
 import com.nfhsnetwork.calebsunitytool.exceptions.GameNotFoundException;
 import com.nfhsnetwork.calebsunitytool.exceptions.InvalidContentTypeException;
 import com.nfhsnetwork.calebsunitytool.exceptions.NullFieldException;
 import com.nfhsnetwork.calebsunitytool.io.UnityInterface;
 import com.nfhsnetwork.calebsunitytool.scripts.focuscompare.FocusCompareScript;
+import com.nfhsnetwork.calebsunitytool.utils.Util;
 import com.nfhsnetwork.calebsunitytool.utils.Util.IOUtils;
 import com.nfhsnetwork.calebsunitytool.utils.Util.TimeUtils;
 
@@ -172,10 +174,15 @@ public class NFHSGameObject
 			System.out.println("[DEBUG] {buildFromFocusSheetLine} date not found");
 		}
 		
+		LocalDateTime focusDateTime;
 		if (time == null || date == null)
+		{
 			System.out.println("[DEBUG] {buildFromFocusSheetLine} null date or time for line:\n" + focusLine);
-		
-		LocalDateTime focusDateTime = LocalDateTime.parse(date + " " + time, dtf_focusDT);
+			focusDateTime = null;
+		}
+		else {
+			focusDateTime = LocalDateTime.parse(date + " " + time, dtf_focusDT);
+		}
 		
 		
 		String title;
@@ -247,6 +254,8 @@ public class NFHSGameObject
 	
 	private JSONObject bdcstate_json;
 	
+	private ByteString pixellot;
+	
 	
 	
 	//TODO figure out what should be cached and what can be fetched ad-hoc from the JSON
@@ -260,10 +269,20 @@ public class NFHSGameObject
 		
 		if (j != null)
 			this.terr_mgr = TerritoryManagers.getTerritoryManager(getStateCode());
-		else
+		else {
 			this.terr_mgr = null;
+			fetchAndSetBdcStateJSON();
+		}
 		
-		fetchAndSetBdcStateJSON();
+		if (bdc_ids != null)
+		{
+			try {
+				this.pixellot = Util.hexStringToByteString(this.getFirstBroadcast().getString("pixellot_id"));
+			} catch (NumberFormatException | JSONException | NullFieldException e) {
+				e.printStackTrace();
+				this.pixellot = null;
+			}
+		}
 	}
 	
 	
@@ -325,6 +344,17 @@ public class NFHSGameObject
 		
 		return output;
 	}
+	
+	public ByteString getPixellot() {
+		return this.pixellot;
+	}
+	
+	public boolean isPixellot() {
+		return this.game_json.getBoolean("is_pixellot");
+	}
+	
+	
+	
 	
 	private String getStateCode() {
 		return this.game_json.getString("state_code");

@@ -7,7 +7,7 @@ package com.nfhsnetwork.calebsunitytool.ui;
 
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer;
 import com.nfhsnetwork.calebsunitytool.types.NullNFHSObject;
-import com.nfhsnetwork.calebsunitytool.ui.pixellotcsv.ImportCSVDialog;
+import com.nfhsnetwork.calebsunitytool.ui.pixellotcsv.DragNDropCSV;
 import com.nfhsnetwork.calebsunitytool.utils.Util;
 
 import java.io.File;
@@ -41,6 +41,7 @@ class MainWindow extends javax.swing.JFrame {
     	mwf = new MainWindowFields();
     	uic = new UIController(this);
         initComponents();
+        uic.onNoneSelected();
     }
 
     /**
@@ -337,7 +338,7 @@ class MainWindow extends javax.swing.JFrame {
         };
         
         SwingUtilities.invokeLater(() -> {
-			new ImportCSVDialog(this, fileCallback).setVisible(true);
+			new DragNDropCSV(this, fileCallback).setVisible(true);
 		});
         
     }//GEN-LAST:event_menuItem_openPixellotCSVActionPerformed
@@ -507,6 +508,7 @@ class MainWindow extends javax.swing.JFrame {
     		if (eventTags == null)
     		{
     			eventDetailsPane1.data_eventtags.setText("");
+    			return;
     		}
     		
     		StringBuilder sb = new StringBuilder();
@@ -542,6 +544,7 @@ class MainWindow extends javax.swing.JFrame {
 		protected void setGameid(String gameid) {
 			this.gameid = gameid;
 			eventDetailsPane1.label_eventID_data.setText(gameid);
+			pixellotTabPane1.data_consoleEventID.setText(gameid);
 		}
 
 		protected void setBdcid(String bdcid) {
@@ -645,6 +648,10 @@ class MainWindow extends javax.swing.JFrame {
 			this.pxl_lminame = pxl_lminame;
 			pixellotTabPane1.data_lminame.setText(pxl_lminame);
 		}
+		
+		protected void setPxl_version(String pxl_version) {
+			//TODO
+		}
 
 		protected void setPxl_clubname(String pxl_clubname) {
 			this.pxl_clubname = pxl_clubname;
@@ -694,6 +701,8 @@ class MainWindow extends javax.swing.JFrame {
 		protected void setProd_producer(String prod_producer) {
 			this.prod_producer = prod_producer;
 			//TODO
+			pixellotTabPane1.data_prodname.setText(prod_producer);
+			
 		}
 
 		protected void setProd_publisher(String prod_publisher) {

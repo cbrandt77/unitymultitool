@@ -265,7 +265,7 @@
             </Component>
             <Component class="com.nfhsnetwork.calebsunitytool.ui.components.EditableLabel" name="data_clubEventStatus">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Req. CSV Import"/>
+                <Property name="text" type="java.lang.String" value="Coming soon!"/>
               </Properties>
             </Component>
             <Component class="com.nfhsnetwork.calebsunitytool.ui.components.EditableLabel" name="data_clubEventLink">
@@ -326,9 +326,15 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="tag_unitStatus" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="tag_unitStatus" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="tag_version" alignment="0" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
-                      <Component id="data_unityStatus" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="data_unitStatus" pref="217" max="32767" attributes="0"/>
+                          <Component id="data_version" max="32767" attributes="0"/>
+                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -339,9 +345,14 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="tag_unitStatus" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="data_unityStatus" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="data_unitStatus" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="59" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="tag_version" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="data_version" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace pref="36" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -352,9 +363,19 @@
                 <Property name="text" type="java.lang.String" value="Unit Status:"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="data_unityStatus">
+            <Component class="javax.swing.JLabel" name="data_unitStatus">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Req. CSV Import"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="tag_version">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Version:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="data_version">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="v"/>
               </Properties>
             </Component>
           </SubComponents>

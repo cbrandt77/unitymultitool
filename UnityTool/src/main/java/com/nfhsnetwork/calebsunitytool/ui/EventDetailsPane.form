@@ -178,7 +178,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="label_status_field" min="-2" pref="14" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="label_focusType_field" min="-2" max="-2" attributes="0"/>
+                      <Component id="label_focusType_field" min="-2" pref="20" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -210,7 +210,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="label_focusType_field">
               <Properties>
-                <Property name="text" type="java.lang.String" value="State Assoc."/>
+                <Property name="text" type="java.lang.String" value="Req. Focus List Import"/>
               </Properties>
             </Component>
           </SubComponents>

@@ -5,7 +5,7 @@ import java.util.List;
 import com.nfhsnetwork.calebsunitytool.types.NFHSGameObject;
 import com.nfhsnetwork.calebsunitytool.types.NullNFHSObject;
 
-public class UIController 
+public class UIController //TODO merge UIController and MainWindowFields
 {
 	private MainWindow mw;
 	
@@ -21,9 +21,7 @@ public class UIController
 		updateAllLabels(null);
 		updateAllEditableLabels(new NullNFHSObject());
 	}
-
 	
-
 	protected void onMultipleSelected(List<NFHSGameObject> l) 
 	{
 		// TODO display the first game selected, enable editing of only batch-viable fields

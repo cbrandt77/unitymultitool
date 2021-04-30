@@ -49,6 +49,7 @@ public class ProductionTabPane extends javax.swing.JPanel {
         p_prodhistory = new javax.swing.JPanel();
         scroll_prodhistory = new javax.swing.JScrollPane();
         p_prodhistory_listcontainer = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
         p_prodInfo = new javax.swing.JPanel();
 
         javax.swing.GroupLayout jFrame1Layout = new javax.swing.GroupLayout(jFrame1.getContentPane());
@@ -158,6 +159,10 @@ public class ProductionTabPane extends javax.swing.JPanel {
         scroll_prodhistory.setMinimumSize(new java.awt.Dimension(471, 66));
 
         p_prodhistory_listcontainer.setMinimumSize(new java.awt.Dimension(471, 66));
+
+        jLabel1.setText("Coming Soon!");
+        p_prodhistory_listcontainer.add(jLabel1);
+
         scroll_prodhistory.setViewportView(p_prodhistory_listcontainer);
 
         javax.swing.GroupLayout p_prodhistoryLayout = new javax.swing.GroupLayout(p_prodhistory);
@@ -238,6 +243,7 @@ public class ProductionTabPane extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     javax.swing.JFrame jFrame1;
+    javax.swing.JLabel jLabel1;
     javax.swing.JLabel l_focusType_data;
     javax.swing.JLabel l_focusType_tag;
     javax.swing.JLabel l_hlsStatus_data;

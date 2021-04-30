@@ -114,7 +114,7 @@ public class EventDetailsPane extends javax.swing.JPanel {
 
         label_status_field.setText("Scheduled");
 
-        label_focusType_field.setText("State Assoc.");
+        label_focusType_field.setText("Req. Focus List Import");
 
         javax.swing.GroupLayout panel_general_fieldsLayout = new javax.swing.GroupLayout(panel_general_fields);
         panel_general_fields.setLayout(panel_general_fieldsLayout);
@@ -140,7 +140,7 @@ public class EventDetailsPane extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(label_status_field, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(label_focusType_field))
+                .addComponent(label_focusType_field, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout subPanel_generalDetailsLayout = new javax.swing.GroupLayout(subPanel_generalDetails);

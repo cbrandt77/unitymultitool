@@ -26,7 +26,7 @@ import javax.swing.filechooser.FileSystemView;
  *
  * @author impro_000
  */
-public class DragNDropCSV extends javax.swing.JDialog {
+public class ImportCSVDialog extends javax.swing.JDialog {
 	
 	private final Function<File, File> fileCallback;
 	private final Function<Void, Void> cancelCallback;
@@ -34,9 +34,9 @@ public class DragNDropCSV extends javax.swing.JDialog {
 	private boolean fileSet = false;
 	
     /**
-     * Creates new form DragNDropCSV
+     * Creates new form ImportCSVDialog
      */
-    public DragNDropCSV(Window parent, String title, ModalityType modalityType, Function<File, File> onFileChosen, Function<Void, Void> onCancel) {
+    public ImportCSVDialog(Window parent, String title, ModalityType modalityType, Function<File, File> onFileChosen, Function<Void, Void> onCancel) {
     	super(parent, title, modalityType);
     	this.fileCallback = onFileChosen;
     	this.cancelCallback = onCancel;
@@ -53,23 +53,22 @@ public class DragNDropCSV extends javax.swing.JDialog {
         			return;
         		else
         			cancelCallback.apply(null);
-        		
         	}
         });
     }
     
-    public DragNDropCSV(Window parent, String title, ModalityType modalityType, Function<File, File> onFileChosen)
+    public ImportCSVDialog(Window parent, String title, ModalityType modalityType, Function<File, File> onFileChosen)
     {
     	this(parent, title, modalityType, onFileChosen, null);
     }
     
-    public DragNDropCSV(Window parent, Function<File, File> onFileChosen)
+    public ImportCSVDialog(Window parent, Function<File, File> onFileChosen)
     {
     	this(parent, "Import Pixellot CSV", Dialog.DEFAULT_MODALITY_TYPE, onFileChosen, null);
     }
     
     @SuppressWarnings("unused")
-	private DragNDropCSV()
+	private ImportCSVDialog()
     {
     	fileCallback = null;
     	cancelCallback = null;

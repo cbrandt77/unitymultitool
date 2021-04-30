@@ -9,8 +9,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
+import java.net.Authenticator;
 import java.net.HttpURLConnection;
+import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -42,23 +45,28 @@ public final class Util
 	
 	static {
 		if (UnityToolCommon.ISWINDOWS) {
-			CURRENTDIRECTORY = Path.of(truncateFilePath(Util.class.getProtectionDomain().getCodeSource().getLocation().getPath()));
+			CURRENTDIRECTORY = Path.of(truncateFilePath(new File("").getAbsolutePath()));
 		}
 		else {
-			boolean worked = false;
-			Path p = null;
-			try {
-				p = Path.of(truncateFilePath(Files.readSymbolicLink(Path.of("/proc/self/exe")).toString())); //TODO verify
-				worked = true;
-			} catch (IOException e) {
-				e.printStackTrace();
-				worked = false;
-			}
-			
-			if (worked) //workaround to get java to stop yelling at me about reassigned final vars
-				CURRENTDIRECTORY = p;
-			else
-				CURRENTDIRECTORY = Path.of(truncateFilePath(Util.class.getProtectionDomain().getCodeSource().getLocation().getPath()));
+//			boolean worked = false;
+//			Path p = null;
+//			try {
+//				p = Path.of(truncateFilePath(Files.readSymbolicLink(Path.of("/proc/self/exe")).toString())); //TODO verify
+//				worked = true;
+//			} catch (IOException e) {
+//				//e.printStackTrace();
+//				if (UnityToolCommon.isDebugMode) {
+//					System.out.println("[DEBUG] {Util static init} /proc/self/exe didn't work.");
+//				}
+//				
+//				worked = false;
+//				
+//			}
+//			
+//			if (worked) //workaround to get java to stop yelling at me about reassigned final vars
+//				CURRENTDIRECTORY = p;
+//			else
+				CURRENTDIRECTORY = Path.of(truncateFilePath(new File("").getAbsolutePath()));//TODO debug info //Path.of(truncateFilePath(Util.class.getProtectionDomain().getCodeSource().getLocation().getPath()));
 		}
 	}
 	
@@ -231,24 +239,64 @@ public final class Util
 			}
 		}
 		
+		public static String httpGET(String url) throws IOException
+		{
+			return httpGET(url, null);
+		}
+		
 		public static String httpGET(String url, Map<String, String> headers) throws IOException
+		{
+			return httpGET(url, null, headers);
+		}
+		
+		public static String httpGET(String url, String payload, Map<String, String> headers) throws IOException
 		{
 			HttpURLConnection http = (HttpURLConnection)new URL(url).openConnection();
 			
 			if (headers != null)
 				headers.forEach(http::addRequestProperty);
 			
+			
+			
+			//http.setAuthenticator(new GHAuth());
 			http.connect();
+			
+			
+			if (UnityToolCommon.isDebugMode) {
+				System.out.println("[DEBUG] {httpGET} http status code: " + http.getResponseCode());
+			}
+			
+			
+			if (payload != null)
+			{
+				if (UnityToolCommon.isDebugMode) {
+					System.out.println("[DEBUG] {httpGET} Outputting payload: " + payload);
+				}
+				try (OutputStream os = http.getOutputStream())
+				{
+					os.write(payload.getBytes());
+				}
+			}
+			
 			String out;
 			try (InputStream is = http.getInputStream();
 				 BufferedReader rd = new BufferedReader(new InputStreamReader(is)))
 			{
 				out = readAllFromReader(rd);
 			}
+			if (UnityToolCommon.isDebugMode) {
+				System.out.println("[DEBUG] {httpGET} response payload: " + out);
+			}
 			
 			return out;
 		}
 
+		
+		
+		
+		
+		
+		
 		public static boolean printToFile(String toPrint, File file) throws IOException
 		{
 			if (file.isDirectory())
@@ -332,6 +380,14 @@ public final class Util
 			}
 			
 			return output;
+		}
+	}
+	
+	class GHAuth extends Authenticator
+	{
+		@Override
+		protected PasswordAuthentication getPasswordAuthentication() {
+			return new PasswordAuthentication("ByThePowerOfScience", "".toCharArray());
 		}
 	}
 

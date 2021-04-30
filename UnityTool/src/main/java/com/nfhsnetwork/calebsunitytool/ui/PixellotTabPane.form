@@ -136,7 +136,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="data_lminame">
               <Properties>
-                <Property name="text" type="java.lang.String" value="PXLS2_XXXXX Sample Academy (UT) Field"/>
+                <Property name="text" type="java.lang.String" value="Coming soon!"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="tag_prodname">
@@ -161,12 +161,12 @@
             </Component>
             <Component class="javax.swing.JLabel" name="data_clubname">
               <Properties>
-                <Property name="text" type="java.lang.String" value="PXLS2_12345 Sample Academy (UT) Field"/>
+                <Property name="text" type="java.lang.String" value="Requires CSV Import"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="data_sfname">
               <Properties>
-                <Property name="text" type="java.lang.String" value="PXLS2_12245 Sample Academy (UT) Field"/>
+                <Property name="text" type="java.lang.String" value="Coming soon!"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -255,22 +255,22 @@
             </Component>
             <Component class="com.nfhsnetwork.calebsunitytool.ui.components.EditableLabel" name="data_consoleEventID">
               <Properties>
-                <Property name="text" type="java.lang.String" value="editableLabel1"/>
+                <Property name="text" type="java.lang.String" value="gam123456789"/>
               </Properties>
             </Component>
             <Component class="com.nfhsnetwork.calebsunitytool.ui.components.EditableLabel" name="data_clubEventID">
               <Properties>
-                <Property name="text" type="java.lang.String" value="editableLabel2"/>
+                <Property name="text" type="java.lang.String" value="Req. CSV Import"/>
               </Properties>
             </Component>
             <Component class="com.nfhsnetwork.calebsunitytool.ui.components.EditableLabel" name="data_clubEventStatus">
               <Properties>
-                <Property name="text" type="java.lang.String" value="editableLabel3"/>
+                <Property name="text" type="java.lang.String" value="Req. CSV Import"/>
               </Properties>
             </Component>
             <Component class="com.nfhsnetwork.calebsunitytool.ui.components.EditableLabel" name="data_clubEventLink">
               <Properties>
-                <Property name="text" type="java.lang.String" value="editableLabel4"/>
+                <Property name="text" type="java.lang.String" value="Coming soon!"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -287,49 +287,27 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="tag_am" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="54" max="-2" attributes="0"/>
-                              <Component id="data_acctmgr" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="tag_sfinfo2" alignment="0" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace pref="187" max="32767" attributes="0"/>
+                  <Group type="102" alignment="1" attributes="0">
+                      <EmptySpace max="32767" attributes="0"/>
+                      <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="111" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="tag_am" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="data_acctmgr" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="tag_sfinfo2" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="54" max="32767" attributes="0"/>
+                      <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
+                      <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="50" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="tag_am">
+            <Component class="javax.swing.JLabel" name="jLabel2">
               <Properties>
-                <Property name="text" type="java.lang.String" value="AM:"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JLabel" name="tag_sfinfo2">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="SF Info 2"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JLabel" name="data_acctmgr">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="jLabel1"/>
+                <Property name="text" type="java.lang.String" value="Coming Soon!"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -346,10 +324,12 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="tag_unitStatus" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
+                      <Component id="data_unityStatus" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -357,7 +337,10 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="tag_unitStatus" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="tag_unitStatus" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="data_unityStatus" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace pref="59" max="32767" attributes="0"/>
                   </Group>
               </Group>
@@ -367,6 +350,11 @@
             <Component class="javax.swing.JLabel" name="tag_unitStatus">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Unit Status:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="data_unityStatus">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Req. CSV Import"/>
               </Properties>
             </Component>
           </SubComponents>

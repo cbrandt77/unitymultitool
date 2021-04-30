@@ -24,22 +24,22 @@ import com.nfhsnetwork.calebsunitytool.utils.Util.IOUtils;
 
 public class UpdateManager {
 	private static final String CURRENTVERSION = "v1.0.0";
-	private static final String VERSIONMODIFIERS = "snapshot";
+	private static final String VERSIONMODIFIERS = "";
 	public static final String FULLVERSIONNAME = CURRENTVERSION + " - " + VERSIONMODIFIERS;
 	
-	private static final String token = System.getenv("token");
-	private static final String VERSION_URL = "https://raw.githubusercontent.com/ByThePowerOfScience/unitymultitool/master/version.json";
-	private static final String DOWNLOAD_URL = "https://api.github.com/repos/unitymultitool/releases/latest"; //TODO
+	private static final String VERSION_URL = "https://api.github.com/repos/ByThePowerOfScience/unitymultitool/contents/version.json";
+	private static final String DOWNLOAD_URL = "https://api.github.com/repos/ByThePowerOfScience/unitymultitool/releases/latest";
 	
-	public static final String NEWFILENAME = ".UnityTool.exe";
-	public static final String OLDFILENAME = "UnityTool.exe";
+	
+	public static String NEWFILENAME;
+	public static final String OLDFILENAME = UpdateManager.class.getProtectionDomain().getCodeSource().getLocation().getFile();
 	
 	private static final String DOWNLOADPATH;
 	
 	public static final String SCRIPTNAME = ((UnityToolCommon.ISWINDOWS) ? ".update.bat" : ".update.sh");
 	
-	static {
-		DOWNLOADPATH = Util.getCurrentDirectory() + File.separator + NEWFILENAME;
+	static { //TODO un-hardcode this
+		DOWNLOADPATH = Util.getCurrentDirectory() + File.separator + "bin" + File.separator + NEWFILENAME;
 	}
 	
 	private static ByteString source_checksum;
@@ -58,6 +58,9 @@ public class UpdateManager {
 	 */
 	public static boolean checkAndGetUpdates() 
 	{
+		if (UnityToolCommon.isDebugMode) {
+			System.out.println("[DEBUG] {checkAndGetUpdates} ");
+		}
 		switch (checkVersion()) {
 			case CURRENT:
 				return false;
@@ -71,6 +74,8 @@ public class UpdateManager {
 		}
 	}
 	
+	//TODO restructure so that it just gets the latest release json, then reads the tag for the version instead of having a version.json
+	//how to do checksum in that case?
 	
 	/**
 	 * Side effects: sets source_checksum.
@@ -79,49 +84,72 @@ public class UpdateManager {
 	private static int checkVersion()
 	{
 		try {
-			JSONObject version = new JSONObject(IOUtils.httpGET(VERSION_URL, makeAuthMap()));
+			if (UnityToolCommon.isDebugMode) {
+				System.out.println("[DEBUG] {checkVersion} checking version");
+			}
+			JSONObject version = new JSONObject(getVersionJSON());
+			
+			if (UnityToolCommon.isDebugMode) {
+				System.out.println("[DEBUG] {checkVersion} version json: " + version.toString());
+			}
+			
 			String versionString = version.getString("current");
 			String modifierString = version.getString("modifiers");
 			if (CURRENTVERSION.equals(versionString)
 					&& VERSIONMODIFIERS.equals(modifierString))
 			{
 				if (UnityToolCommon.isDebugMode) {
-					System.out.println("[DEBUG] {checkVersion} current version");
-					System.out.println("[DEBUG] {checkVersion} version json: " + version.toString());
+					System.out.println("[DEBUG] {checkVersion} is current version");
 				}
 				
 				return CURRENT;
 			}
 			else
 			{
-				String[] versionarr = versionString.split("[.|-]");
-				String[] current = CURRENTVERSION.split("[.|-]");
+				String[] versionarr = versionString.substring(1).split("[.|-]");
+				String[] current = CURRENTVERSION.substring(1).split("[.|-]");
 				
 				boolean isGreater = false;
-				for (int i = 0, l = versionarr.length - 1; i < l; i++) 
+				for (int i = 0, l = versionarr.length; i < l; i++) 
 				{
 					try {
-						if (Integer.valueOf(versionarr[i]) > Integer.valueOf(current[i]) && modifierString.equals(""))
+//						if (UnityToolCommon.isDebugMode) {
+//							System.out.println("[DEBUG] {checkVersion} versionarr[i] = " + Integer.valueOf(versionarr[i]));
+//							System.out.println("current[i] = " + Integer.valueOf(current[i]));
+//						}
+						
+						if (Integer.valueOf(versionarr[i]) > Integer.valueOf(current[i])) //TODO change to only accept versions without modifiers. Also fix version control system completely.
 						{
-							isGreater = true; // still need to check for modifiers
+							isGreater = true;
 							continue;
 						}
 					} catch (NumberFormatException e) {
 						// assume this is the modifiers? I don't think I'm scanning the mods tbh
+						if (UnityToolCommon.isDebugMode) {
+							System.out.println("[DEBUG] {checkVersion} NumFormatException");
+						}
 						return CURRENT;
 					}
 				}
+				
+				if (UnityToolCommon.isDebugMode) {
+					System.out.println("[DEBUG] {checkVersion} isGreater = " + isGreater);
+				}
+				
 				if (isGreater)
 				{
 					source_checksum = Util.hexStringToByteString(version.getString("checksum"));
 					
 					if (UnityToolCommon.isDebugMode) {
-						System.out.println("[DEBUG] {checkVersion} outdated");
+						System.out.println("[DEBUG] {checkVersion} version is outdated");
 					}
 					
 					return OUTDATED;
 				}
 				
+				if (UnityToolCommon.isDebugMode) {
+					System.out.println("[DEBUG] {checkVersion} reach end return current");
+				}
 				return CURRENT;
 			}
 		} 
@@ -185,6 +213,10 @@ public class UpdateManager {
 	}
 	
 	
+	
+	
+	
+	
 	/**
 	 * Reads file from URL, and puts it in the directory.
 	 * @param url
@@ -194,20 +226,35 @@ public class UpdateManager {
 	 */
 	private static byte[] downloadFile() throws IOException
 	{
+		//TODO show dialog box and progress bar for download
+		
+		JSONObject githubAPIObject = new JSONObject(
+				Util.IOUtils.httpGET(
+						DOWNLOAD_URL,
+						Map.of("Accept", "application/vnd.github.v3+json",
+								"User-Agent", "UnityMultiTool")))
+				.getJSONArray("assets").getJSONObject(0);
+		
+		String downloadUrl = githubAPIObject.getString("url");
+		
+		UpdateManager.NEWFILENAME = githubAPIObject.getString("name");
+		
+		if (UnityToolCommon.isDebugMode) {
+			System.out.println("[DEBUG] {downloadFile} download url: " + downloadUrl);
+		}
+		
 		URL url;
 		try {
-			url = new URL(DOWNLOAD_URL);
+			url = new URL(downloadUrl);
 		} catch (MalformedURLException e1) {
 			e1.printStackTrace();
 			return null;
 		}
 		
-		HttpURLConnection http = (HttpURLConnection)url.openConnection();
-		http.addRequestProperty("Authorization", "token " + token);
 		
-		if (UnityToolCommon.isDebugMode) {
-			System.out.println("[DEBUG] {downloadFile} downloading file.");
-		}
+		HttpURLConnection http = (HttpURLConnection)url.openConnection();
+		http.addRequestProperty("Accept", "application/octet-stream"); //TODO application/exe
+		http.addRequestProperty("User-Agent", "UnityMultiTool");
 		
 		MessageDigest md;
 		try {
@@ -219,7 +266,7 @@ public class UpdateManager {
 		
 		try (InputStream is = http.getInputStream();
 		     DigestInputStream dis = new DigestInputStream(is, md);
-				FileOutputStream fos = new FileOutputStream(new File(DOWNLOADPATH))) 
+				FileOutputStream fos = new FileOutputStream(DOWNLOADPATH)) 
 		{
 			dis.transferTo(fos);
 		}
@@ -229,7 +276,26 @@ public class UpdateManager {
 	
 	private static Map<String, String> makeAuthMap()
 	{
-		return Map.of("Authorization", "token " + token);
+		return Map.of("Accept", "application/vnd.github.v3+json",
+					  "User-Agent","ByThePowerOfScience");
+		
+//		Map<String, String> headers = new HashMap<String, String>();
+//		
+//		headers.put("Authorization", "token " + token);
+//					 headers.put( "Accept", "application/vnd.github.v3.raw");
+//					  headers.put("User-Agent", "bythepowerofscience");
+//					  return headers;
+	}
+	
+	
+	private static String getVersionJSON() throws IOException
+	{
+		
+		return IOUtils.httpGET(
+				VERSION_URL, 
+				Map.of("Accept", "application/vnd.github.v3.raw+json",
+				  "User-Agent","ByThePowerOfScience"));
+		
 	}
 
 
@@ -246,23 +312,31 @@ public class UpdateManager {
 			+ "\n" + Util.getCurrentDirectory() + File.separator + OLDFILENAME
 	: "echo 'script executed'" 
 			+ "\n" + "currentprocess=$(pgrep '" + OLDFILENAME + "')" //TODO see if this works
-			+ "\n" + "kill -s SIGINT $currentprocess"
-			+ "\n" + "rm " + Util.getCurrentDirectory() + File.separator + OLDFILENAME
-			+ "\n" + "mv " + Util.getCurrentDirectory() + File.separator + NEWFILENAME + " " + Util.getCurrentDirectory() + File.separator + OLDFILENAME
-			+ "\n" + Util.getCurrentDirectory() + File.separator + OLDFILENAME;
+			+ "\n" + "kill -s 2 '$currentprocess'"
+			+ "\n" + "mv '" + Util.getCurrentDirectory() + File.separator + NEWFILENAME + "' '" + Util.getCurrentDirectory() + File.separator + OLDFILENAME + "'"
+			+ "\n" + "'" + Util.getCurrentDirectory() + File.separator + OLDFILENAME + "'";
 	
 	
 	public static void printAndRunUpdateScript()
 	{
+		int res = JOptionPane.showOptionDialog(null, "running update script", "", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
+				null, null, null);
+
+		if (res != 4) {
+			
+		}
+		
+		
 		// Write a script file, call it, and make it delete itself?
 		try 
 		{
 			File f = new File(Util.getCurrentDirectory().toString() + File.separator + UpdateManager.SCRIPTNAME);
 			
-			if (f.exists())
-				executeUpdateCleanScript();
-			else
+			if (!f.exists()) {
 				Util.IOUtils.printToFile(UpdateManager.UPDATESCRIPT, f);
+			}
+			
+			executeUpdateCleanScript();
 		}
 		catch (IOException e) {
 			showFailedToCleanUpdateWindow();
@@ -296,6 +370,8 @@ public class UpdateManager {
 				System.out.println("[DEBUG] {executePostUpdateScript} executing");
 			}
 			pb.start();
+			
+			System.exit(0); //?
 		} catch (IOException e) {
 			showFailedToCleanUpdateWindow();
 			e.printStackTrace();
@@ -311,6 +387,7 @@ public class UpdateManager {
 			if (UnityToolCommon.isDebugMode) {
 				System.out.println("[DEBUG] {deleteUpdateScriptIfPresent} update script exists, deleting");
 			}
+			
 			if (!updatescript.delete())
 				showFailedToCleanUpdateWindow();
 		}
@@ -321,5 +398,4 @@ public class UpdateManager {
 		JOptionPane.showOptionDialog(null, "Failed to clean update files.", "Update failed", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
 				null, null, null);
 	}
-	
 }

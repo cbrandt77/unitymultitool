@@ -258,14 +258,15 @@ public class NFHSGameObject
 		this.game_json = j;
 		this.content_type = n;
 		
-		this.terr_mgr = TerritoryManagers.getTerritoryManager(getStateCode());
+		if (j != null)
+			this.terr_mgr = TerritoryManagers.getTerritoryManager(getStateCode());
+		else
+			this.terr_mgr = null;
 		
 		fetchAndSetBdcStateJSON();
 	}
 	
-	private String getStateCode() {
-		return this.game_json.getString("state_code");
-	}
+	
 
 
 	private void fetchAndSetBdcStateJSON()
@@ -325,6 +326,9 @@ public class NFHSGameObject
 		return output;
 	}
 	
+	private String getStateCode() {
+		return this.game_json.getString("state_code");
+	}
 	
 	public JSONArray getBroadcasts() throws NullFieldException 
 	{

@@ -24,7 +24,7 @@ import com.nfhsnetwork.calebsunitytool.scripts.focuscompare.FocusCompareScript;
 import com.nfhsnetwork.calebsunitytool.scripts.focuscompare.FocusOutputFrame;
 import com.nfhsnetwork.calebsunitytool.scripts.multiviewertag.MultiviewerTagScript;
 import com.nfhsnetwork.calebsunitytool.ui.components.ProgressBarDialogBox;
-import com.nfhsnetwork.calebsunitytool.ui.pixellotcsv.DragNDropCSV;
+import com.nfhsnetwork.calebsunitytool.ui.pixellotcsv.ImportCSVDialog;
 import com.nfhsnetwork.calebsunitytool.utils.Util.IOUtils;
 
 /**
@@ -42,6 +42,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
      */
     public ImportDataFrame() {
         initComponents();
+        this.button_mviewer.setEnabled(false); //#BlameAndy :P
     }
 
     /**
@@ -267,13 +268,30 @@ public class ImportDataFrame extends javax.swing.JFrame {
         importType = UnityContainer.ImportTypes.FOCUS;
     }//GEN-LAST:event_rb_it_focusActionPerformed
 
+    
+    
+    
+    private boolean hasEnoughText()
+    {
+    	return placeholderTextArea1.getText().length() >= 13;
+    }
+    
+    
     private void button_importActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_importActionPerformed
+    	
+    	if (!hasEnoughText())
+    	{
+    		JOptionPane.showOptionDialog(this, "No data entered.", "Invalid Import", JOptionPane.DEFAULT_OPTION,
+					JOptionPane.ERROR_MESSAGE, null, null, null);
+    		return;
+    	}
+    	
     	UnityContainer.makeOrGetInstance();
     	
     	SwingWorker<Void, Void> importWorker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
-				UnityContainer.getInstance().importData(placeholderTextArea1.getText(), ImportDataFrame.this.importType);
+				UnityContainer.getInstance().importEventData(placeholderTextArea1.getText(), ImportDataFrame.this.importType);
 				return null;
 			}
     	};
@@ -294,7 +312,14 @@ public class ImportDataFrame extends javax.swing.JFrame {
     private FocusCompareScript fe;
     
     private void button_focuscompareActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_focuscompareActionPerformed
-        disableAllComponents();
+    	if (!hasEnoughText())
+    	{
+    		JOptionPane.showOptionDialog(this, "No data entered.", "Invalid Import", JOptionPane.DEFAULT_OPTION,
+					JOptionPane.ERROR_MESSAGE, null, null, null);
+    		return;
+    	}
+    	
+    	disableAllComponents();
         
         fe = new FocusCompareScript();
         importPxlCSV();
@@ -318,7 +343,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
     	};
     	
     	SwingUtilities.invokeLater(() -> {
-			new DragNDropCSV(SwingUtilities.windowForComponent(ImportDataFrame.this), "Import Pixellot CSV", Dialog.DEFAULT_MODALITY_TYPE, onFileSelected, onCancel)
+			new ImportCSVDialog(SwingUtilities.windowForComponent(ImportDataFrame.this), "Import Pixellot CSV", Dialog.DEFAULT_MODALITY_TYPE, onFileSelected, onCancel)
 					.setVisible(true);
 		});
     }
@@ -454,7 +479,16 @@ public class ImportDataFrame extends javax.swing.JFrame {
 	
 	
     private void button_mviewerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_mviewerActionPerformed
-        disableAllComponents();
+    	
+    	if (!hasEnoughText())
+    	{
+    		JOptionPane.showOptionDialog(this, "No data entered.", "Invalid Import", JOptionPane.DEFAULT_OPTION,
+					JOptionPane.ERROR_MESSAGE, null, null, null);
+    		return;
+    	}
+    	
+    	
+    	disableAllComponents();
         
         ProgressBarDialogBox bar = new ProgressBarDialogBox(this);
         //bar.setVisible(true);

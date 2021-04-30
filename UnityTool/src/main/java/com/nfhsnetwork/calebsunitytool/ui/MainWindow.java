@@ -7,10 +7,18 @@ package com.nfhsnetwork.calebsunitytool.ui;
 
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer;
 import com.nfhsnetwork.calebsunitytool.types.NullNFHSObject;
+import com.nfhsnetwork.calebsunitytool.ui.pixellotcsv.ImportCSVDialog;
+import com.nfhsnetwork.calebsunitytool.utils.Util;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.function.Function;
+
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -61,7 +69,6 @@ class MainWindow extends javax.swing.JFrame {
         mb_topMenu = new javax.swing.JMenuBar();
         menu_file = new javax.swing.JMenu();
         menuItem_dologin = new javax.swing.JMenuItem();
-        menuItem_refresh = new javax.swing.JMenuItem();
         menuItem_importNewData = new javax.swing.JMenuItem();
         menuItem_openPixellotCSV = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
@@ -73,6 +80,7 @@ class MainWindow extends javax.swing.JFrame {
         view_gameList_eventID = new javax.swing.JRadioButtonMenuItem();
         view_gameList_bdcID = new javax.swing.JRadioButtonMenuItem();
         view_gameList_title = new javax.swing.JRadioButtonMenuItem();
+        menuItem_refresh = new javax.swing.JMenuItem();
 
         loginDialog.setResizable(false);
 
@@ -191,35 +199,24 @@ class MainWindow extends javax.swing.JFrame {
 
         menuItem_dologin.setText("Login to Unity");
         menuItem_dologin.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItem_dologinActionPerformed(evt);
             }
         });
         menu_file.add(menuItem_dologin);
 
-        menuItem_refresh.setText("Refresh Data");
-        menuItem_refresh.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItem_refreshActionPerformed(evt);
-            }
-        });
-        menu_file.add(menuItem_refresh);
-
         menuItem_importNewData.setText("Import New Data");
         menuItem_importNewData.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItem_importNewDataActionPerformed(evt);
             }
         });
+        menuItem_importNewData.setVisible(false);
         menu_file.add(menuItem_importNewData);
 
         menuItem_openPixellotCSV.setText("Import Pixellot CSV");
         menuItem_openPixellotCSV.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItem_openPixellotCSVActionPerformed(evt);
             }
         });
@@ -228,11 +225,11 @@ class MainWindow extends javax.swing.JFrame {
 
         menuItem_exportToFocus.setText("Export as Focus List Sheet");
         menuItem_exportToFocus.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItem_exportToFocusActionPerformed(evt);
             }
         });
+        menuItem_exportToFocus.setVisible(false);
         menu_file.add(menuItem_exportToFocus);
 
         mb_topMenu.add(menu_file);
@@ -241,12 +238,13 @@ class MainWindow extends javax.swing.JFrame {
 
         menuItemCB_enableEditing.setText("Enable Editing");
         menuItemCB_enableEditing.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItemCB_enableEditingActionPerformed(evt);
             }
         });
         menu_edit.add(menuItemCB_enableEditing);
+
+        menu_edit.setVisible(false);
 
         mb_topMenu.add(menu_edit);
 
@@ -257,8 +255,7 @@ class MainWindow extends javax.swing.JFrame {
         view_gameList_eventID.setSelected(true);
         view_gameList_eventID.setText("Event ID");
         view_gameList_eventID.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 view_gameList_eventIDActionPerformed(evt);
             }
         });
@@ -267,8 +264,7 @@ class MainWindow extends javax.swing.JFrame {
         view_gameList_bdcID.setSelected(true);
         view_gameList_bdcID.setText("Broadcast ID");
         view_gameList_bdcID.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 view_gameList_bdcIDActionPerformed(evt);
             }
         });
@@ -277,14 +273,23 @@ class MainWindow extends javax.swing.JFrame {
         view_gameList_title.setSelected(true);
         view_gameList_title.setText("Title");
         view_gameList_title.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 view_gameList_titleActionPerformed(evt);
             }
         });
         menu_subView_gameList.add(view_gameList_title);
 
         menu_view.add(menu_subView_gameList);
+
+        menuItem_refresh.setText("Refresh Data");
+        menuItem_refresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItem_refreshActionPerformed(evt);
+            }
+        });
+        menu_view.add(menuItem_refresh);
+
+        menu_view.setVisible(false);
 
         mb_topMenu.add(menu_view);
 
@@ -315,7 +320,26 @@ class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_menuItem_importNewDataActionPerformed
 
     private void menuItem_openPixellotCSVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItem_openPixellotCSVActionPerformed
-        // TODO add your handling code here:
+        Function<File, File> fileCallback = (f) -> {
+        	try {
+				UnityContainer.ClubInventory.parse(Util.IOUtils.readFromFile(f));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				UnityContainer.ClubInventory.clear();
+				
+				SwingUtilities.invokeLater(() -> {
+					JOptionPane.showOptionDialog(this, "Failed to parse Pixellot CSV.", "Import Failed", JOptionPane.DEFAULT_OPTION,
+							JOptionPane.ERROR_MESSAGE, null, null, null);
+				});
+			}
+        	return f;
+        };
+        
+        SwingUtilities.invokeLater(() -> {
+			new ImportCSVDialog(this, fileCallback).setVisible(true);
+		});
+        
     }//GEN-LAST:event_menuItem_openPixellotCSVActionPerformed
 
     private void menuItem_exportToFocusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItem_exportToFocusActionPerformed
@@ -639,7 +663,7 @@ class MainWindow extends javax.swing.JFrame {
 
 		protected void setPxl_acctmgr(String pxl_acctmgr) {
 			this.pxl_acctmgr = pxl_acctmgr;
-			pixellotTabPane1.data_acctmgr.setText(pxl_acctmgr);
+			//TODO
 		}
 
 		protected void setPxl_clubeventurl(String pxl_clubeventurl) {

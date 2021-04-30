@@ -2,6 +2,8 @@ package com.nfhsnetwork.calebsunitytool;
 
 import java.io.File;
 
+import javax.swing.JOptionPane;
+
 import com.nfhsnetwork.calebsunitytool.common.UnityToolCommon;
 import com.nfhsnetwork.calebsunitytool.ui.ImportDataFrame;
 import com.nfhsnetwork.calebsunitytool.updater.UpdateManager;
@@ -13,11 +15,17 @@ public class Wrapper
 	{
 		if (UnityToolCommon.isDebugMode) {
 			System.out.println("[DEBUG] {main} Debug mode active.");
+			System.out.println("[DEBUG] {main} Current directory: " + Util.getCurrentDirectory());
+			System.out.println("[DEBUG] {main} GetClass directory: " + Wrapper.class.getProtectionDomain().getCodeSource().getLocation());
 		}
 		
-		UpdateManager.deleteUpdateScriptIfPresent();
+		UpdateManager.deleteUpdateScriptIfPresent(); //TODO
         
-		if (UpdateManager.checkAndGetUpdates()) {
+		boolean requiresUpdate = UpdateManager.checkAndGetUpdates();
+		
+		System.out.println("Requires update? " + requiresUpdate);
+		
+		if (requiresUpdate) {
 			if (UnityToolCommon.isDebugMode) {
 				System.out.println("[DEBUG] {main} Update downloaded, executing update script.");
 			}
@@ -27,21 +35,20 @@ public class Wrapper
 		
 		//createFiles(); //TODO check if required folders exist and, if not, create them (e.g. outputs and other potential folders)
 				//TODO make config.json that saves configuration settings between sessions
-				//TODO hide token better
 		
-		setLookAndFeel();
 		
 		
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
 			public void run() {
+            	setLookAndFeel();
                 new ImportDataFrame().setVisible(true);
             }
         });
 	}
 	
 	//TODO
-	private static void createFiles()
+	private static void createInitialFiles()
 	{
 		File outputsfolder = new File(Util.getCurrentDirectory() + File.separator + "outputs");
 		

@@ -294,6 +294,13 @@
                   </Properties>
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout"/>
+                  <SubComponents>
+                    <Component class="javax.swing.JLabel" name="jLabel1">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Coming Soon!"/>
+                      </Properties>
+                    </Component>
+                  </SubComponents>
                 </Container>
               </SubComponents>
             </Container>

@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 
-import org.eclipse.jdt.annotation.Nullable;
 import org.json.JSONObject;
 
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer.ClubInventory;
@@ -168,9 +167,6 @@ public class FocusCompareScript
 	}
 	
 	
-	
-	
-	@Nullable
 	private String[] getSysIDDetails(String search) {
 		if (search == null)
 			return null;

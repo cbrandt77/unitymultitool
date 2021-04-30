@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -97,7 +98,7 @@ public final class UnityContainer {
 	
 	private BlockingQueue<String> getQueue;
 	
-	public UnityContainer importData(String input, ImportTypes importType)
+	public UnityContainer importEventData(String input, ImportTypes importType)
 	{
 //		if (importType != ImportTypes.FOCUS || importType != ImportTypes.OTHER)
 //			throw new RuntimeException("Invalid Import Type");
@@ -247,6 +248,11 @@ public final class UnityContainer {
 		public static Integer parse(List<String> csv)
 		{
 			return parseClubCSV(csv);
+		}
+		
+		public static void clear()
+		{
+			clubInventoryMap = new HashMap<>();
 		}
 		
 		private static Map<ByteString, String[]> clubInventoryMap = null;

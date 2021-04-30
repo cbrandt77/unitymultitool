@@ -78,14 +78,6 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItem_dologinActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="menuItem_refresh">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Refresh Data"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItem_refreshActionPerformed"/>
-              </Events>
-            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuItem_importNewData">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Import New Data"/>
@@ -93,6 +85,9 @@
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItem_importNewDataActionPerformed"/>
               </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_AddingCodePre" type="java.lang.String" value="menuItem_importNewData.setVisible(false);"/>
+              </AuxValues>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuItem_openPixellotCSV">
               <Properties>
@@ -111,6 +106,9 @@
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItem_exportToFocusActionPerformed"/>
               </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_ListenersCodePost" type="java.lang.String" value="menuItem_exportToFocus.setVisible(false);"/>
+              </AuxValues>
             </MenuItem>
           </SubComponents>
         </Menu>
@@ -118,6 +116,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Edit"/>
           </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_LayoutCodePost" type="java.lang.String" value="menu_edit.setVisible(false);"/>
+          </AuxValues>
           <SubComponents>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuItemCB_enableEditing">
               <Properties>
@@ -133,6 +134,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="View"/>
           </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_LayoutCodePost" type="java.lang.String" value="menu_view.setVisible(false);"/>
+          </AuxValues>
           <SubComponents>
             <Menu class="javax.swing.JMenu" name="menu_subView_gameList">
               <Properties>
@@ -168,6 +172,14 @@
                 </MenuItem>
               </SubComponents>
             </Menu>
+            <MenuItem class="javax.swing.JMenuItem" name="menuItem_refresh">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Refresh Data"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItem_refreshActionPerformed"/>
+              </Events>
+            </MenuItem>
           </SubComponents>
         </Menu>
       </SubComponents>

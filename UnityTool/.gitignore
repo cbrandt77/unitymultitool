@@ -9,3 +9,4 @@
 .DS_Store
 Test.java
 *.bak
+/install.sh

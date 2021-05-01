@@ -12,7 +12,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -27,30 +29,30 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer;
+import com.nfhsnetwork.calebsunitytool.common.UnityToolCommon;
 import com.nfhsnetwork.calebsunitytool.exceptions.GameNotFoundException;
 import com.nfhsnetwork.calebsunitytool.exceptions.InvalidContentTypeException;
 import com.nfhsnetwork.calebsunitytool.types.NFHSGameObject;
 import com.nfhsnetwork.calebsunitytool.ui.LoginDialog;
 import com.nfhsnetwork.calebsunitytool.ui.components.ProgressBarDialogBox;
+import com.nfhsnetwork.calebsunitytool.utils.Debug;
 
 public class MultiviewerTagScript {
 	
 	static final int SUCCESS = 27;
 	static final int FAILURE = 35;
 	
-	final String unityGETAddress = "https://unity.nfhsnetwork.com/v2/game_or_event/%s";
-	final String unityPUTAddress = "https://unity.nfhsnetwork.com/v2/game_or_event/%s/update_all";
+	private final String unityGETAddress = "https://unity.nfhsnetwork.com/v2/game_or_event/%s";
+	private final String unityPUTAddress = "https://unity.nfhsnetwork.com/v2/game_or_event/%s/update_all";
 	
-	List<String> idOrUrlList;
+	List<String> idOrUrlList; //TODO turn this into a Set
 	
 	final JFrame parent;
 	
-	//CookieManager cm;
 	public MultiviewerTagScript(JFrame parent) 
 	{
 		this.parent = parent;
-		System.out.println("[DEBUG] init object");
-		//CookieHandler.setDefault(cm = new CookieManager(null, CookiePolicy.ACCEPT_ALL));
+		Debug.out("[DEBUG] init object");
 	}
 	
 	
@@ -65,35 +67,15 @@ public class MultiviewerTagScript {
 		return SUCCESS;
 	}
 	
-	public void execute()
-	{
-		execute(null);
-	}
 	
-	public void execute(ProgressBarDialogBox linkedProgressBar)
+	
+	public void setProgressBar(ProgressBarDialogBox linkedProgressBar)
 	{
 		if (linkedProgressBar != null)
 			this.hasProgressBar = true;
-		System.out.println("[DEBUG] execute");
+		
 		this.linkedProgressBar = linkedProgressBar;
-		loginToUnity();
 	}
-	
-	private void loginToUnity()
-	{
-		LoginDialog ld = new LoginDialog(parent);
-		ld.setAlwaysOnTop(true);
-		
-		ld.addActionListener((evt) -> {
-			ld.setVisible(false);
-			ld.dispose();
-			System.out.println("[DEBUG] event fired");
-			startTagOperation();
-		});
-		
-		SwingUtilities.invokeLater(() -> ld.setVisible(true));
-	}
-	
 	
 	
 	private ProgressBarDialogBox linkedProgressBar;
@@ -101,9 +83,9 @@ public class MultiviewerTagScript {
 	
 	public void startTagOperation()
 	{
-		System.out.println("[DEBUG] Tag operation started");
+		Debug.out("[DEBUG] Tag operation started");
 		totalTasks = idOrUrlList.size();
-		System.out.println("[DEBUG] total tasks: " + totalTasks);
+		Debug.out("[DEBUG] total tasks: " + totalTasks);
 		initAndQueueJSONBuilders();
 		initPUTThread();
 	}
@@ -112,7 +94,7 @@ public class MultiviewerTagScript {
 	private final int NUMTHREADS = 4;
 	void initAndQueueJSONBuilders() //multi-threaded
 	{
-		System.out.println("[DEBUG] jsonbuilder thread started");
+		Debug.out("[DEBUG] jsonbuilder thread started");
 		ExecutorService e = Executors.newFixedThreadPool(NUMTHREADS);
 		
 		for (String s : idOrUrlList)
@@ -126,7 +108,7 @@ public class MultiviewerTagScript {
 	}
 	final void initPUTThread() //Single-threaded
 	{
-		System.out.println("[DEBUG] put thread started");
+		Debug.out("[DEBUG] put thread started");
 		Thread putThread = new Thread(new PutThread());
 		putThread.start();
 	}
@@ -155,11 +137,11 @@ public class MultiviewerTagScript {
 		@Override
 		public void run() {
 			try {
-				System.out.println("[DEBUG] Started background task.");
+				Debug.out("[DEBUG] Started background task.");
 				String s = workQueue.take();
 				
 				if (s.length() < 13) {
-					System.out.println("[DEBUG] {MTS} length less than 13: " + s);
+					Debug.out("[DEBUG] {MTS} length less than 13: " + s);
 					return;
 				}
 					
@@ -167,7 +149,7 @@ public class MultiviewerTagScript {
 				NFHSGameObject n = NFHSGameObject.buildFromIdOrUrl(s);
 				
 				putQueue.add(n);
-				System.out.println("[DEBUG] Added " + s + " to Put Queue!");
+				Debug.out("[DEBUG] Added " + s + " to Put Queue!");
 				
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -195,20 +177,20 @@ public class MultiviewerTagScript {
 		public void run() 
 		{
 			int counter = 0;
-			System.out.println("[DEBUG] Put thread initialized");
+			Debug.out("[DEBUG] Put thread initialized");
 			
 			main_loop:
 			while (true)
 			{
 				if (taskCompleteCounter.get() >= totalTasks)
 				{
-					System.out.println("[DEBUG] All puts done!");
-					alertActionListeners("all_puts_done");
+					Debug.out("[DEBUG] All puts done!");
+					firePropertyChangeEvent(UnityToolCommon.PropertyChangeType.DONE);
 					return;
 				}
 				if (!putQueue.isEmpty())
 				{
-					System.out.println("[DEBUG] Put task started for ");
+					Debug.out("[DEBUG] Put task started for ");
 					try {
 						updateProgressBar(counter, totalTasks);
 						
@@ -415,10 +397,7 @@ public class MultiviewerTagScript {
 	
 	
 	
-	List<PropertyChangeListener> listeners = new LinkedList<>();
-	
-	public static final String FINISHED = "task_complete";
-	public static final String CHANGED = "progress_changed";
+	Set<PropertyChangeListener> listeners = new CopyOnWriteArraySet<>();
 	
 	public MultiviewerTagScript addPropertyChangeListener(PropertyChangeListener e)
 	{
@@ -427,11 +406,19 @@ public class MultiviewerTagScript {
 		return this;
 	}
 	
-	private void alertActionListeners(String name)
+	public void firePropertyChangeEvent(UnityToolCommon.PropertyChangeType type)
 	{
-		failedToUpdate.forEach(System.out::println);
-		listeners.forEach(e -> e.propertyChange(new PropertyChangeEvent(this, FINISHED, 100, 100))); //TODO progress bar and CHANGED
+		Debug.out("[DEBUG] {firePropertyChangeEvent} change event fired of type " + type.name() + ": " + type.toString());
+		listeners.forEach(e -> e.propertyChange(new PropertyChangeEvent(this, type.toString(), null, null))); //TODO progress bar and CHANGED
 	}
+	
+	public void firePropertyChangeEvent(Object source, UnityToolCommon.PropertyChangeType type, Object oldValue, Object newValue)
+	{
+		PropertyChangeEvent evt = new PropertyChangeEvent(source, type.toString(), oldValue, newValue);
+		listeners.forEach(e -> e.propertyChange(evt));
+	}
+	
+	
 	
 	
 	

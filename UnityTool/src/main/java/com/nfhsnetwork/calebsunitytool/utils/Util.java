@@ -55,9 +55,8 @@ public final class Util
 //				worked = true;
 //			} catch (IOException e) {
 //				//e.printStackTrace();
-//				if (UnityToolCommon.isDebugMode) {
-//					System.out.println("[DEBUG] {Util static init} /proc/self/exe didn't work.");
-//				}
+//				Debug.out("[DEBUG] {Util static init} /proc/self/exe didn't work.");
+//				
 //				
 //				worked = false;
 //				
@@ -115,11 +114,10 @@ public final class Util
 	 */
 	public static ByteString hexStringToByteString(String s) throws NumberFormatException
 	{
-		//System.out.println("[DEBUG] {hexStringToByteString} " + s);
+		//Debug.out("[DEBUG] {hexStringToByteString} " + s);
 		if (s.length() % 2 != 0) {
-			if (UnityToolCommon.isDebugMode) {
-				System.out.println("[DEBUG] {parseClubCSV} not div by 2 for id " + s);
-			}
+			Debug.out("[DEBUG] {hexStringToByteString} not div by 2 for id " + s);
+			
 			throw new NumberFormatException("String not divisible by 2.");
 		}
 		
@@ -262,16 +260,14 @@ public final class Util
 			http.connect();
 			
 			
-			if (UnityToolCommon.isDebugMode) {
-				System.out.println("[DEBUG] {httpGET} http status code: " + http.getResponseCode());
-			}
+			Debug.out("[DEBUG] {httpGET} http status code: " + http.getResponseCode());
+			
 			
 			
 			if (payload != null)
 			{
-				if (UnityToolCommon.isDebugMode) {
-					System.out.println("[DEBUG] {httpGET} Outputting payload: " + payload);
-				}
+				Debug.out("[DEBUG] {httpGET} Outputting payload: " + payload);
+				
 				try (OutputStream os = http.getOutputStream())
 				{
 					os.write(payload.getBytes());
@@ -284,9 +280,9 @@ public final class Util
 			{
 				out = readAllFromReader(rd);
 			}
-			if (UnityToolCommon.isDebugMode) {
-				System.out.println("[DEBUG] {httpGET} response payload: " + out);
-			}
+			
+			Debug.out("[DEBUG] {httpGET} response payload: " + out);
+			
 			
 			return out;
 		}

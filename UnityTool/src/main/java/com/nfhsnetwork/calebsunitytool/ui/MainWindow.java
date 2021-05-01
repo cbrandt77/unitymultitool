@@ -8,6 +8,7 @@ package com.nfhsnetwork.calebsunitytool.ui;
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer;
 import com.nfhsnetwork.calebsunitytool.types.NullNFHSObject;
 import com.nfhsnetwork.calebsunitytool.ui.pixellotcsv.DragNDropCSV;
+import com.nfhsnetwork.calebsunitytool.utils.Debug;
 import com.nfhsnetwork.calebsunitytool.utils.Util;
 
 import java.io.File;
@@ -38,10 +39,10 @@ class MainWindow extends javax.swing.JFrame {
      * Creates new form EventDetailsPane
      */
     public MainWindow() {
+    	Debug.out("[DEBUG] {MainWindow} Main Window Init");
     	mwf = new MainWindowFields();
     	uic = new UIController(this);
         initComponents();
-        uic.onNoneSelected();
     }
 
     /**
@@ -549,6 +550,7 @@ class MainWindow extends javax.swing.JFrame {
 
 		protected void setBdcid(String bdcid) {
 			this.bdcid = bdcid;
+			Debug.out("[DEBUG] {setBdcid} Setting BDC id to " + bdcid);
 			eventDetailsPane1.tf_bdcID_field.setText(bdcid);
 			
 		}
@@ -641,7 +643,7 @@ class MainWindow extends javax.swing.JFrame {
 
 		protected void setPxl_status(String pxl_status) {
 			this.pxl_status = pxl_status;
-			pixellotTabPane1.tag_unitStatus.setText(pxl_status);
+			pixellotTabPane1.data_unitStatus.setText(pxl_status);
 		}
 
 		protected void setPxl_lminame(String pxl_lminame) {
@@ -650,7 +652,7 @@ class MainWindow extends javax.swing.JFrame {
 		}
 		
 		protected void setPxl_version(String pxl_version) {
-			//TODO
+			pixellotTabPane1.data_version.setText(pxl_version);
 		}
 
 		protected void setPxl_clubname(String pxl_clubname) {
@@ -670,7 +672,7 @@ class MainWindow extends javax.swing.JFrame {
 
 		protected void setPxl_acctmgr(String pxl_acctmgr) {
 			this.pxl_acctmgr = pxl_acctmgr;
-			//TODO
+			//TODO don't have sf integration yet
 		}
 
 		protected void setPxl_clubeventurl(String pxl_clubeventurl) {
@@ -723,6 +725,7 @@ class MainWindow extends javax.swing.JFrame {
 		protected void setProd_focustype(String prod_focustype) {
 			this.prod_focustype = prod_focustype;
 			productionTabPane1.l_focusType_data.setText(prod_focustype);
+			eventDetailsPane1.label_focusType_field.setText(prod_focustype);
 		}
 
 		

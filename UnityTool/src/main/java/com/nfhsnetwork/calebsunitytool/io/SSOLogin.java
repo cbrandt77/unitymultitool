@@ -1,5 +1,6 @@
 package com.nfhsnetwork.calebsunitytool.io;
 
+import java.awt.Window;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,13 +14,19 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
+
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer;
+import com.nfhsnetwork.calebsunitytool.ui.LoginDialog;
+import com.nfhsnetwork.calebsunitytool.utils.Debug;
 import com.nfhsnetwork.calebsunitytool.utils.Util.IOUtils;
 
 public final class SSOLogin
@@ -90,6 +97,24 @@ public final class SSOLogin
 //	}
 	
 	
+	public static void showLoginDialog(Window parent, Function<Void, Void> callback)
+	{
+		LoginDialog ld = new LoginDialog(parent);
+		ld.setAlwaysOnTop(true);
+		
+		ld.addActionListener((evt) -> {
+			ld.setVisible(false);
+			ld.dispose();
+			Debug.out("[DEBUG] {loginToUnity} event fired");
+			
+			callback.apply(null);
+		});
+		
+		SwingUtilities.invokeLater(() -> ld.setVisible(true));
+	}
+	
+	
+	
 	public static String loginToUnity(String email, char[] cs) throws IOException
 	{
 		cm = new CookieManager();
@@ -101,7 +126,7 @@ public final class SSOLogin
 		String dataRaw = String.format(RAWPOSTDATA, csrfToken, email, new String(cs));
 		byte[] out = dataRaw.getBytes();
 		
-		System.out.println("[DEBUG]" + dataRaw);
+		Debug.out("[DEBUG]" + dataRaw);
 		
 		
 		HttpURLConnection http = (HttpURLConnection)(new URL(SSO_ENDPOINT).openConnection());
@@ -119,7 +144,7 @@ public final class SSOLogin
 			os.write(out);
 		}
 		
-		System.out.println("[DEBUG] response content type: " + http.getContentType());
+		Debug.out("[DEBUG] response content type: " + http.getContentType());
 		
 		try (InputStream is = http.getInputStream())
 		{
@@ -129,7 +154,7 @@ public final class SSOLogin
 		http.disconnect();
 		
 		
-		System.out.println("[DEBUG] response code: " + http.getResponseCode());
+		Debug.out("[DEBUG] response code: " + http.getResponseCode());
 		
 		cm.getCookieStore().getCookies().stream().forEach(System.out::println); //[DEBUG]
 		

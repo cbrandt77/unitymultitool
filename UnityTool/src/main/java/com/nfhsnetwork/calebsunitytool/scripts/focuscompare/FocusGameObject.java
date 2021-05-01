@@ -11,6 +11,7 @@ import com.nfhsnetwork.calebsunitytool.exceptions.InvalidContentTypeException;
 import com.nfhsnetwork.calebsunitytool.exceptions.NullFieldException;
 import com.nfhsnetwork.calebsunitytool.io.UnityInterface;
 import com.nfhsnetwork.calebsunitytool.types.NFHSGameObject;
+import com.nfhsnetwork.calebsunitytool.utils.Debug;
 
 public class FocusGameObject {
 	
@@ -114,7 +115,7 @@ public class FocusGameObject {
 		try {
 			return NFHSGameObject.getFirstBroadcast(gamejson).getString("pixellot_id");
 		} catch (JSONException e) {
-			System.out.println("[DEBUG] {getPxlKey} pxlid is null for " + this.gameID);
+			Debug.out("[DEBUG] {getPxlKey} pxlid is null for " + this.gameID);
 			return null;
 		}
 	}

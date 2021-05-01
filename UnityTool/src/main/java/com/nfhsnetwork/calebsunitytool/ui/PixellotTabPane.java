@@ -69,6 +69,7 @@ public class PixellotTabPane extends javax.swing.JPanel {
         tag_sfname.setText("SF Name:");
 
         data_clubname.setText("Requires CSV Import");
+        data_clubname.setOpaque(true);
 
         data_sfname.setText("Coming soon!");
 
@@ -197,6 +198,7 @@ public class PixellotTabPane extends javax.swing.JPanel {
         p_unitinfo.setBorder(javax.swing.BorderFactory.createTitledBorder("Unit Info"));
 
         tag_unitStatus.setText("Unit Status:");
+        tag_unitStatus.setOpaque(true);
 
         data_unitStatus.setText("Req. CSV Import");
 

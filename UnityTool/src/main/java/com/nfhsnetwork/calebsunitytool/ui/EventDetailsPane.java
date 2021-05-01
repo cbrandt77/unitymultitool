@@ -5,8 +5,11 @@
  */
 package com.nfhsnetwork.calebsunitytool.ui;
 
+import java.awt.Color;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 /**
  *
@@ -106,7 +109,11 @@ public class EventDetailsPane extends javax.swing.JPanel {
 
         tf_bdcID_field.setEditable(false);
         tf_bdcID_field.setText("bdc1234567890");
+        tf_bdcID_field.setAutoscrolls(false);
         tf_bdcID_field.setBorder(null);
+        tf_bdcID_field.setDoubleBuffered(true);
+        tf_bdcID_field.setOpaque(true);
+        tf_bdcID_field.setRequestFocusEnabled(false);
 
         label_eventID_data.setText("gam1234567890");
 

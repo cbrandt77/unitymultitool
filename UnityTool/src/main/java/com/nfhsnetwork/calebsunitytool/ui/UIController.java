@@ -2,9 +2,11 @@ package com.nfhsnetwork.calebsunitytool.ui;
 
 import java.util.List;
 
+import com.nfhsnetwork.calebsunitytool.common.UnityContainer;
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer.ClubInventory;
 import com.nfhsnetwork.calebsunitytool.types.NFHSGameObject;
 import com.nfhsnetwork.calebsunitytool.types.NullNFHSObject;
+import com.nfhsnetwork.calebsunitytool.utils.Debug;
 
 public class UIController //TODO merge UIController and MainWindowFields
 {
@@ -19,7 +21,7 @@ public class UIController //TODO merge UIController and MainWindowFields
 	protected void onNoneSelected() 
 	{
 		// TODO change all fields to blank and/or disable all fields
-		updateAllLabels(null);
+		updateAllLabels(new NullNFHSObject());
 		updateAllEditableLabels(new NullNFHSObject());
 	}
 	
@@ -42,6 +44,7 @@ public class UIController //TODO merge UIController and MainWindowFields
 	{
 		if (n instanceof NullNFHSObject || n == null)
 		{
+			Debug.out("[DEBUG] {updateAllLabels} " + n.getGameID() + " is NullNFHSObject.");
 			mw.mwf.setGender("");
 			mw.mwf.setGameid("");
 			mw.mwf.setBdcid("");
@@ -60,6 +63,11 @@ public class UIController //TODO merge UIController and MainWindowFields
 			mw.mwf.setStarttime(null);
 			mw.mwf.setTitle("");
 			mw.mwf.setEventTags(null);
+			mw.mwf.setPxl_status("");
+			mw.mwf.setPxl_clubname("");
+			mw.mwf.setPxl_version("");
+			mw.mwf.setProd_focustype("");
+			
 		}
 		else
 		{
@@ -81,14 +89,31 @@ public class UIController //TODO merge UIController and MainWindowFields
 			mw.mwf.setStarttime(n.getDateTime());
 			mw.mwf.setTitle(n.getTitle());
 			mw.mwf.setEventTags(n.getEventTags());
+			
+			
+			if (!UnityContainer.ClubInventory.exists()) {
+				mw.mwf.setPxl_status("Req. CSV Import");
+				mw.mwf.setPxl_clubname("Req. CSV Import");
+				mw.mwf.setPxl_version("Req. CSV Import");
+			}
+			else if (n.isPixellot())
+			{
+				mw.mwf.setPxl_status(ClubInventory.get(n.getPixellot())[ClubInventory.STATUS]);
+				mw.mwf.setPxl_clubname(ClubInventory.get(n.getPixellot())[ClubInventory.SYSNAME]);
+				mw.mwf.setPxl_version(ClubInventory.get(n.getPixellot())[ClubInventory.VERSION]);
+			}
+			
+			if (n.isFocusEvent())
+			{
+				mw.mwf.setProd_focustype(n.getFocusEventType());
+			}
+			else
+			{
+				mw.mwf.setProd_focustype("Req. Focus List Import");
+			}
 		}
 		
-		if (n.isPixellot())
-		{
-			mw.mwf.setPxl_status(ClubInventory.get(n.getPixellot())[ClubInventory.STATUS]);
-			mw.mwf.setPxl_clubname(ClubInventory.get(n.getPixellot())[ClubInventory.SYSNAME]);
-			mw.mwf.setPxl_version(ClubInventory.get(n.getPixellot())[ClubInventory.VERSION]);
-		}
+		
 		
 		
 		

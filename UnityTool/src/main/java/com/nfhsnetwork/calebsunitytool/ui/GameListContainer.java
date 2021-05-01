@@ -16,6 +16,7 @@ import javax.swing.event.ListSelectionEvent;
 
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer;
 import com.nfhsnetwork.calebsunitytool.types.NFHSGameObject;
+import com.nfhsnetwork.calebsunitytool.utils.Debug;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -35,17 +36,13 @@ public class GameListContainer extends javax.swing.JPanel {
     
     
 	
-    /**
-     * Creates new form GameListContainer
-     */
-    public GameListContainer() { //TODO figure out why this doesn't appear in mainwindow
-        initComponents();
-    }
+    
     
     public GameListContainer(UIController c)
     {
     	initComponents();
     	this.c = c;
+    	this.list_gameIds.setSelectedIndex(0);
     }
 
     /**
@@ -131,17 +128,17 @@ public class GameListContainer extends javax.swing.JPanel {
     	int x = selected.size();
     	if (x == 1)
     	{
-    		System.out.println("[DEBUG] Selected size ONE");
+    		Debug.out("[DEBUG] Selected size ONE");
     		c.onOneSelected(selected.get(0));
     	}
     	else if (x > 1)
     	{
-    		System.out.println("[DEBUG] Selected size MULT, numSelected: " + x);
+    		Debug.out("[DEBUG] Selected size MULT, numSelected: " + x);
     		c.onMultipleSelected(selected);
     	}
     	else
     	{
-    		System.out.println("[DEBUG] Selected size ELSE, numSelected: " + x); //TODO debug
+    		Debug.out("[DEBUG] Selected size ELSE, numSelected: " + x); //TODO debug
     		c.onNoneSelected();
     	}
     }

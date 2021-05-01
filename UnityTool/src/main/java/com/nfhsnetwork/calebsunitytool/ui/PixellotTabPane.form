@@ -162,6 +162,7 @@
             <Component class="javax.swing.JLabel" name="data_clubname">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Requires CSV Import"/>
+                <Property name="opaque" type="boolean" value="true"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="data_sfname">
@@ -361,6 +362,7 @@
             <Component class="javax.swing.JLabel" name="tag_unitStatus">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Unit Status:"/>
+                <Property name="opaque" type="boolean" value="true"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="data_unitStatus">

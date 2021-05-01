@@ -5,6 +5,7 @@
  */
 package com.nfhsnetwork.calebsunitytool.ui;
 
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
@@ -23,13 +24,19 @@ import com.nfhsnetwork.calebsunitytool.io.SSOLogin;
  */
 public class LoginDialog extends javax.swing.JDialog {
     
-	final JFrame parent;
+	private final Window parent;
 	
     /**
      * Creates new form NewJFrame
      */
-    public LoginDialog(JFrame parent) {
-    	super(parent);
+    public LoginDialog(Window parent) {
+    	this(parent, ModalityType.APPLICATION_MODAL);
+    }
+    
+    public LoginDialog(Window parent, ModalityType modalityType)
+    {
+    	super(parent, modalityType);
+    	
     	this.parent = parent;
         initComponents();
     }
@@ -158,27 +165,34 @@ public class LoginDialog extends javax.swing.JDialog {
         				return;
         			}
         			
-					UnityContainer.setAuthToken(result);
+					onLogin(result);
+					return;
 				} 
         		catch (InterruptedException | ExecutionException e1)
         		{
 					e1.printStackTrace();
         		}
-        		loginSucceeded();
+        		loginFailed();
         	}
         });
         
         s.execute();
         
     }
+    
+    
+    private void onLogin(String token)
+    {
+    	UnityContainer.setAuthToken(token);
+    	loginSucceeded();
+    }
 
     
     private void loginFailed()
     {
-    	int res = JOptionPane.showOptionDialog(this, "Failed to login, please try again.", "Login Failed", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, null, null);
+    	JOptionPane.showOptionDialog(this, "Failed to login, please try again.", "Login Failed", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, null, null);
     	
-    	if (res != 2)
-    		((ImportDataFrame)parent).enableAllComponents();
+    	((ImportDataFrame)parent).enableAllComponents();
     }
     
     private void loginSucceeded()

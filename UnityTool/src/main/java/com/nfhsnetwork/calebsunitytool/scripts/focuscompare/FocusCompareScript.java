@@ -17,6 +17,7 @@ import com.nfhsnetwork.calebsunitytool.common.UnityContainer.ClubInventory;
 import com.nfhsnetwork.calebsunitytool.common.UnityToolCommon;
 import com.nfhsnetwork.calebsunitytool.exceptions.NullFieldException;
 import com.nfhsnetwork.calebsunitytool.types.NFHSGameObject;
+import com.nfhsnetwork.calebsunitytool.utils.Debug;
 import com.nfhsnetwork.calebsunitytool.utils.Util;
 import com.nfhsnetwork.calebsunitytool.utils.Util.TimeUtils;
 
@@ -67,7 +68,7 @@ public class FocusCompareScript
 			
 			if (temp.length < NUM_COLUMNS_FROM_FEL)
 			{
-				System.out.println("[DEBUG] {setFocusData} bad line: " + focusLine);
+				Debug.out("[DEBUG] {setFocusData} bad line: " + focusLine);
 				continue;
 			}
 			
@@ -94,7 +95,7 @@ public class FocusCompareScript
 			if (m.find())
 				broadcastKey = m.group();
 			else {
-				System.out.println("[DEBUG] {buildFromFocusSheetLine} bdc key not found");
+				Debug.out("[DEBUG] {buildFromFocusSheetLine} bdc key not found");
 				broadcastKey = null;
 			}
 
@@ -104,7 +105,7 @@ public class FocusCompareScript
 			if (m.find())
 				time = m.group();
 			else {	
-				System.out.println("[DEBUG] {buildFromFocusSheetLine} time not found");
+				Debug.out("[DEBUG] {buildFromFocusSheetLine} time not found");
 				time = null;
 			}
 			
@@ -114,11 +115,11 @@ public class FocusCompareScript
 				date = m.group();
 			} else {
 				date = null;
-				System.out.println("[DEBUG] {buildFromFocusSheetLine} date not found");
+				Debug.out("[DEBUG] {buildFromFocusSheetLine} date not found");
 			}
 			
 			if (time == null || date == null)
-				System.out.println("[DEBUG] {buildFromFocusSheetLine} null date or time for line:\n" + focusLine);
+				Debug.out("[DEBUG] {buildFromFocusSheetLine} null date or time for line:\n" + focusLine);
 			
 			LocalDateTime focusDateTime = LocalDateTime.parse(date + " " + time, NFHSGameObject.dtf_focusDT);
 			
@@ -158,10 +159,10 @@ public class FocusCompareScript
 			gameQueue.add(game);
 			
 			this.firePropertyChangeEvent(PC_PROGRESS, length, i);
-			//System.out.println("[DEBUG] {setFocusData} Game added, pc progress = " + i);
+			//Debug.out("[DEBUG] {setFocusData} Game added, pc progress = " + i);
 		}
 		
-		System.out.println("[DEBUG] gamequeue size: " + gameQueue.size());
+		Debug.out("[DEBUG] gamequeue size: " + gameQueue.size());
 		
 		return UnityToolCommon.SUCCESSFUL;
 	}
@@ -174,25 +175,15 @@ public class FocusCompareScript
 	    try {
 			
 	    	
-	    	//debug info:
-	    	if (UnityToolCommon.isDebugMode) {
-				String[] deets = ClubInventory.get(Util.hexStringToByteString(search));
-				if (deets == null) {
-					System.out.println("[DEBUG] {getSysIDDetails} details null for " + search + ". key exists: "
-							+ ClubInventory.containsKey(Util.hexStringToByteString(search)));
-					return null;
-				}
-				return deets;
-			} 
-	    	else 
-	    	{
-				return ClubInventory.get(Util.hexStringToByteString(search));
-			}
+	    	String[] details = ClubInventory.get(Util.hexStringToByteString(search));
+	    	
+	    	Debug.checkNull(details, "[DEBUG] {getSysIDDetails} details null for " + search + ". key exists: " + ClubInventory.containsKey(Util.hexStringToByteString(search)));
+	    	
+			return details;
 	    	
 	    	
 	    } catch (NullPointerException e) {
-	    	if (UnityToolCommon.isDebugMode)
-	    		System.out.println("[DEBUG] {getSysIDDetails} NullPointerException for " + search);
+	    	Debug.out("[DEBUG] {getSysIDDetails} NullPointerException for " + search);
 	    	
 	    	
 	    	return null;
@@ -242,9 +233,9 @@ public class FocusCompareScript
 	private boolean compareDateTime(FocusGameObject f)
 	{
 		LocalDateTime unityDT = TimeUtils.convertDateTimeToEST(f.getGameJson().getString("start_time"));
-		//System.out.println("[DEBUG] unityDT for " + f.getGameID() + ": " + unityDT.toString() + ", focus: " + f.getDt().toString());
+		//Debug.out("[DEBUG] unityDT for " + f.getGameID() + ": " + unityDT.toString() + ", focus: " + f.getDt().toString());
 		f.setUnityDT(unityDT);
-		//System.out.println("[DEBUG] unityDT = focusDT for " + f.getGameID() + ": " + unityDT.equals(f.getDt()));
+		//Debug.out("[DEBUG] unityDT = focusDT for " + f.getGameID() + ": " + unityDT.equals(f.getDt()));
 		return !unityDT.format(dtf_output).equals(f.getDt().format(dtf_output));
 		
 	}
@@ -279,14 +270,14 @@ public class FocusCompareScript
 													  .filter(el -> !el.getStatus().toLowerCase().equals("deleted") && !el.getStatus().toLowerCase().equals("cancelled"))
 													  .collect(Collectors.toUnmodifiableList());
 		
-//		System.out.println("[DEBUG] filteredGameList");
+//		Debug.out("[DEBUG] filteredGameList");
 //		filteredGameList.forEach(e -> System.out.println(e.getGameID()));
 		
 		deletedGames = filteredGameList.parallelStream()
 											 .filter(this::isDeleted)
 											 .collect(Collectors.toUnmodifiableList());
 		
-//		System.out.println("[DEBUG] deletedgames:");
+//		Debug.out("[DEBUG] deletedgames:");
 //		deletedGames.forEach(e -> {
 //			System.out.println(e.getGameID());
 //		});
@@ -297,7 +288,7 @@ public class FocusCompareScript
 											 .filter(this::hasErrors)
 											 .collect(Collectors.toUnmodifiableList());
 		
-//		System.out.println("[DEBUG] gameswitherrors:");
+//		Debug.out("[DEBUG] gameswitherrors:");
 //		gamesWithErrors.forEach(e -> System.out.println(e.getGameID()));
 
 		
@@ -306,7 +297,7 @@ public class FocusCompareScript
 											 .filter(this::compareDateTime)
 											 .collect(Collectors.toUnmodifiableList());
 
-//		System.out.println("[DEBUG] gamesWithAlteredDatesOrTimes:");
+//		Debug.out("[DEBUG] gamesWithAlteredDatesOrTimes:");
 //		gamesWithAlteredDatesOrTimes.forEach(e -> System.out.println(e.getGameID()));
 		
 		if (ClubInventory.exists()) 
@@ -432,7 +423,7 @@ public class FocusCompareScript
 					String[] details = getSysIDDetails(game.getPxlId());
 					if (details == null)
 					{
-						System.out.println("[DEBUG] {buildOutputText} details is null for " + game.getPxlId() + " | game id: " + game.getGameID());
+						Debug.out("[DEBUG] {buildOutputText} details is null for " + game.getPxlId() + " | game id: " + game.getGameID());
 						return;
 					}
 					
@@ -475,7 +466,7 @@ public class FocusCompareScript
 	
 	private boolean printOutputToFile(String s) throws IOException
 	{
-		System.out.println("[DEBUG] {printOutputToFile} Print output");
+		Debug.out("[DEBUG] {printOutputToFile} Print output");
 		
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm-ss");
 		LocalDateTime now = LocalDateTime.now();
@@ -572,7 +563,7 @@ public class FocusCompareScript
 //		
 //		LocalDateTime unityDT = Util.convertDateTimeToEST(unityTime);
 //		
-//		System.out.println("[DEBUG] DateTime of " + n.getGameID() + ": " + unityDT.toString());
+//		Debug.out("[DEBUG] DateTime of " + n.getGameID() + ": " + unityDT.toString());
 //		
 //		
 //		//Output
@@ -646,14 +637,14 @@ public class FocusCompareScript
 //					if (!isNFHS(k.getKey()))
 //					{
 //						//count.incrementAndGet();
-//						System.out.println("[DEBUG] " + k + " is not NFHS.");
+//						Debug.out("[DEBUG] " + k + " is not NFHS.");
 //						return;
 //					}
 //					
 //					if (g.getIsDeleted())
 //					{
 //						this.deletedGames.add(k.getKey());
-//						System.out.println("[DEBUG] {compareFocus} Deleted game detected - " + k);
+//						Debug.out("[DEBUG] {compareFocus} Deleted game detected - " + k);
 //						//count.incrementAndGet();
 //						return;
 //					}
@@ -704,10 +695,10 @@ public class FocusCompareScript
 //					  .importData(focusData_raw, UnityContainer.ImportTypes.FOCUS);
 //		
 //		UnityContainer.getContainer().getEventMap().keySet().forEach(e -> {
-//			System.out.println("[DEBUG] " + e + ": " + UnityContainer.getContainer().getEventMap().get(e));
+//			Debug.out("[DEBUG] " + e + ": " + UnityContainer.getContainer().getEventMap().get(e));
 //		});
 //		
-//		System.out.println("[DEBUG] EventMap Size: " + UnityContainer.getContainer().getEventMap().size());
+//		Debug.out("[DEBUG] EventMap Size: " + UnityContainer.getContainer().getEventMap().size());
 //		
 //		return SUCCESSFUL;
 //	}

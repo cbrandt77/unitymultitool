@@ -20,6 +20,7 @@ import com.nfhsnetwork.calebsunitytool.exceptions.InvalidContentTypeException;
 import com.nfhsnetwork.calebsunitytool.exceptions.NullFieldException;
 import com.nfhsnetwork.calebsunitytool.io.UnityInterface;
 import com.nfhsnetwork.calebsunitytool.scripts.focuscompare.FocusCompareScript;
+import com.nfhsnetwork.calebsunitytool.utils.Debug;
 import com.nfhsnetwork.calebsunitytool.utils.Util;
 import com.nfhsnetwork.calebsunitytool.utils.Util.IOUtils;
 import com.nfhsnetwork.calebsunitytool.utils.Util.TimeUtils;
@@ -35,7 +36,8 @@ public class NFHSGameObject
 	private static final int numDigitsInID = 13;
 	
 	//TODO implement new regex and Builder method of initialization.
-	public static NFHSGameObject buildFromIdOrUrl(String in) throws InvalidContentTypeException, GameNotFoundException
+	
+	public static NFHSGameObject buildFromIdOrUrl(String in) throws GameNotFoundException, InvalidContentTypeException
 	{
 		if (in.length() < 13)
 			throw new InvalidContentTypeException("String too short");
@@ -43,6 +45,10 @@ public class NFHSGameObject
 		String event_id = null;
 		String bdc_id = null;
 		NFHSContentType n = null;
+		
+		
+		
+		// Find the event ID
 		
 		int startIndex;
 		if ((startIndex = in.indexOf("gam")) != -1) 
@@ -54,15 +60,12 @@ public class NFHSGameObject
 				event_id = temp;
 				n = NFHSContentType.GAME;
 				
-				//System.out.println("[DEBUG] game id detected: " + event_id);
+				//Debug.out("[DEBUG] game id detected: " + event_id);
 				
-				if (NFHSContentType.identify(event_id) != NFHSContentType.GAME)
-					throw new RuntimeException("[DEBUG] game id mismatch, bad substring | event id: " + event_id + " | input: " + in);
-				//TODO debug info ^
+				assert(NFHSContentType.identify(event_id) == NFHSContentType.GAME);
 			}
 		}
-		
-		if ((startIndex = in.indexOf("evt")) != -1) 
+		else if ((startIndex = in.indexOf("evt")) != -1) 
 		{
 			String temp = in.substring(startIndex, startIndex + numDigitsInID);
 			
@@ -70,9 +73,10 @@ public class NFHSGameObject
 			{
 				event_id = temp;
 				n = NFHSContentType.EVENT;
-				//System.out.println("[DEBUG] event id detected: " + event_id);
+				//Debug.out("[DEBUG] event id detected: " + event_id);
 			}
 		}
+		
 		
 		if ((startIndex = in.indexOf("bdc")) != -1) 
 		{
@@ -81,11 +85,11 @@ public class NFHSGameObject
 			if (BDCIDPATTERN.matcher(temp).matches()) 
 			{
 				bdc_id = temp;
-				//System.out.println("[DEBUG] bdc id detected: " + bdc_id);
-				if (event_id == null) 
+				//Debug.out("[DEBUG] bdc id detected: " + bdc_id);
+				
+				if (event_id == null) // if the game ID wasn't given but the broadcast key was, get the game id from the broadcast key
 				{
-					try 
-					{
+					try {
 						event_id = IOUtils.FetchID.fetchEventIDFromChild(bdc_id, NFHSContentType.BROADCAST);
 					} 
 					catch (IOException e) {
@@ -95,27 +99,35 @@ public class NFHSGameObject
 				}
 			}
 		}
-			
 		
 		if (event_id == null && bdc_id == null) {
-			System.out.println("[DEBUG] {buildFromIdOrUrl} invalidcontenttypeexception thrown for " + in);
+			Debug.out("[DEBUG] {buildFromIdOrUrl} invalidcontenttypeexception thrown for " + in);
 			throw new InvalidContentTypeException(in, "gam/evt/bdc/vod");
 		}
 		
-		//TODO figure out when to fetch json and when not to
-		JSONObject jGet = null;
-		try {
-			jGet = UnityInterface.fetchEventFromUnity(event_id);
-		} catch (IOException e) {
-			throw new GameNotFoundException(event_id, e);
-		}
 		
-		return new NFHSGameObject(
-				event_id,
-				new String[] {bdc_id},
-				jGet,
-				n);
+		//Since the event json is entirely reliant on the game id, I don't think I should separate the two.
+		//Actually, since the broadcast key is as well, I feel like I should let the builder handle this.
+		//Everything is already stored on Unity, so they have the workload of abstracting the two, and I should let them do the work for me.
+		
+		
+//		JSONObject jGet = null;
+//		try {
+//			jGet = UnityInterface.fetchEventFromUnity(event_id);
+//		} catch (IOException e) {
+//			throw new GameNotFoundException(event_id, e);
+//		}
+		
+		
+		assert(event_id != null); //bdc id might be null here
+		
+		return new Builder()
+					 .setEventId(event_id)
+					 .build();
 	}
+	
+	
+	
 	
 	public static final Pattern FOCUS_DATE_PATTERN = Pattern.compile("((?:\\d{1,2})/(?:\\d{1,2})/(?:\\d{2,4}))");
 	public static final Pattern FOCUS_TIME_PATTERN = Pattern.compile("((?:\\d){1,2}:(?:\\d){1,2}:(?:\\d){1,2} (?:PM|AM|pm|am))");
@@ -151,7 +163,7 @@ public class NFHSGameObject
 		if (m.find())
 			broadcastKey = new String[] { m.group() };
 		else {
-			System.out.println("[DEBUG] {buildFromFocusSheetLine} bdc key not found");
+			Debug.out("[DEBUG] {buildFromFocusSheetLine} bdc key not found");
 			broadcastKey = null;
 		}
 
@@ -161,7 +173,7 @@ public class NFHSGameObject
 		if (m.find())
 			time = m.group();
 		else {	
-			System.out.println("[DEBUG] {buildFromFocusSheetLine} time not found");
+			Debug.out("[DEBUG] {buildFromFocusSheetLine} time not found");
 			time = null;
 		}
 		
@@ -171,13 +183,13 @@ public class NFHSGameObject
 			date = m.group();
 		} else {
 			date = null;
-			System.out.println("[DEBUG] {buildFromFocusSheetLine} date not found");
+			Debug.out("[DEBUG] {buildFromFocusSheetLine} date not found");
 		}
 		
 		LocalDateTime focusDateTime;
 		if (time == null || date == null)
 		{
-			System.out.println("[DEBUG] {buildFromFocusSheetLine} null date or time for line:\n" + focusLine);
+			Debug.out("[DEBUG] {buildFromFocusSheetLine} null date or time for line:\n" + focusLine);
 			focusDateTime = null;
 		}
 		else {
@@ -209,20 +221,20 @@ public class NFHSGameObject
 			e.printStackTrace();
 		}
 		
-		System.out.println("[DEBUG] game id detected: " + gameID + "\n[DEBUG] bdc id detected: " + ((broadcastKey == null) ? "null" : broadcastKey[0]));
+		Debug.out("[DEBUG] game id detected: " + gameID + "\n[DEBUG] bdc id detected: " + ((broadcastKey == null) ? "null" : broadcastKey[0]));
 		
 		
 		NFHSGameObject n;
 		try {
-			n = Builder.newBuilder()
-									  .setEventId(gameID)
-									  .addBroadcastKeys(broadcastKey)
-									  .setFocusDateTime(focusDateTime)
-									  .setFocusStatus(status)
-									  .setFocusTitle(title)
-									  .setFocusMonitoringType(type)
-									  .build();
-		} catch (GameNotFoundException | InvalidContentTypeException | IOException e) {
+			n = new Builder()
+					  .setEventId(gameID)
+					  .addBroadcastKeys(broadcastKey)
+					  .setFocusDateTime(focusDateTime)
+					  .setFocusStatus(status)
+					  .setFocusTitle(title)
+					  .setFocusMonitoringType(type)
+					  .build();
+		} catch (GameNotFoundException | InvalidContentTypeException e) {
 			e.printStackTrace();
 			return new NullNFHSObject(gameID, e);
 		}
@@ -243,6 +255,7 @@ public class NFHSGameObject
 	private final String[] bdc_ids;
 	private final NFHSContentType content_type;
 	private final TerritoryManagers terr_mgr;
+	private final boolean hasbdcstate;
 	
 	
 	//Only initialized if created by focus data import
@@ -267,14 +280,16 @@ public class NFHSGameObject
 		this.game_json = j;
 		this.content_type = n;
 		
-		if (j != null)
+		if (j != null) {
 			this.terr_mgr = TerritoryManagers.getTerritoryManager(getStateCode());
+			this.hasbdcstate = fetchAndSetBdcStateJSON();
+		}
 		else {
 			this.terr_mgr = null;
-			fetchAndSetBdcStateJSON();
+			this.hasbdcstate = false;
 		}
 		
-		if (bdc_ids != null)
+		if (bdc_ids != null && this.isPixellot())
 		{
 			try {
 				this.pixellot = Util.hexStringToByteString(this.getFirstBroadcast().getString("pixellot_id"));
@@ -288,18 +303,19 @@ public class NFHSGameObject
 	
 
 
-	private void fetchAndSetBdcStateJSON()
+	private boolean fetchAndSetBdcStateJSON()
 	{
 		JSONObject stateJSON;
 		try {
 			stateJSON = UnityInterface.fetchBdcStateJSON(this.bdc_ids[0]);
 		} catch (Exception e) {
-			System.out.println("[DEBUG] {fetchAndSetBdcStateJSON} exception thrown for game " + this.game_id);
+			Debug.out("[DEBUG] {fetchAndSetBdcStateJSON} exception thrown for game " + this.game_id);
 			e.printStackTrace();
-			return;
+			return false;
 		}
 		
 		this.bdcstate_json = stateJSON;
+		return true;
 	}
 	
 	
@@ -662,11 +678,17 @@ public class NFHSGameObject
 	}
 	
 	
-	public JSONObject getBdcState() {
+	
+	public boolean hasBdcStateJSON()
+	{
+		return this.hasbdcstate;
+	}
+	
+	public JSONObject getBdcState() throws NullPointerException {
 		return this.bdcstate_json;
 	}
 	
-	public String getHLSStatus() {
+	public String getHLSStatus() throws NullPointerException {
 		return this.bdcstate_json.getString("BroadcastState");
 	}
 	
@@ -700,11 +722,6 @@ public class NFHSGameObject
 		private Builder()
 		{
 			childIds = new ArrayList<>();
-		}
-		
-		public static Builder newBuilder()
-		{
-			return new Builder();
 		}
 		
 		public Builder addBroadcastKey(String key)
@@ -767,110 +784,126 @@ public class NFHSGameObject
 			return this;
 		}
 		
-		public NFHSGameObject build() throws GameNotFoundException, InvalidContentTypeException, IOException
+		public NFHSGameObject build() throws GameNotFoundException, InvalidContentTypeException
 		{
-			if (eventId == null) 
+			try 
 			{
-				if (childIds == null)
+				if (eventId == null) // if no game id was given:
 				{
-					if (event_json != null)
+					if (childIds.size() == 0) // if no child ids were given either:
 					{
-						String key;
-						try {
-							 key = event_json.getString("key");
-						} catch (JSONException e) {
-							throw new GameNotFoundException("No information given in building.");
+						if (event_json != null) // if no event id or child id was given but there is a json:
+						{
+							String key;
+							try {
+								 key = event_json.getString("key");
+							} catch (JSONException e) {
+								throw new GameNotFoundException("No information given in building.");
+							}
+							
+							switch (NFHSContentType.identify(key)) {
+								case EVENT:
+								case GAME:
+									eventId = key;
+									break;
+								case BROADCAST:
+								case VOD:
+									childIds.add(key);
+									return build();
+								default:
+									throw new InvalidContentTypeException(key, "gam/evt/bdc/vod");
+							}
 						}
+						else
+							throw new InvalidContentTypeException("No information given in building.");
+					}
+					else // if childIds != null but gameId == null
+					{
+						for (String s : childIds)
+						{
+							String get;
+							try {
+								get = IOUtils.FetchID.fetchEventIDIfNeeded(s);
+							} catch (GameNotFoundException e) {
+								continue;
+							} catch (InvalidContentTypeException e) {
+								continue;
+							} catch (IOException e) {
+								throw new IOException("Issue contacting Unity broadcast server.", e);
+							}
+							
+							eventId = get;
+							break;
+						}
+						throw new GameNotFoundException("Unable to find broadcast.");
+					}
+				}
+				
+				
+				assert(eventId != null);
+				
+				
+				
+				
+				
+				if (event_json == null)
+				{
+					event_json = UnityInterface.fetchEventFromUnity(eventId);
+					childIds.add(NFHSGameObject.getFirstBroadcast(event_json).getString("key")); // TODO support multiple broadcasts, maybe in a tab pane
 						
-						switch (NFHSContentType.identify(key)) {
-							case EVENT:
-							case GAME:
+					
+				}
+				else // Compare info from JSON to provided details and conform to fit json if necessary
+				{
+					String key;
+					try {
+						 key = event_json.getString("key");
+					} catch (JSONException e) {
+						throw new GameNotFoundException("Not enough information given in building.");
+					}
+					
+					switch (NFHSContentType.identify(key)) {
+						case EVENT:
+						case GAME:
+							if (!eventId.equals(key)) {
+								Debug.out("[DEBUG] {Builder} {build} eventId " + eventId + " does not equal id from JSON: " + key + "; conforming to json");
 								eventId = key;
-								break;
-							case BROADCAST:
-							case VOD:
-								childIds.add(key);
-								return build();
-							default:
-								throw new InvalidContentTypeException(key, "gam/evt/bdc/vod");
-						}
+								childIds.clear();
+								childIds.add(NFHSGameObject.getFirstBroadcast(event_json).getString("key"));
+							}
+							
+							break;
+						case BROADCAST:
+						case VOD:
+						default:
+							event_json = UnityInterface.fetchEventFromUnity(eventId);
 					}
-					else
-						throw new InvalidContentTypeException("No information given in building.");
 				}
-				else // if childIds != null
+				
+				
+				assert(childIds.size() != 0);
+				
+				NFHSGameObject n = new NFHSGameObject(eventId, childIds.toArray(new String[childIds.size()]), event_json, NFHSContentType.identify(eventId));
+				
+				if (isFocusEvent)
 				{
-					for (String s : childIds)
-					{
-						String get;
-						try {
-							get = IOUtils.FetchID.fetchEventIDIfNeeded(s);
-						} catch (GameNotFoundException e) {
-							continue;
-						} catch (InvalidContentTypeException e) {
-							continue;
-						} catch (IOException e) {
-							throw new IOException("Issue contacting Unity broadcast server.", e);
-						}
-						
-						eventId = get;
-						break;
-					}
-					throw new GameNotFoundException("Unable to find broadcast.");
-				}
-			}
-			
-			assert(eventId != null);
-			
-			
-			if (event_json == null)
-			{
-				event_json = UnityInterface.fetchEventFromUnity(eventId);
-			}
-			else 
-			{
-				String key;
-				try {
-					 key = event_json.getString("key");
-				} catch (JSONException e) {
-					throw new GameNotFoundException("Not enough information given in building.");
+					n.setFocusEvent(true);
+					
+					if (this.focusDateTime != null)
+						n.setFocusDateTime(focusDateTime);
+					if (this.focusStatus != null)
+						n.setFocusStatus(focusStatus);
+					if (this.focusTitle != null)
+						n.setFocusTitle(focusTitle);
+					if (this.focusType != null)
+						n.setFocusEventType(focusType);
 				}
 				
-				switch (NFHSContentType.identify(key)) {
-					case EVENT:
-					case GAME:
-						if (!eventId.equals(key)) {
-							System.out.println("[DEBUG] {Builder} {build} eventId " + eventId + " does not equal JSON key " + key + ", conforming to json");
-							eventId = key;
-							childIds.clear();
-							childIds.add(NFHSGameObject.getFirstBroadcast(event_json).getString("key"));
-						}
-						break;
-					case BROADCAST:
-					case VOD:
-					default:
-						event_json = UnityInterface.fetchEventFromUnity(eventId);
-				}
+				return n;
+			} catch (IOException e) {
+				return new NullNFHSObject(eventId, e);
 			}
-			
-			NFHSGameObject n = new NFHSGameObject(eventId, childIds.toArray(new String[childIds.size()]), event_json, NFHSContentType.identify(eventId));
-			
-			if (isFocusEvent)
-			{
-				n.setFocusEvent(true);
-				
-				if (this.focusDateTime != null)
-					n.setFocusDateTime(focusDateTime);
-				if (this.focusStatus != null)
-					n.setFocusStatus(focusStatus);
-				if (this.focusTitle != null)
-					n.setFocusTitle(focusTitle);
-				if (this.focusType != null)
-					n.setFocusEventType(focusType);
-			}
-			
-			return n;
-		}
+		} 
 		
 		
 	}

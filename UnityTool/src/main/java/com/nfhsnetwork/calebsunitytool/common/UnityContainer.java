@@ -2,6 +2,8 @@ package com.nfhsnetwork.calebsunitytool.common;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,16 +12,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.protobuf.ByteString;
+import com.nfhsnetwork.calebsunitytool.common.UnityToolCommon.PropertyChangeType;
 import com.nfhsnetwork.calebsunitytool.exceptions.GameNotFoundException;
 import com.nfhsnetwork.calebsunitytool.exceptions.InvalidContentTypeException;
 import com.nfhsnetwork.calebsunitytool.types.NFHSGameObject;
 import com.nfhsnetwork.calebsunitytool.types.NullNFHSObject;
+import com.nfhsnetwork.calebsunitytool.utils.Debug;
 import com.nfhsnetwork.calebsunitytool.utils.Util;
 import com.nfhsnetwork.calebsunitytool.utils.Util.StringUtils;
 
@@ -98,7 +103,7 @@ public final class UnityContainer {
 	
 	private BlockingQueue<String> getQueue;
 	
-	public UnityContainer importEventData(String input, ImportTypes importType)
+	public UnityContainer importEventData(String input, ImportTypes importType) throws InterruptedException
 	{
 //		if (importType != ImportTypes.FOCUS || importType != ImportTypes.OTHER)
 //			throw new RuntimeException("Invalid Import Type");
@@ -109,43 +114,52 @@ public final class UnityContainer {
 		
 		getQueue = new LinkedBlockingQueue<String>();
 		
-		ExecutorService executor = Executors.newFixedThreadPool(4);
+		final ExecutorService executor = Executors.newFixedThreadPool(4);
 		
+		final int totalTasks = inputSplit.length;
 		
+		final AtomicInteger completedTaskCounter = new AtomicInteger(0);
 		
-		int totalTasks = inputSplit.length;
-		AtomicInteger completedTaskCounter = new AtomicInteger(0);
-		
-		System.out.println("[DEBUG] Total Tasks: " + totalTasks);
-		
+		Debug.out("[DEBUG] Total Tasks: " + totalTasks);
 		
 		for (String s : inputSplit) 
 		{
 			getQueue.add(s);
 			
-			Task_BuildNFHSObjects task = new Task_BuildNFHSObjects(completedTaskCounter) {
+			Task_BuildNFHSObjects task = new Task_BuildNFHSObjects(completedTaskCounter, totalTasks) {
 					@Override
 					protected NFHSGameObject factoryMethod(String input)
 							throws InvalidContentTypeException, GameNotFoundException 
 					{
 						if (importType == ImportTypes.FOCUS) {
 							NFHSGameObject n = NFHSGameObject.buildFromFocusSheetLine(input);
-							System.out.println("[DEBUG] [UC] focus build | game id: " + n.getGameID());
+							Debug.out("[DEBUG] [UC] focus build | game id: " + n.getGameID());
 							return n;
 						}
 						else {
 							NFHSGameObject n = NFHSGameObject.buildFromIdOrUrl(input);
-							System.out.println("[DEBUG] [UC] url build | game id: " + n.getGameID());
+							Debug.out("[DEBUG] [UC] url build | game id: " + n.getGameID());
 							return n;
 						}
 					}
 			};
 			
 			executor.execute(task);
-			System.out.println("[DEBUG] [UC] Added " + s + " to queue!"); //TODO debug
+			
+			Debug.out("[DEBUG] [UC] Added " + s + " to queue!");
 		}
 		
+		//lockThread();
 		
+		Debug.out("[DEBUG] {importEventData} after locked thread, must be unlocked?");
+		
+		
+		
+		
+		
+//		return this;
+//		
+//	}
 		//TODO don't busy-wait
 		new Thread(
 				() -> {
@@ -153,10 +167,11 @@ public final class UnityContainer {
 					{
 						if (completedTaskCounter.intValue() >= totalTasks)
 						{
-							System.out.println("[DEBUG] [UC] All games added to list.");
-							System.out.println("[DEBUG] [UC] Size of map: " + eventMap.size());
-							actionListeners.stream()
-										   .forEach(l -> l.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "parse_complete"))); //TODO
+							firePropertyChangeEvent(UnityContainer.this, PropertyChangeType.PARSE_COMPLETE, null, null);
+							
+							Debug.out("[DEBUG] [UC] All games added to list.");
+							Debug.out("[DEBUG] [UC] Size of map: " + eventMap.size());
+							
 							return;
 						}
 					}
@@ -165,15 +180,36 @@ public final class UnityContainer {
 		
 		return this;
 	}
+		
+	private synchronized void lockThread()
+	{
+		try {
+			Debug.out("[DEBUG] {lockThread} locking thread");
+			UnityContainer.this.wait();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private synchronized void unlockThread()
+	{
+		UnityContainer.this.notify();
+		Debug.out("[DEBUG] {unlockThread} thread notified");
+	}
 	
 	
+
+
 	private abstract class Task_BuildNFHSObjects implements Runnable
 	{
 		private final AtomicInteger counter;
+		private final int totalTasks;
 		
-		Task_BuildNFHSObjects(AtomicInteger counter)
+		Task_BuildNFHSObjects(AtomicInteger counter, final int totalTasks)
 		{
 			this.counter = counter;
+			this.totalTasks = totalTasks;
 		}
 		
 		@Override
@@ -181,7 +217,7 @@ public final class UnityContainer {
 		{
 			try 
 			{
-				//System.out.println("[DEBUG] [UC] [BNO] Building game");
+				//Debug.out("[DEBUG] [UC] [BNO] Building game");
 				
 				String input = getQueue.take();
 				
@@ -199,21 +235,36 @@ public final class UnityContainer {
 				}
 				if (n.getGameID() == null)
 				{
-					System.out.println("[DEBUG] {UC run} game ID is null for line: " + "\n" + input);
-					counter.incrementAndGet();
+					Debug.out("[DEBUG] {UC run} game ID is null for line: " + "\n" + input);
+					beforeReturn();
 					return;
 				}
 				
 				eventMap.put(n.getGameID(), n);
-				counter.incrementAndGet();
+				beforeReturn();
 			}
 			catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				beforeReturn();
 				throw new RuntimeException("Queue Take operation interrupted.", e);
 			}
 			
 		}
+		
+		private void beforeReturn()
+		{
+			counter.incrementAndGet();
+		}
+		
+//		private void beforeReturn()
+//		{
+//			if (counter.incrementAndGet() >= totalTasks) {
+//				unlockThread();
+//				Debug.out("[DEBUG] {beforeReturn} unlocking thread");
+//			}
+//				
+//		}
 
 		protected abstract NFHSGameObject factoryMethod(String input) throws InvalidContentTypeException, GameNotFoundException;
 	}
@@ -231,7 +282,7 @@ public final class UnityContainer {
 	}
         
 	
-	private List<ActionListener> actionListeners = new ArrayList<>();
+	
 
 	
 	
@@ -254,6 +305,8 @@ public final class UnityContainer {
 		{
 			clubInventoryMap = new HashMap<>();
 		}
+		
+		
 		
 		private static Map<ByteString, String[]> clubInventoryMap = null;
 		
@@ -318,13 +371,17 @@ public final class UnityContainer {
 								StringUtils.stripQuotes(items[csv_version_index])
 						};
 						
-						if (UnityToolCommon.isDebugMode) {
-							System.out.println("[DEBUG] {parseClubCSV} put " + StringUtils.stripQuotes(items[csv_sysid_index])
+						
+						
+						
+						
+						Debug.out("[DEBUG] {parseClubCSV} put " + StringUtils.stripQuotes(items[csv_sysid_index])
 									+ " into map.");
-							for (String s : details) {
-								System.out.println("[DEBUG] {parseClubCSV} \t-" + s);
-							}
+						for (String s : details) {
+							Debug.out("[DEBUG] {parseClubCSV} \t-" + s);
 						}
+						
+						
 						
 						clubInventoryMap.put(systemID, details);
 					} catch (Exception e) {
@@ -332,9 +389,8 @@ public final class UnityContainer {
 					}
 				});
 				
-				if (UnityToolCommon.isDebugMode) {
-					System.out.println("[DEBUG] {csv_fetchHeaderIndices} sysname: " + csv_sysname_index + " | sysid: " + csv_sysid_index + " | status: " + csv_status_index + " | version: " + csv_version_index);
-				}
+				Debug.out("[DEBUG] {csv_fetchHeaderIndices} sysname: " + csv_sysname_index + " | sysid: " + csv_sysid_index + " | status: " + csv_status_index + " | version: " + csv_version_index);
+				
 			}
 			
 			return UnityToolCommon.SUCCESSFUL;
@@ -392,9 +448,6 @@ public final class UnityContainer {
 		private static final String CSV_STATUS_HEADER = "VPU Status";
 		private static final String CSV_VERSION_HEADER = "Version";
 		
-		
-		
-		
 		public static final int SYSNAME = 0;
 		public static final int STATUS = 1;
 		public static final int VERSION = 2;
@@ -402,13 +455,26 @@ public final class UnityContainer {
 	
 	
 	
+	private Set<PropertyChangeListener> listeners_propertyChange = new CopyOnWriteArraySet<>();
 	
-	
-	public UnityContainer addActionListener(ActionListener listener) 
+	public UnityContainer addPropertyChangeListener(PropertyChangeListener listener) 
 	{
-		actionListeners.add(listener);
+		listeners_propertyChange.add(listener);
 		return this;
 	}
+	
+	public void firePropertyChangeEvent(Object source, PropertyChangeType type, Object oldValue, Object newValue) 
+	{
+		PropertyChangeEvent evt = new PropertyChangeEvent(source, type.toString(), oldValue, newValue);
+		
+		this.listeners_propertyChange.forEach(
+				el -> el.propertyChange(evt));
+	}
+	
+	
+	
+	
+	
 	
 	private static String user_email;
 	

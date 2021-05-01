@@ -19,12 +19,14 @@ import javax.swing.SwingWorker;
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer;
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer.ClubInventory;
 import com.nfhsnetwork.calebsunitytool.common.UnityContainer.ImportTypes;
+import com.nfhsnetwork.calebsunitytool.io.SSOLogin;
 import com.nfhsnetwork.calebsunitytool.common.UnityToolCommon;
 import com.nfhsnetwork.calebsunitytool.scripts.focuscompare.FocusCompareScript;
 import com.nfhsnetwork.calebsunitytool.scripts.focuscompare.FocusOutputFrame;
 import com.nfhsnetwork.calebsunitytool.scripts.multiviewertag.MultiviewerTagScript;
 import com.nfhsnetwork.calebsunitytool.ui.components.ProgressBarDialogBox;
 import com.nfhsnetwork.calebsunitytool.ui.pixellotcsv.DragNDropCSV;
+import com.nfhsnetwork.calebsunitytool.utils.Debug;
 import com.nfhsnetwork.calebsunitytool.utils.Util.IOUtils;
 
 /**
@@ -42,7 +44,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
      */
     public ImportDataFrame() {
         initComponents();
-        this.button_mviewer.setEnabled(false); //#BlameAndy :P
+        this.button_mviewer.setEnabled(true); //#BlameAndy :P
     }
 
     /**
@@ -299,7 +301,8 @@ public class ImportDataFrame extends javax.swing.JFrame {
     	SwingUtilities.invokeLater(() -> {
     		disableAllComponents();
     		
-    		UnityContainer.getInstance().addActionListener((e) -> {
+    		UnityContainer.getInstance().addPropertyChangeListener((e) -> {
+    			Debug.out("[DEBUG] {button_importActionPerformed} action event fired");
     			ImportDataFrame.this.setVisible(false);
     			new MainWindow().setVisible(true);
     			ImportDataFrame.this.dispose();
@@ -309,6 +312,11 @@ public class ImportDataFrame extends javax.swing.JFrame {
     	});
     }//GEN-LAST:event_button_importActionPerformed
 
+    
+    
+    
+    
+    
     private FocusCompareScript fe;
     
     private void button_focuscompareActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_focuscompareActionPerformed
@@ -325,14 +333,17 @@ public class ImportDataFrame extends javax.swing.JFrame {
         importPxlCSV();
     }//GEN-LAST:event_button_focuscompareActionPerformed
     
+    
+    
+    
     private void importPxlCSV()
     {
     	Function<File, File> onFileSelected = (file) -> {
 			executeFocusScript(file);
 			if (file == null)
-				System.out.println("[DEBUG] Script executed with null csv.");
+				Debug.out("[DEBUG] Script executed with null csv.");
 			else
-				System.out.println("[DEBUG] Script executed with csv: " + file.getAbsolutePath());
+				Debug.out("[DEBUG] Script executed with csv: " + file.getAbsolutePath());
 			return null;
 		};
     	
@@ -359,7 +370,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
         SwingWorker<Integer, Void> setDataWorker = new SwingWorker<Integer, Void>() {
 			@Override
 			protected Integer doInBackground() throws Exception {
-				System.out.println("[DEBUG] {doInBackground} SetDataWorker executed");
+				Debug.out("[DEBUG] {doInBackground} SetDataWorker executed");
 				return fe.setFocusData(ImportDataFrame.this.placeholderTextArea1.getText());
 			}
 			
@@ -384,7 +395,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
     		fe.addPropertyChangeListener((e) -> {
         		if (e.getPropertyName().equals(FocusCompareScript.PC_PROGRESS))
         		{
-        			//System.out.println("[DEBUG] {executeFocusScript} set value");
+        			//Debug.out("[DEBUG] {executeFocusScript} set value");
         			bar.setValue((Integer)e.getNewValue() * 100 / (Integer)e.getOldValue());
         		}
         		else if (e.getPropertyName().equals(FocusCompareScript.PC_DONE))
@@ -396,7 +407,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
         		}
         	});
     		
-    		System.out.println("[DEBUG] {executeFocusScript} setDataWorker executed");
+    		Debug.out("[DEBUG] {executeFocusScript} setDataWorker executed");
 		    setDataWorker.execute();
     		pbdb.setVisible(true);
 		});
@@ -414,7 +425,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
 			@Override
 			protected void done()
 			{
-				System.out.println("[DEBUG] {parseclubcsv | done} club csv parse complete");
+				Debug.out("[DEBUG] {parseclubcsv | done} club csv parse complete");
 				executeFocusScript(null);
 			}
 		};
@@ -426,7 +437,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
 
 	private void afterSetFocusData(Integer x) 
     {
-    	System.out.println("[DEBUG] {afterSetFocusData} method call");
+    	Debug.out("[DEBUG] {afterSetFocusData} method call");
     	if (x == UnityToolCommon.FAILED)
         {
         	int res = JOptionPane.showOptionDialog(this, "Invalid data.", "ERROR", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
@@ -442,14 +453,14 @@ public class ImportDataFrame extends javax.swing.JFrame {
         	SwingWorker<String, Void> compareWorker = new SwingWorker<String, Void>() {
         		@Override
         		public String doInBackground() throws IOException {
-        			System.out.println("[DEBUG] {afterSetFocusData} {doInBackground} Comparing focus");
+        			Debug.out("[DEBUG] {afterSetFocusData} {doInBackground} Comparing focus");
         			return fe.compareFocus();
         		}
         		
         		@Override
         		public void done()
         		{
-        			System.out.println("[DEBUG] {afterSetFocusData} {done()} focus compare done");
+        			Debug.out("[DEBUG] {afterSetFocusData} {done()} focus compare done");
         			String output;
         			try {
         				output = get();
@@ -495,31 +506,43 @@ public class ImportDataFrame extends javax.swing.JFrame {
         bar.setAlwaysOnTop(true);
         
         MultiviewerTagScript mts = new MultiviewerTagScript(this);
+        
+        
+        
+        
+        
         mts.inputIDs(placeholderTextArea1.getText());
         
+        final int total = placeholderTextArea1.getLineCount();
+        
         mts.addPropertyChangeListener((e) -> {
-        	if (e.getPropertyName().equals(MultiviewerTagScript.FINISHED)) 
+        	if (e.getPropertyName().equals(UnityToolCommon.PropertyChangeType.DONE.toString())) 
         	{
         		afterMultiviewerOperation();
         	}
-        	else if (e.getPropertyName().equals(MultiviewerTagScript.CHANGED))
+        	else if (e.getPropertyName().equals(UnityToolCommon.PropertyChangeType.PROGRESS.toString()))
         	{
-        		bar.getProgressBar().setValue((Integer)e.getNewValue());
+        		bar.getProgressBar().setValue((Integer)e.getNewValue() * 100 / total);
         	}
         });
         
         SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
-				mts.execute(bar);
+				mts.startTagOperation();
 				return null;
 			}
         };
         
         //TODO figure out loading bar
         SwingUtilities.invokeLater(() -> {
-        	bar.setVisible(true);
-        	sw.execute();
+        	SSOLogin.showLoginDialog(
+        			SwingUtilities.windowForComponent(this),
+        			(v) -> {
+        				sw.execute();
+        	        	bar.setVisible(true);
+        				return null;
+        			});
         });
         
     }//GEN-LAST:event_button_mviewerActionPerformed

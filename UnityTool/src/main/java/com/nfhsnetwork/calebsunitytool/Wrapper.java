@@ -7,17 +7,17 @@ import javax.swing.JOptionPane;
 import com.nfhsnetwork.calebsunitytool.common.UnityToolCommon;
 import com.nfhsnetwork.calebsunitytool.ui.ImportDataFrame;
 import com.nfhsnetwork.calebsunitytool.updater.UpdateManager;
+import com.nfhsnetwork.calebsunitytool.utils.Debug;
 import com.nfhsnetwork.calebsunitytool.utils.Util;
 
 public class Wrapper 
 {
 	public static void main(String[] args) 
 	{
-		if (UnityToolCommon.isDebugMode) {
-			System.out.println("[DEBUG] {main} Debug mode active.");
-			System.out.println("[DEBUG] {main} Current directory: " + Util.getCurrentDirectory());
-			System.out.println("[DEBUG] {main} GetClass directory: " + Wrapper.class.getProtectionDomain().getCodeSource().getLocation());
-		}
+		
+		Debug.out("[DEBUG] {main} Current directory: " + Util.getCurrentDirectory());
+		Debug.out("[DEBUG] {main} GetClass directory: " + Wrapper.class.getProtectionDomain().getCodeSource().getLocation());
+		
 		
 		UpdateManager.deleteUpdateScriptIfPresent(); //TODO
         
@@ -26,9 +26,9 @@ public class Wrapper
 		System.out.println("Requires update? " + requiresUpdate);
 		
 		if (requiresUpdate) {
-			if (UnityToolCommon.isDebugMode) {
-				System.out.println("[DEBUG] {main} Update downloaded, executing update script.");
-			}
+			
+			Debug.out("[DEBUG] {main} Update downloaded, executing update script.");
+			
 			
 			UpdateManager.printAndRunUpdateScript();
 		}

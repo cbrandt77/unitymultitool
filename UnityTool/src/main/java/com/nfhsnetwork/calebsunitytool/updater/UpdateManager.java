@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import com.google.protobuf.ByteString;
 import com.nfhsnetwork.calebsunitytool.common.UnityToolCommon;
+import com.nfhsnetwork.calebsunitytool.utils.Debug;
 import com.nfhsnetwork.calebsunitytool.utils.Util;
 import com.nfhsnetwork.calebsunitytool.utils.Util.IOUtils;
 
@@ -58,9 +59,9 @@ public class UpdateManager {
 	 */
 	public static boolean checkAndGetUpdates() 
 	{
-		if (UnityToolCommon.isDebugMode) {
-			System.out.println("[DEBUG] {checkAndGetUpdates} ");
-		}
+		Debug.out("[DEBUG] {checkAndGetUpdates} init check");
+		
+		
 		switch (checkVersion()) {
 			case CURRENT:
 				return false;
@@ -84,23 +85,23 @@ public class UpdateManager {
 	private static int checkVersion()
 	{
 		try {
-			if (UnityToolCommon.isDebugMode) {
-				System.out.println("[DEBUG] {checkVersion} checking version");
-			}
+			Debug.out("[DEBUG] {checkVersion} checking version");
+			
+			
 			JSONObject version = new JSONObject(getVersionJSON());
 			
-			if (UnityToolCommon.isDebugMode) {
-				System.out.println("[DEBUG] {checkVersion} version json: " + version.toString());
-			}
+			
+			Debug.out("[DEBUG] {checkVersion} version json: " + version.toString());
+			
 			
 			String versionString = version.getString("current");
 			String modifierString = version.getString("modifiers");
+			
 			if (CURRENTVERSION.equals(versionString)
 					&& VERSIONMODIFIERS.equals(modifierString))
 			{
-				if (UnityToolCommon.isDebugMode) {
-					System.out.println("[DEBUG] {checkVersion} is current version");
-				}
+				Debug.out("[DEBUG] {checkVersion} is current version");
+				
 				
 				return CURRENT;
 			}
@@ -113,10 +114,8 @@ public class UpdateManager {
 				for (int i = 0, l = versionarr.length; i < l; i++) 
 				{
 					try {
-//						if (UnityToolCommon.isDebugMode) {
-//							System.out.println("[DEBUG] {checkVersion} versionarr[i] = " + Integer.valueOf(versionarr[i]));
-//							System.out.println("current[i] = " + Integer.valueOf(current[i]));
-//						}
+//						Debug.out("[DEBUG] {checkVersion} versionarr[i] = " + Integer.valueOf(versionarr[i]));
+//						Debug.out("current[i] = " + Integer.valueOf(current[i]));
 						
 						if (Integer.valueOf(versionarr[i]) > Integer.valueOf(current[i])) //TODO change to only accept versions without modifiers. Also fix version control system completely.
 						{
@@ -125,31 +124,27 @@ public class UpdateManager {
 						}
 					} catch (NumberFormatException e) {
 						// assume this is the modifiers? I don't think I'm scanning the mods tbh
-						if (UnityToolCommon.isDebugMode) {
-							System.out.println("[DEBUG] {checkVersion} NumFormatException");
-						}
+						Debug.out("[DEBUG] {checkVersion} NumFormatException");
+						
 						return CURRENT;
 					}
 				}
 				
-				if (UnityToolCommon.isDebugMode) {
-					System.out.println("[DEBUG] {checkVersion} isGreater = " + isGreater);
-				}
+				Debug.out("[DEBUG] {checkVersion} isGreater = " + isGreater);
+				
 				
 				if (isGreater)
 				{
 					source_checksum = Util.hexStringToByteString(version.getString("checksum"));
 					
-					if (UnityToolCommon.isDebugMode) {
-						System.out.println("[DEBUG] {checkVersion} version is outdated");
-					}
+					Debug.out("[DEBUG] {checkVersion} version is outdated");
+					
 					
 					return OUTDATED;
 				}
 				
-				if (UnityToolCommon.isDebugMode) {
-					System.out.println("[DEBUG] {checkVersion} reach end return current");
-				}
+				Debug.out("[DEBUG] {checkVersion} reach end return current");
+				
 				return CURRENT;
 			}
 		} 
@@ -159,9 +154,9 @@ public class UpdateManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		if (UnityToolCommon.isDebugMode) {
-			System.out.println("[DEBUG] {checkVersion} interrupted");
-		}
+		
+		Debug.out("[DEBUG] {checkVersion} interrupted");
+		
 		
 		return INTERRUPTED;
 	}
@@ -177,9 +172,8 @@ public class UpdateManager {
 				filesum = ByteString.copyFrom(downloadFile());
 				if (filesum != null && filesum.equals(source_checksum))
 				{
-					if (UnityToolCommon.isDebugMode) {
-						System.out.println("[DEBUG] {doUpdate} return true");
-					}
+					Debug.out("[DEBUG] {doUpdate} return true");
+					
 					return true;
 				}
 			} catch (IOException e) {
@@ -239,9 +233,8 @@ public class UpdateManager {
 		
 		UpdateManager.NEWFILENAME = githubAPIObject.getString("name");
 		
-		if (UnityToolCommon.isDebugMode) {
-			System.out.println("[DEBUG] {downloadFile} download url: " + downloadUrl);
-		}
+		Debug.out("[DEBUG] {downloadFile} download url: " + downloadUrl);
+		
 		
 		URL url;
 		try {
@@ -353,25 +346,21 @@ public class UpdateManager {
 		if (UnityToolCommon.ISWINDOWS)
 		{
 			pb.command("cmd", Util.getCurrentDirectory() + File.separator + UpdateManager.SCRIPTNAME);
-			if (UnityToolCommon.isDebugMode) {
-				System.out.println("[DEBUG] {executePostUpdateScript} is windows");
-			}
+			Debug.out("[DEBUG] {executePostUpdateScript} is windows");
 		}
 		else
 		{
 			pb.command("sh", Util.getCurrentDirectory() + File.separator + UpdateManager.SCRIPTNAME);
-			if (UnityToolCommon.isDebugMode) {
-				System.out.println("[DEBUG] {executePostUpdateScript} is not windows");
-			}
+			Debug.out("[DEBUG] {executePostUpdateScript} is not windows");
+			
 		}
 		
 		try {
-			if (UnityToolCommon.isDebugMode) {
-				System.out.println("[DEBUG] {executePostUpdateScript} executing");
-			}
+			Debug.out("[DEBUG] {executePostUpdateScript} executing");
+			
 			pb.start();
 			
-			System.exit(0); //?
+			System.exit(0); //TODO should I do this???
 		} catch (IOException e) {
 			showFailedToCleanUpdateWindow();
 			e.printStackTrace();
@@ -384,9 +373,7 @@ public class UpdateManager {
 		
 		if (updatescript.exists())
 		{
-			if (UnityToolCommon.isDebugMode) {
-				System.out.println("[DEBUG] {deleteUpdateScriptIfPresent} update script exists, deleting");
-			}
+			Debug.out("[DEBUG] {deleteUpdateScriptIfPresent} update script exists, deleting");
 			
 			if (!updatescript.delete())
 				showFailedToCleanUpdateWindow();

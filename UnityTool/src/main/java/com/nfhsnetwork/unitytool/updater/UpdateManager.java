@@ -1,10 +1,12 @@
 package com.nfhsnetwork.unitytool.updater;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -277,11 +279,41 @@ public class UpdateManager {
 	}
 	
 	
+	private static JSONObject getChecksumObject(JSONObject j) throws IOException
+	{
+		String url = j.getString("url");
+		
+		HttpURLConnection http = getGitHubURLConnection(new URL(url));
+		http.addRequestProperty("Accept", "application/json");
+		
+		
+		String response;
+		try (InputStream is = http.getInputStream();
+				BufferedReader rd = new BufferedReader(new InputStreamReader(is)))
+		{
+			response = IOUtils.readAllFromReader(rd);
+		}
+		
+		Debug.out("[DEBUG] {getChecksumObject} checksum json object: " + response);
+		
+		return new JSONObject(response);
+	}
+	
+	
+	
 	private static boolean doChecksum(Package p) {
 		if (checksumObject == null)
 			return false;
 		
-		ByteString checkAgainst = Util.hexStringToByteString(checksumObject.getString(p.getType().getChecksumName()));
+		JSONObject checksumDownload;
+		try {
+			checksumDownload = getChecksumObject(checksumObject);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		ByteString checkAgainst = Util.hexStringToByteString(checksumDownload.getString(p.getType().getChecksumName()));
 		
 		return p.getChecksum().equals(checkAgainst);
 	}

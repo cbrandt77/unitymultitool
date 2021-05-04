@@ -6,6 +6,7 @@
 package com.nfhsnetwork.unitytool.ui;
 
 import java.awt.Dialog;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
@@ -363,7 +364,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
 	{
 		if (f != null)
 		{
-			parseClubCsv(f); // parses clubcsv, then recurs once with null param
+			parseClubCsv(f); // parses clubcsv, then calls this again with null param
 			return;
 		}
 		
@@ -418,13 +419,29 @@ public class ImportDataFrame extends javax.swing.JFrame {
     	SwingWorker<Void, Void> parseClubCsvWorker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
-				ClubInventory.parse(IOUtils.readFromFile(f));
+				Debug.out("[DEBUG] {doInBackground} parseclubcsvworker started");
+				
+				String s = IOUtils.readFromFile(f);
+				
+				Debug.out("[DEBUG] {doInBackground} CSV file readout: " + s);
+				
+				int res = ClubInventory.parse(s);
+				
+				if (res == UnityToolCommon.FAILED)
+				{
+					SwingUtilities.invokeLater(() -> {
+						JOptionPane.showOptionDialog(ImportDataFrame.this, "Failed to parse CSV. Executing focus script without.", "CSV Parse Failed", JOptionPane.DEFAULT_OPTION,
+								JOptionPane.ERROR_MESSAGE, null, null, null);
+					});
+					
+					return null;
+				}
+				
 				return null;
 			}
 			
 			@Override
-			protected void done()
-			{
+			public void done() {
 				Debug.out("[DEBUG] {parseclubcsv | done} club csv parse complete");
 				executeFocusScript(null);
 			}

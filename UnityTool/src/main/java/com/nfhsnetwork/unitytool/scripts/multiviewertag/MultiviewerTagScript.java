@@ -10,7 +10,6 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
@@ -22,8 +21,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,7 +30,6 @@ import com.nfhsnetwork.unitytool.common.UnityToolCommon;
 import com.nfhsnetwork.unitytool.exceptions.GameNotFoundException;
 import com.nfhsnetwork.unitytool.exceptions.InvalidContentTypeException;
 import com.nfhsnetwork.unitytool.types.NFHSGameObject;
-import com.nfhsnetwork.unitytool.ui.LoginDialog;
 import com.nfhsnetwork.unitytool.ui.components.ProgressBarDialogBox;
 import com.nfhsnetwork.unitytool.utils.Debug;
 

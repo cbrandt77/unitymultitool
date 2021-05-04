@@ -24,7 +24,7 @@ import com.nfhsnetwork.unitytool.utils.Util;
 import com.nfhsnetwork.unitytool.utils.Util.IOUtils;
 
 public class UpdateManager {
-	private static final String CURRENTVERSION = "v1.0.0";
+	private static final String CURRENTVERSION = "v1.0.1";
 	private static final String VERSIONMODIFIERS = "";
 	public static final String FULLVERSIONNAME = CURRENTVERSION + " - " + VERSIONMODIFIERS;
 	

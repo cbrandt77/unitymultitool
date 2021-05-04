@@ -5,11 +5,8 @@
  */
 package com.nfhsnetwork.unitytool.ui;
 
-import java.awt.Color;
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
 
 /**
  *

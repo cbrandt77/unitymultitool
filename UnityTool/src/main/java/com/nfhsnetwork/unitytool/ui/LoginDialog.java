@@ -12,7 +12,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import com.nfhsnetwork.unitytool.common.UnityContainer;

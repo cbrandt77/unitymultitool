@@ -5,6 +5,9 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
+
+import javax.swing.JOptionPane;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -318,7 +321,12 @@ public class FocusCompareScript
 		
 		String output = buildOutputText();
 		
-		printOutputToFile(output); //TODO show "failed to print" window
+		try {
+			printOutputToFile(output); //TODO show "failed to print" window
+		} catch (IOException e) {
+			JOptionPane.showOptionDialog(null, "Failed to print to file.", "Print Failed", JOptionPane.DEFAULT_OPTION,
+					JOptionPane.ERROR_MESSAGE, null, null, null);
+		}
 		
 		firePropertyChangeEvent(PC_DONE, null, null);
 		
@@ -471,7 +479,7 @@ public class FocusCompareScript
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm-ss");
 		LocalDateTime now = LocalDateTime.now();
 		
-		String fileName = Util.getCurrentDirectory() + File.separator + "outputs";
+		String fileName = Util.getCurrentDirectory() + File.separator + "outputs" + File.separator;
 		File file = new File(fileName);
 		
 		fileName = "Output " + dtf.format(now).toString() + ".txt";

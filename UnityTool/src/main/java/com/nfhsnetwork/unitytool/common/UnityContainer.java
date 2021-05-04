@@ -1,10 +1,7 @@
 package com.nfhsnetwork.unitytool.common;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -343,14 +340,16 @@ public final class UnityContainer {
 		
 		private static Integer parseClubCSV(List<String> csv)
 		{
-			clubInventoryMap = new ConcurrentHashMap<>();
+			Debug.out("[DEBUG] {parseClubCSV} passed in CSV: " + csv.size());
 			
 			if (!ClubInventory.csv_fetchHeaderIndices(csv.get(0)))
 			{
+				Debug.out("[DEBUG] {parseClubCSV} return failed");
 				return UnityToolCommon.FAILED;
 			}
 			else
 			{
+				clubInventoryMap = new ConcurrentHashMap<>();
 				int largestIndex = Integer.max(Integer.max(csv_sysname_index, csv_sysid_index),
 						Integer.max(csv_status_index, csv_version_index));
 				
@@ -401,6 +400,7 @@ public final class UnityContainer {
 		{
 			// headers
 			String[] headers = headerLine.split(",");
+			Debug.out("[DEBUG] {csv_fetchHeaderIndices} header line = " + headerLine);
 			
 			headers:
 			for (int i = 0, l = headers.length; i < l; i++) {
@@ -408,15 +408,19 @@ public final class UnityContainer {
 				{
 					case CSV_SYSNAME_HEADER:
 						csv_sysname_index = i;
+						Debug.out("[DEBUG] {csv_fetchHeaderIndices} sysname index = " + i);
 						continue headers;
 					case CSV_SYSID_HEADER:
 						csv_sysid_index = i;
+						Debug.out("[DEBUG] {csv_fetchHeaderIndices} sysid index = " + i);
 						continue headers;
 					case CSV_STATUS_HEADER:
 						csv_status_index = i;
+						Debug.out("[DEBUG] {csv_fetchHeaderIndices} status index = " + i);
 						continue headers;
 					case CSV_VERSION_HEADER:
 						csv_version_index = i;
+						Debug.out("[DEBUG] {csv_fetchHeaderIndices} version index = " + i);
 						continue headers;
 				}
 			}

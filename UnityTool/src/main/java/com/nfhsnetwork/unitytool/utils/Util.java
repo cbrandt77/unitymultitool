@@ -15,7 +15,6 @@ import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -205,14 +204,19 @@ public final class Util
 
 		public static String readFromFile(File file) throws FileNotFoundException, IOException
 		{
-			StringBuilder sb = new StringBuilder();
+			Debug.out("[DEBUG] {readFromFile} File path: " + file.getAbsolutePath());
+			
+			String s = null;
 			
 			try (BufferedReader rd = new BufferedReader(new FileReader(file)))
 			{
-				IOUtils.readAllFromReader(rd);
+				s = IOUtils.readAllFromReader(rd);
 			}
 			
-			return sb.toString();
+			if (s == null)
+				throw new FileNotFoundException("[UnityTool] {readFromFile} returned null for " + file.getAbsolutePath());
+		
+			return s;
 		}
 
 		public static String readAllFromReader(Reader rd) throws IOException
@@ -329,13 +333,15 @@ public final class Util
 		 */
 		public static boolean createFolderPrintFile(String toPrint, File directory, String fileName) throws IOException
 		{
-			if (!directory.isDirectory())
-				throw new IOException("Invalid directory provided.");
-			
 			if (!directory.exists())
 			{
 				directory.mkdir();
 			}
+			
+			if (!directory.isDirectory())
+				throw new IOException("[UnityTool] Invalid directory provided for print.");
+			
+			
 			String s = directory.toString();
 			if (!s.endsWith(File.separator)
 					&& !fileName.startsWith(File.separator)) {

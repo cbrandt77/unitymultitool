@@ -18,7 +18,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
-import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import org.jsoup.Jsoup;

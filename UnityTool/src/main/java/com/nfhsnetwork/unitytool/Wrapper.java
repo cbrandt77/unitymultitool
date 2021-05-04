@@ -2,9 +2,6 @@ package com.nfhsnetwork.unitytool;
 
 import java.io.File;
 
-import javax.swing.JOptionPane;
-
-import com.nfhsnetwork.unitytool.common.UnityToolCommon;
 import com.nfhsnetwork.unitytool.ui.ImportDataFrame;
 import com.nfhsnetwork.unitytool.updater.UpdateManager;
 import com.nfhsnetwork.unitytool.utils.Debug;

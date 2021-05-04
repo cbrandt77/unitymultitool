@@ -201,7 +201,8 @@ class MainWindow extends javax.swing.JFrame {
 
         menuItem_dologin.setText("Login to Unity");
         menuItem_dologin.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItem_dologinActionPerformed(evt);
             }
         });
@@ -209,7 +210,8 @@ class MainWindow extends javax.swing.JFrame {
 
         menuItem_importNewData.setText("Import New Data");
         menuItem_importNewData.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItem_importNewDataActionPerformed(evt);
             }
         });
@@ -218,7 +220,8 @@ class MainWindow extends javax.swing.JFrame {
 
         menuItem_openPixellotCSV.setText("Import Pixellot CSV");
         menuItem_openPixellotCSV.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItem_openPixellotCSVActionPerformed(evt);
             }
         });
@@ -227,7 +230,8 @@ class MainWindow extends javax.swing.JFrame {
 
         menuItem_exportToFocus.setText("Export as Focus List Sheet");
         menuItem_exportToFocus.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItem_exportToFocusActionPerformed(evt);
             }
         });
@@ -240,7 +244,8 @@ class MainWindow extends javax.swing.JFrame {
 
         menuItemCB_enableEditing.setText("Enable Editing");
         menuItemCB_enableEditing.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItemCB_enableEditingActionPerformed(evt);
             }
         });
@@ -257,7 +262,8 @@ class MainWindow extends javax.swing.JFrame {
         view_gameList_eventID.setSelected(true);
         view_gameList_eventID.setText("Event ID");
         view_gameList_eventID.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 view_gameList_eventIDActionPerformed(evt);
             }
         });
@@ -266,7 +272,8 @@ class MainWindow extends javax.swing.JFrame {
         view_gameList_bdcID.setSelected(true);
         view_gameList_bdcID.setText("Broadcast ID");
         view_gameList_bdcID.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 view_gameList_bdcIDActionPerformed(evt);
             }
         });
@@ -275,7 +282,8 @@ class MainWindow extends javax.swing.JFrame {
         view_gameList_title.setSelected(true);
         view_gameList_title.setText("Title");
         view_gameList_title.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 view_gameList_titleActionPerformed(evt);
             }
         });
@@ -285,7 +293,8 @@ class MainWindow extends javax.swing.JFrame {
 
         menuItem_refresh.setText("Refresh Data");
         menuItem_refresh.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItem_refreshActionPerformed(evt);
             }
         });

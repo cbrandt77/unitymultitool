@@ -13,6 +13,7 @@ public final class UnityToolCommon
 	
 	public static final int SUCCESSFUL = 12;
 	public static final int FAILED = 32;
+	public static final int INTERRUPTED = 41;
 	
 
 

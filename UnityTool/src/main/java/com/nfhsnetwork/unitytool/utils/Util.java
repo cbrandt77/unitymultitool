@@ -243,10 +243,10 @@ public final class Util
 		
 		public static String httpGET(String url) throws IOException
 		{
-			return httpGET(url, null);
+			return httpGETString(url, null);
 		}
 		
-		public static String httpGET(String url, Map<String, String> headers) throws IOException
+		public static String httpGETString(String url, Map<String, String> headers) throws IOException
 		{
 			return httpGET(url, null, headers);
 		}

@@ -23,10 +23,11 @@ import javax.swing.SwingUtilities;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import com.nfhsnetwork.unitytool.common.Config;
 import com.nfhsnetwork.unitytool.common.UnityContainer;
+import com.nfhsnetwork.unitytool.logging.Debug;
 import com.nfhsnetwork.unitytool.ui.LoginDialog;
-import com.nfhsnetwork.unitytool.utils.Debug;
-import com.nfhsnetwork.unitytool.utils.Util.IOUtils;
+import com.nfhsnetwork.unitytool.utils.IOUtils;
 
 public final class SSOLogin
 {
@@ -40,66 +41,12 @@ public final class SSOLogin
 		CookieHandler.setDefault(null);
 	}
 	
-	static CookieManager cm; 
+	static CookieManager cm;
 	
 	
-//	
-//	public static void main(String[] args)
-//	{
-//		try {
-//			loginToUnity("caleb.brandt@nfhsnetwork.com", "beelayboop".toCharArray());
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
-	
-	
-//	public static String login(String email, char[] password) throws IOException
-//	{
-//		cm = new CookieManager();
-//		HttpClient h = HttpClient.newBuilder()
-//								 .cookieHandler(cm)
-//								 .build();
-//		
-//		try {
-//			HttpRequest.Builder getbuilder = HttpRequest.newBuilder(new URI(SSO_ENDPOINT))
-//					   					 .GET();
-//			getbuilder.header("Accept-Language", "en-US,en;q=0.9");
-//			getbuilder.header("Accept-Encoding", "gzip, deflate");
-//			getbuilder.header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
-//			getbuilder.header("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac ISWINDOWS X 11_2_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36");
-//			getbuilder.header("Content-Type", "application/x-www-form-urlencoded");
-//			getbuilder.header("Origin", "http://sso.nfhsnetwork.com");
-//			getbuilder.header("Upgrade-Insecure-Requests", "1");
-//			getbuilder.header("Cache-Control", "max-age=0");
-//			//getbuilder.header("Connection", "keep-alive");
-//			//getbuilder.header("Host", "sso.nfhsnetwork.com");
-//			HttpRequest get = getbuilder.build();
-//			
-//			HttpResponse<String> s = h.send(get, BodyHandlers.ofString());
-//			
-//			System.out.println(s.body());
-//			System.out.println(s.statusCode());
-//			System.out.println(s.headers());
-//		} catch (IOException | InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (URISyntaxException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//
-//		
-//		
-//		return null;
-//	}
-	
-	
-	public static void showLoginDialog(Window parent, Function<Void, Void> callback)
+	public static void showLoginDialog(final Window parent, final Function<Void, Void> callback)
 	{
-		LoginDialog ld = new LoginDialog(parent);
-		ld.setAlwaysOnTop(true);
+		final LoginDialog ld = new LoginDialog(parent);
 		
 		ld.addActionListener((evt) -> {
 			ld.setVisible(false);
@@ -120,15 +67,15 @@ public final class SSOLogin
 		CookieHandler.setDefault(cm);
 		cm.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
 		
-		String csrfToken = URLEncoder.encode(getCSRFToken(), "UTF-8");
+		final String csrfToken = URLEncoder.encode(getCSRFToken(), "UTF-8");
 		
-		String dataRaw = String.format(RAWPOSTDATA, csrfToken, email, new String(cs));
-		byte[] out = dataRaw.getBytes();
+		final String dataRaw = String.format(RAWPOSTDATA, csrfToken, email, new String(cs));
+		final byte[] out = dataRaw.getBytes();
 		
 		Debug.out("[DEBUG]" + dataRaw);
 		
 		
-		HttpURLConnection http = (HttpURLConnection)(new URL(SSO_ENDPOINT).openConnection());
+		final HttpURLConnection http = (HttpURLConnection)(new URL(SSO_ENDPOINT).openConnection());
 		http.setRequestMethod("POST");
 		http.setDoInput(true);
 		http.setDoOutput(true);
@@ -138,14 +85,14 @@ public final class SSOLogin
 		
 		http.connect();
 		
-		try (OutputStream os = http.getOutputStream())
+		try (final OutputStream os = http.getOutputStream())
 		{
 			os.write(out);
 		}
 		
 		Debug.out("[DEBUG] response content type: " + http.getContentType());
 		
-		try (InputStream is = http.getInputStream())
+		try (final InputStream is = http.getInputStream())
 		{
 			System.out.println("\n\n[DEBUG] Login Response:\n" + IOUtils.readAllFromReader(new BufferedReader(new InputStreamReader(is))) + "\n\n");
 		}
@@ -157,15 +104,18 @@ public final class SSOLogin
 		
 		cm.getCookieStore().getCookies().stream().forEach(System.out::println); //[DEBUG]
 		
-		List<HttpCookie> l = cm.getCookieStore().getCookies().stream().filter(e -> e.toString().contains("sso_access_token"))
+		final List<HttpCookie> l = cm.getCookieStore().getCookies().stream().filter(e -> e.toString().contains("sso_access_token"))
 							.collect(Collectors.toList());
 		
 		if (l.size() != 1)
 			throw new IOException("[BTPOS] no cookies retrieved");
 		
-		String authToken = l.get(0)
-								.toString()
-									.substring("sso_access_token=".length());
+		final String authToken = l.get(0)
+									.toString()
+										.substring("sso_access_token=".length());
+		
+//		if (shouldSaveLoginInfo)
+//			saveTokenToFile(authToken);
 		
 		UnityContainer.setUserEmail(email);
 		
@@ -174,13 +124,13 @@ public final class SSOLogin
 	
 	private static String getCSRFToken() throws IOException
 	{
-		HttpURLConnection http = (HttpURLConnection)(new URL(SSO_ENDPOINT).openConnection());
+		final HttpURLConnection http = (HttpURLConnection)(new URL(SSO_ENDPOINT).openConnection());
 		http.setRequestMethod("GET");
 		http.connect();
 		
 		String siteBody = null;
 		if (http.getResponseCode() == 200) {
-			try (InputStream is = http.getInputStream())
+			try (final InputStream is = http.getInputStream())
 			{
 				if ("gzip".equals(http.getContentEncoding())) 
 				{
@@ -195,12 +145,12 @@ public final class SSOLogin
 			}
 		}
 		else {
-			throw new IOException("[BTPOS] Could not connect to SSO.");
+			throw new IOException("[UnityTool] Could not connect to SSO.");
 		}
 		
 		
 		
-		Document doc = Jsoup.parse(siteBody);
+		final Document doc = Jsoup.parse(siteBody);
 		
 		System.out.println("\n\n[DEBUG] Site body:\n" + siteBody + "\n\n");
 		
@@ -224,6 +174,20 @@ public final class SSOLogin
 		http.addRequestProperty("Cache-Control", "max-age=0");
 		http.addRequestProperty("Connection", "keep-alive");
 		http.addRequestProperty("Host", "sso.nfhsnetwork.com");
+	}
+	
+	
+	private static boolean shouldSaveLoginInfo = Config.shouldSaveToken();
+	
+	public static final void saveTokenToFile(final String token)
+	{
+		final String raw = token.split("=")[1];
+		
+		try {
+			IOUtils.printToFile(raw, Config.getCookieFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

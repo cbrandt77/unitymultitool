@@ -1,0 +1,29 @@
+{
+	"version": "v1.0.2",
+	
+	"is_first_launch": true,
+	
+	
+	"outputs": {
+		
+		"save_focus_compare": true,
+		
+		
+		"dir": "/outputs",
+		
+		"prefix": "Output ",
+		
+		
+		"timestamp_format": "yyyy-MM-dd HH-mm-ss"
+	},
+	
+	
+	"view": {
+		"game_list_display_info": 0
+	},
+	
+	"io": {
+		"save_sso_cookie": true
+	}
+	
+}

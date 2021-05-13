@@ -15,8 +15,8 @@ import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 
 import com.nfhsnetwork.unitytool.common.UnityContainer;
+import com.nfhsnetwork.unitytool.logging.Debug;
 import com.nfhsnetwork.unitytool.types.NFHSGameObject;
-import com.nfhsnetwork.unitytool.utils.Debug;
 
 import java.awt.Component;
 import java.awt.Dimension;

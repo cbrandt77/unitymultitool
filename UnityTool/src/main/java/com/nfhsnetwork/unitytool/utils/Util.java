@@ -1,26 +1,15 @@
 package com.nfhsnetwork.unitytool.utils;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.Reader;
 import java.net.Authenticator;
-import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
-import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,10 +17,8 @@ import org.json.JSONObject;
 
 import com.google.protobuf.ByteString;
 import com.nfhsnetwork.unitytool.common.UnityToolCommon;
-import com.nfhsnetwork.unitytool.exceptions.GameNotFoundException;
-import com.nfhsnetwork.unitytool.exceptions.InvalidContentTypeException;
 import com.nfhsnetwork.unitytool.exceptions.NullFieldException;
-import com.nfhsnetwork.unitytool.types.NFHSContentType;
+import com.nfhsnetwork.unitytool.logging.Debug;
 
 /**
  * 
@@ -44,7 +31,7 @@ public final class Util
 	
 	static {
 		if (UnityToolCommon.ISWINDOWS) {
-			CURRENTDIRECTORY = Path.of(truncateFilePath(new File("").getAbsolutePath()));
+			CURRENTDIRECTORY = Path.of(new File("").getAbsolutePath());
 		}
 		else {
 //			boolean worked = false;
@@ -64,7 +51,7 @@ public final class Util
 //			if (worked) //workaround to get java to stop yelling at me about reassigned final vars
 //				CURRENTDIRECTORY = p;
 //			else
-				CURRENTDIRECTORY = Path.of(truncateFilePath(new File("").getAbsolutePath()));//TODO debug info //Path.of(truncateFilePath(Util.class.getProtectionDomain().getCodeSource().getLocation().getPath()));
+				CURRENTDIRECTORY = Path.of(new File("").getAbsolutePath());//TODO debug info //Path.of(truncateFilePath(Util.class.getProtectionDomain().getCodeSource().getLocation().getPath()));
 		}
 	}
 	
@@ -80,7 +67,22 @@ public final class Util
 	{
 		public static String stripQuotes(String input)
 		{
-			return input.replaceAll("^\"", "").replaceAll("\"$", "");
+			return strip(input, "\"");
+		}
+		
+		public static String strip(String input, String toStrip)
+		{
+			return input.replaceAll("^" + toStrip, "").replaceAll(toStrip + "$", "");
+		}
+		
+		public static String stripFromEnd(String input, String toStrip)
+		{
+			return input.replaceAll(toStrip + "$", "");
+		}
+		
+		public static String stripFromBeginning(String input, String toStrip)
+		{
+			return input.replaceAll("^" + toStrip, "");
 		}
 		
 	}
@@ -142,227 +144,12 @@ public final class Util
 	    return new String(hexChars);
 	}
 	
-	public static class IOUtils
-	{
-
-		public static class FetchID 
-		{
-			/**
-			 * Wrapper function for {@link fetchEventIDFromChild}.
-			 * Checks if the input is a valid event ID, and if not, determines what type of child it is, fetches the child JSON, and retrieves the parent ID from that.
-			 * @param id Input child ID
-			 * @return parent event ID for the given child id, or returns the input if it is already a valid parent.
-			 * @throws GameNotFoundException if parent could not be found.
-			 * @throws IOException if external
-			 * @throws InvalidContentTypeException
-			 */
-			public static String fetchEventIDIfNeeded(String id) throws GameNotFoundException, IOException, InvalidContentTypeException
-			{
-				if (NFHSContentType.isValidEventId(id))
-				{
-					return id;
-				}
-				else if (NFHSContentType.BROADCAST.is(id))
-				{
-					return fetchEventIDFromChild(id, NFHSContentType.BROADCAST);
-				}
-				else if (NFHSContentType.VOD.is(id))
-				{
-					return fetchEventIDFromChild(id, NFHSContentType.VOD);
-				}
-				else
-				{
-					throw new InvalidContentTypeException(id, "gam/evt/bdc/vod");
-				}
-			}
-			
-			/**
-			 * 
-			 * @param id child ID.
-			 * @param contentType the type of the ID.
-			 * @return String containing parent event ID.
-			 * @throws GameNotFoundException
-			 * @throws IOException
-			 */
-			public static String fetchEventIDFromChild(String id, NFHSContentType contentType) throws GameNotFoundException, IOException
-			{
-				try
-				{
-					JSONObject bdc_or_vod = readJSONFromURL(contentType.getEndpointURL() + id);
-					String gameID = bdc_or_vod.getString("game_key");
-					
-					if (gameID == null)
-						throw new GameNotFoundException(id);
-					
-					return gameID;
-				} 
-				catch (JSONException e) {
-					throw new GameNotFoundException(id, e);
-				}
-			}
-		}
-
-		public static String readFromFile(File file) throws FileNotFoundException, IOException
-		{
-			Debug.out("[DEBUG] {readFromFile} File path: " + file.getAbsolutePath());
-			
-			String s = null;
-			
-			try (BufferedReader rd = new BufferedReader(new FileReader(file)))
-			{
-				s = IOUtils.readAllFromReader(rd);
-			}
-			
-			if (s == null)
-				throw new FileNotFoundException("[UnityTool] {readFromFile} returned null for " + file.getAbsolutePath());
-		
-			return s;
-		}
-
-		public static String readAllFromReader(Reader rd) throws IOException
-		{
-			StringBuilder sb = new StringBuilder();
-			int cp;
-			while ((cp = rd.read()) != -1)
-			{
-				sb.append((char)cp);
-			}
-			return sb.toString();
-		}
-
-		public static JSONObject readJSONFromURL(String url) throws JSONException, IOException
-		{
-			//TODO optimize the read function to stop after getting the multiviewer tags.  Might not be easy, and also might not save any time either.
-			InputStream inputStream = new URL(url).openStream();
-			try (BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream)))
-			{
-				String jsonText = readAllFromReader(rd);
-				return new JSONObject(jsonText);
-			}
-		}
-		
-		public static String httpGET(String url) throws IOException
-		{
-			return httpGETString(url, null);
-		}
-		
-		public static String httpGETString(String url, Map<String, String> headers) throws IOException
-		{
-			return httpGET(url, null, headers);
-		}
-		
-		public static String httpGET(String url, String payload, Map<String, String> headers) throws IOException
-		{
-			HttpURLConnection http = (HttpURLConnection)new URL(url).openConnection();
-			
-			if (headers != null)
-				headers.forEach(http::addRequestProperty);
-			
-			
-			
-			//http.setAuthenticator(new GHAuth());
-			http.connect();
-			
-			
-			Debug.out("[DEBUG] {httpGET} http status code: " + http.getResponseCode());
-			
-			
-			
-			if (payload != null)
-			{
-				Debug.out("[DEBUG] {httpGET} Outputting payload: " + payload);
-				
-				try (OutputStream os = http.getOutputStream())
-				{
-					os.write(payload.getBytes());
-				}
-			}
-			
-			String out;
-			try (InputStream is = http.getInputStream();
-				 BufferedReader rd = new BufferedReader(new InputStreamReader(is)))
-			{
-				out = readAllFromReader(rd);
-			}
-			
-			Debug.out("[DEBUG] {httpGET} response payload: " + out);
-			
-			
-			return out;
-		}
-
-		
-		
-		
-		
-		
-		
-		public static boolean printToFile(String toPrint, File file) throws IOException
-		{
-			if (file.isDirectory())
-				throw new IOException("Cannot print to directory.");
-			
-			
-			try (BufferedWriter writer = new BufferedWriter(new FileWriter(file)))
-			{
-				for (int i = 0, l = toPrint.length(); i < l; i++)
-				{
-					char c;
-					if ((c = toPrint.charAt(i)) == '\n')
-						writer.newLine();
-					else
-						writer.write(c);
-				}
-				
-				return true;
-			} 
-			catch (IOException e)
-			{
-				e.printStackTrace();
-				return false;
-			}
-		}
-		
-		/**
-		 * 
-		 * @param toPrint
-		 * @param directory
-		 * @param fileName
-		 * @return
-		 * @throws IOException
-		 */
-		public static boolean createFolderPrintFile(String toPrint, File directory, String fileName) throws IOException
-		{
-			if (!directory.exists())
-			{
-				directory.mkdir();
-			}
-			
-			if (!directory.isDirectory())
-				throw new IOException("[UnityTool] Invalid directory provided for print.");
-			
-			
-			String s = directory.toString();
-			if (!s.endsWith(File.separator)
-					&& !fileName.startsWith(File.separator)) {
-				printToFile(toPrint, new File(s + File.separator + fileName));
-			}
-			else
-				printToFile(toPrint, new File(s + fileName));
-			
-			return true;
-			
-		}
-		
-	}
-	
-	
 	
 	public static class ManipNFHSJSON
 	{
-		public static String[] getBroadcastKeys(JSONObject j) throws NullFieldException
+		public static String[] getBroadcastKeys(final JSONObject j) throws NullFieldException
 		{
-			JSONArray broadcasts;
+			final JSONArray broadcasts;
 			try {
 				broadcasts = j.getJSONArray("publishers").getJSONObject(0).getJSONArray("broadcasts");
 			} 
@@ -370,7 +157,7 @@ public final class Util
 				throw new NullFieldException("\"broadcasts\" field does not exist for game " + j.getString("key"), e);
 			}
 			
-			String[] output = new String[broadcasts.length()];
+			final String[] output = new String[broadcasts.length()];
 			
 			for (int i = 0; i < broadcasts.length(); i++)
 			{
@@ -385,20 +172,39 @@ public final class Util
 		}
 	}
 	
-	class GHAuth extends Authenticator
-	{
-		@Override
-		protected PasswordAuthentication getPasswordAuthentication() {
-			return new PasswordAuthentication("ByThePowerOfScience", "".toCharArray());
-		}
-	}
-
-
-
-
+	
 	public static Path getCurrentDirectory()
 	{
 		return CURRENTDIRECTORY;
+	}
+	
+	
+	private static final String DEV_DIR = File.separator + "DEV";
+	
+	/**
+	 * Sanitizes input relative path and converts it to an absolute path.
+	 * @param relativeDirectory the relative path of the file or directory.  May or may not begin with a file separator char.
+	 * @return Absolute {@link Path} of the file or directory.
+	 */
+	public static Path getAbsoluteDir(final String relativeDirectory)
+	{
+		final StringBuilder sb = new StringBuilder();
+		
+		final String currentDir = StringUtils.stripFromEnd(getCurrentDirectory().toString(), File.separator);
+		sb.append(currentDir);
+		
+		if (Debug.IS_DEV_MODE)
+		{
+			sb.append(DEV_DIR);
+		}
+		
+		sb.append(File.separator);
+		
+		// Remove potential file separators from the end of the current directory and the beginning of the file name
+		final String relDir = StringUtils.stripFromBeginning(relativeDirectory.replace('/', File.separatorChar), File.separator);
+		sb.append(relDir);
+		
+		return Path.of(sb.toString());
 	}
 	
 }

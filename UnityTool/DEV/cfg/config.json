@@ -1,0 +1,36 @@
+{
+	"version": "v1.0.2",
+	
+	"is_first_launch":"true",
+	
+	/* Output file settings. */
+	"outputs": {
+		
+		"save_focus_compare": true,
+		
+		/* Directory for output files.  Defaults to "<install location>/outputs/" */
+		"dir": "outputs",
+		
+		//Output file prefix.
+		"prefix": "Output ",
+		
+		/* 
+			Output file timestamp formatting.
+			
+			M = 1-digit month (e.g. 4 or 12) MM = 2-digit month (e.g. 04 or 12), MMM = month abbreviation (e.g. Apr or Dec)
+			dd = day, yy or yyyy = year (21 or 2021),
+			hh = hour in 24-hour time, hh = hour in 12-hour time, mm = minute, ss = second, aa = AM/PM 
+		*/
+		"timestamp_format": "yyyy-MM-dd HH-mm-ss"
+	},
+	
+	
+	"view": {
+		"game_list_display_info": 0, /* 0 = game id, 1 = bdc id, 2 = title */ 
+	},
+	
+	"io": {
+		"save_sso_cookie": true
+	},
+	
+}

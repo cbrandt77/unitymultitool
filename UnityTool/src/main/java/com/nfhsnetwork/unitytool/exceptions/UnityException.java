@@ -1,6 +1,6 @@
 package com.nfhsnetwork.unitytool.exceptions;
 
-public class UnityException extends Exception {
+public class UnityException extends RuntimeException {
 
 	public UnityException() {
 		super();

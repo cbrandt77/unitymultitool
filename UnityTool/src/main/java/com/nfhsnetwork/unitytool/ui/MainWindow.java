@@ -20,10 +20,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.nfhsnetwork.unitytool.common.UnityContainer;
+import com.nfhsnetwork.unitytool.logging.Debug;
 import com.nfhsnetwork.unitytool.types.NullNFHSObject;
 import com.nfhsnetwork.unitytool.ui.pixellotcsv.DragNDropCSV;
-import com.nfhsnetwork.unitytool.utils.Debug;
-import com.nfhsnetwork.unitytool.utils.Util;
+import com.nfhsnetwork.unitytool.utils.IOUtils;
 
 /**
  *
@@ -331,9 +331,9 @@ class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_menuItem_importNewDataActionPerformed
 
     private void menuItem_openPixellotCSVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItem_openPixellotCSVActionPerformed
-        Function<File, File> fileCallback = (f) -> {
+        final Function<File, File> fileCallback = (f) -> {
         	try {
-				UnityContainer.ClubInventory.parse(Util.IOUtils.readFromFile(f));
+				UnityContainer.ClubInventory.parse(IOUtils.readFromFile(f));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

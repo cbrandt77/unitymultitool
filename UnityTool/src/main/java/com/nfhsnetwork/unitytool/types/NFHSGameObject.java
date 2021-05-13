@@ -19,10 +19,10 @@ import com.nfhsnetwork.unitytool.exceptions.GameNotFoundException;
 import com.nfhsnetwork.unitytool.exceptions.InvalidContentTypeException;
 import com.nfhsnetwork.unitytool.exceptions.NullFieldException;
 import com.nfhsnetwork.unitytool.io.UnityInterface;
+import com.nfhsnetwork.unitytool.logging.Debug;
 import com.nfhsnetwork.unitytool.scripts.focuscompare.FocusCompareScript;
-import com.nfhsnetwork.unitytool.utils.Debug;
+import com.nfhsnetwork.unitytool.utils.IOUtils;
 import com.nfhsnetwork.unitytool.utils.Util;
-import com.nfhsnetwork.unitytool.utils.Util.IOUtils;
 import com.nfhsnetwork.unitytool.utils.Util.TimeUtils;
 
 
@@ -305,7 +305,7 @@ public class NFHSGameObject
 
 	private boolean fetchAndSetBdcStateJSON()
 	{
-		JSONObject stateJSON;
+		final JSONObject stateJSON;
 		try {
 			stateJSON = UnityInterface.fetchBdcStateJSON(this.bdc_ids[0]);
 		} catch (Exception e) {
@@ -330,7 +330,7 @@ public class NFHSGameObject
 	
 	public String getProducerName()
 	{
-		JSONArray broadcasts;
+		final JSONArray broadcasts;
 		try {
 			broadcasts = getBroadcasts();
 		} catch (NullFieldException e1) {
@@ -346,19 +346,19 @@ public class NFHSGameObject
 			}
 		}
 		
-		String output = "";
+		final StringBuilder sb = new StringBuilder();
 		for (int i = 0, length = broadcasts.length(); i < length; i++)
 		{
 			try {
-				output += broadcasts.getJSONObject(i).getString("producer_name");
+				sb.append(broadcasts.getJSONObject(i).getString("producer_name"));
 			} catch (JSONException e) {
 				continue;
 			}
 			if (i != length - 2)
-				output += " | ";
+				sb.append(" | ");
 		}
 		
-		return output;
+		return sb.toString();
 	}
 	
 	public ByteString getPixellot() {

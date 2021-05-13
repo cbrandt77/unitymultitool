@@ -24,64 +24,15 @@ import org.json.JSONObject;
 
 import com.google.protobuf.ByteString;
 import com.nfhsnetwork.unitytool.common.UnityToolCommon;
-import com.nfhsnetwork.unitytool.utils.Debug;
+import com.nfhsnetwork.unitytool.logging.Debug;
+import com.nfhsnetwork.unitytool.utils.IOUtils;
 import com.nfhsnetwork.unitytool.utils.Util;
-import com.nfhsnetwork.unitytool.utils.Util.IOUtils;
+import com.nfhsnetwork.unitytool.utils.LocalFileHelper.Version;
 
 public class UpdateManager {
-	private enum PackageType {
-		ZIP(".zip", "application/zip", "zip-checksum"),
-		JAR(".jar", "application/java-archive", "jar-checksum"),
-		DMG(".dmg", "application/octet-stream", "dmg-checksum"),
-		EXE(".exe", "application/octet-stream", "exe-checksum"),
-		CHECKSUM(".chksum", "application/json", null);
-		
-		private final String extension;
-		private final String encoding;
-		private final String checksumName;
-		
-		PackageType(final String extension, final String encoding, final String checksum)
-		{
-			this.extension = extension;
-			this.encoding = encoding;
-			this.checksumName = checksum;
-		}
-		
-		public String getExtension()
-		{
-			return this.extension;
-		}
-		
-		public String getEncoding()
-		{
-			return this.encoding;
-		}
-		
-		public String getChecksumName()
-		{
-			return this.checksumName;
-		}
-		
-		public static PackageType idByExtension(String filename)
-		{
-			if (filename.endsWith(ZIP.extension))
-				return ZIP;
-			else if (filename.endsWith(JAR.extension))
-				return JAR;
-			else if (filename.endsWith(DMG.extension))
-				return DMG;
-			else if (filename.endsWith(EXE.extension))
-				return EXE;
-			else
-				return null;
-		}
-		
-	}
-
+	
 
 	private static final String DOWNLOAD_URL = "https://api.github.com/repos/ByThePowerOfScience/unitymultitool/releases/latest";
-	
-	private static final int THISRELEASE = 41851038;
 	
 	private static JSONObject checksumObject = null;
 	
@@ -101,8 +52,6 @@ public class UpdateManager {
 				shouldRetry = showInterruptedDialog();
 			}
 		} while (shouldRetry);
-		
-		//TODO should this part continue or return here? I can't think rn...
 	}
 	
 	
@@ -179,14 +128,14 @@ public class UpdateManager {
 
 	private static boolean needsUpdate(JSONObject releaseObject)
 	{
-		return releaseObject.getInt("id") != THISRELEASE;
+		return releaseObject.getInt("id") != Version.THISRELEASE;
 	}
 	
 	
 	
 	private static JSONObject getReleaseObject() throws JSONException, IOException
 	{
-		return new JSONObject(IOUtils.httpGETString(DOWNLOAD_URL,
+		return new JSONObject(IOUtils.httpGET(DOWNLOAD_URL,
 				Map.of("Accept", "application/vnd.github.v3+json",
 						"User-Agent", "UnityMultiTool")));
 	}
@@ -283,16 +232,11 @@ public class UpdateManager {
 	{
 		String url = j.getString("url");
 		
-		HttpURLConnection http = getGitHubURLConnection(new URL(url));
+		final HttpURLConnection http = getGitHubURLConnection(new URL(url));
 		http.addRequestProperty("Accept", "application/json");
 		
 		
-		String response;
-		try (InputStream is = http.getInputStream();
-				BufferedReader rd = new BufferedReader(new InputStreamReader(is)))
-		{
-			response = IOUtils.readAllFromReader(rd);
-		}
+		final String response = IOUtils.HttpUtils.readHttpURLCon(http);
 		
 		Debug.out("[DEBUG] {getChecksumObject} checksum json object: " + response);
 		
@@ -301,11 +245,11 @@ public class UpdateManager {
 	
 	
 	
-	private static boolean doChecksum(Package p) {
+	private static boolean doChecksum(final Package p) {
 		if (checksumObject == null)
 			return false;
 		
-		JSONObject checksumDownload;
+		final JSONObject checksumDownload;
 		try {
 			checksumDownload = getChecksumObject(checksumObject);
 		} catch (IOException e) {
@@ -313,7 +257,7 @@ public class UpdateManager {
 			return false;
 		}
 		
-		ByteString checkAgainst = Util.hexStringToByteString(checksumDownload.getString(p.getType().getChecksumName()));
+		final ByteString checkAgainst = Util.hexStringToByteString(checksumDownload.getString(p.getType().getChecksumName()));
 		
 		return p.getChecksum().equals(checkAgainst);
 	}
@@ -321,8 +265,8 @@ public class UpdateManager {
 	
 	
 	
-	private static final class Package {
-		
+	private static final class Package 
+	{
 		private final File f;
 		private final PackageType t;
 		private final ByteString s;
@@ -352,5 +296,53 @@ public class UpdateManager {
 		
 	}
 	
-	
+	private enum PackageType {
+		ZIP(".zip", "application/zip", "zip-checksum"),
+		JAR(".jar", "application/java-archive", "jar-checksum"),
+		DMG(".dmg", "application/octet-stream", "dmg-checksum"),
+		EXE(".exe", "application/octet-stream", "exe-checksum"),
+		CHECKSUM(".chksum", "application/json", null);
+		
+		private final String extension;
+		private final String encoding;
+		private final String checksumName;
+		
+		PackageType(final String extension, final String encoding, final String checksum)
+		{
+			this.extension = extension;
+			this.encoding = encoding;
+			this.checksumName = checksum;
+		}
+		
+		public String getExtension()
+		{
+			return this.extension;
+		}
+		
+		public String getEncoding()
+		{
+			return this.encoding;
+		}
+		
+		public String getChecksumName()
+		{
+			return this.checksumName;
+		}
+		
+		public static PackageType idByExtension(String filename)
+		{
+			if (filename.endsWith(ZIP.extension))
+				return ZIP;
+			else if (filename.endsWith(JAR.extension))
+				return JAR;
+			else if (filename.endsWith(DMG.extension))
+				return DMG;
+			else if (filename.endsWith(EXE.extension))
+				return EXE;
+			else
+				return null;
+		}
+		
+	}
+
 }

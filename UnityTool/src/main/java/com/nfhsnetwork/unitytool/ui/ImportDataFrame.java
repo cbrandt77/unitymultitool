@@ -17,18 +17,19 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
+import com.nfhsnetwork.unitytool.common.StdPropertyChangeEvent;
 import com.nfhsnetwork.unitytool.common.UnityContainer;
 import com.nfhsnetwork.unitytool.common.UnityToolCommon;
 import com.nfhsnetwork.unitytool.common.UnityContainer.ClubInventory;
 import com.nfhsnetwork.unitytool.common.UnityContainer.ImportTypes;
 import com.nfhsnetwork.unitytool.io.SSOLogin;
+import com.nfhsnetwork.unitytool.logging.Debug;
 import com.nfhsnetwork.unitytool.scripts.focuscompare.FocusCompareScript;
 import com.nfhsnetwork.unitytool.scripts.focuscompare.FocusOutputFrame;
 import com.nfhsnetwork.unitytool.scripts.multiviewertag.MultiviewerTagScript;
 import com.nfhsnetwork.unitytool.ui.components.ProgressBarDialogBox;
 import com.nfhsnetwork.unitytool.ui.pixellotcsv.DragNDropCSV;
-import com.nfhsnetwork.unitytool.utils.Debug;
-import com.nfhsnetwork.unitytool.utils.Util.IOUtils;
+import com.nfhsnetwork.unitytool.utils.IOUtils;
 
 /**
  *
@@ -45,7 +46,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
      */
     public ImportDataFrame() {
         initComponents();
-        this.button_mviewer.setEnabled(true); //#BlameAndy :P
+        this.button_mviewer.setEnabled(true);
     }
 
     /**
@@ -57,6 +58,22 @@ public class ImportDataFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        dialog_helpPopup = new javax.swing.JDialog();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        hyperlinkLabel1 = new com.nfhsnetwork.unitytool.ui.components.HyperlinkLabel();
+        jLabel12 = new javax.swing.JLabel();
         sp_textarea = new javax.swing.JScrollPane();
         placeholderTextArea1 = new com.nfhsnetwork.unitytool.ui.components.PlaceholderTextArea();
         p_sidebar = new javax.swing.JPanel();
@@ -70,6 +87,121 @@ public class ImportDataFrame extends javax.swing.JFrame {
         button_focuscompare = new javax.swing.JButton();
         l_quickactions = new javax.swing.JLabel();
         button_mviewer = new javax.swing.JButton();
+        menubar = new javax.swing.JMenuBar();
+        menu_help = new javax.swing.JMenu();
+        mi_helpfocuscmp = new javax.swing.JMenuItem();
+        menu_about = new javax.swing.JMenu();
+
+        dialog_helpPopup.setMinimumSize(new java.awt.Dimension(434, 549));
+
+        jLabel1.setText("Note: Good-looking help section coming soon.");
+
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("Step 1: Select all rows of the focus events list");
+        jLabel2.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("that you wish to check, from the date column to");
+
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel4.setText("Step 2: Copy the cells from the spreadsheet");
+
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel5.setText("the status column.");
+
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel6.setText("with CTRL+V (or CMD+V on MAC).");
+
+        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel7.setText("Step 3: Paste the cells into the text field");
+
+        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel8.setText("and click \"FOCUS CMP\".");
+
+        jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel9.setText("Step 4: Download the Inventory CSV from Club");
+
+        jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel10.setText("by clicking the download icon at the upper-right.");
+
+        hyperlinkLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        hyperlinkLabel1.setText("https://club.pixellot.tv/inventory/systems");
+
+        jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel12.setText("Step 5: Drop the CSV file onto the popup.");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(73, 73, 73)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(hyperlinkLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(320, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel5)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel6)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel8)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel9)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel10)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel11)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(hyperlinkLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel12)
+                .addContainerGap(189, Short.MAX_VALUE))
+        );
+
+        jScrollPane1.setViewportView(jPanel1);
+
+        javax.swing.GroupLayout dialog_helpPopupLayout = new javax.swing.GroupLayout(dialog_helpPopup.getContentPane());
+        dialog_helpPopup.getContentPane().setLayout(dialog_helpPopupLayout);
+        dialog_helpPopupLayout.setHorizontalGroup(
+            dialog_helpPopupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dialog_helpPopupLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 422, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        dialog_helpPopupLayout.setVerticalGroup(
+            dialog_helpPopupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dialog_helpPopupLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1)
+                .addContainerGap())
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Import Event Data");
@@ -82,21 +214,18 @@ public class ImportDataFrame extends javax.swing.JFrame {
         p_importtypecontainer.setBorder(javax.swing.BorderFactory.createTitledBorder("Import Type"));
 
         rb_it_focus.setFont(new java.awt.Font("Helvetica Neue", 0, 12)); // NOI18N
-        rb_it_focus.setSelected(false);
         rb_it_focus.setText("Focus");
         rb_it_focus.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rb_it_focusActionPerformed(evt);
             }
         });
 
         rb_it_other.setFont(new java.awt.Font("Helvetica Neue", 0, 12)); // NOI18N
-        rb_it_other.setText("Other");
         rb_it_other.setSelected(true);
+        rb_it_other.setText("Other");
         rb_it_other.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rb_it_otherActionPerformed(evt);
             }
         });
@@ -127,9 +256,9 @@ public class ImportDataFrame extends javax.swing.JFrame {
         p_importbuttoncontainer.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         button_import.setText("IMPORT");
+        button_import.setToolTipText("Open events in the Unity Tool");
         button_import.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_importActionPerformed(evt);
             }
         });
@@ -154,9 +283,9 @@ public class ImportDataFrame extends javax.swing.JFrame {
         p_quickactionscontainer.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         button_focuscompare.setText("FOCUS CMP");
+        button_focuscompare.setToolTipText("Compare Focus Event data against Console.");
         button_focuscompare.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_focuscompareActionPerformed(evt);
             }
         });
@@ -165,9 +294,9 @@ public class ImportDataFrame extends javax.swing.JFrame {
         l_quickactions.setText("Quick Actions");
 
         button_mviewer.setText("MVIEWER");
+        button_mviewer.setEnabled(false);
         button_mviewer.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_mviewerActionPerformed(evt);
             }
         });
@@ -235,6 +364,23 @@ public class ImportDataFrame extends javax.swing.JFrame {
                 .addComponent(p_buttonscontainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        menu_help.setText("Help");
+
+        mi_helpfocuscmp.setText("Focus Compare");
+        mi_helpfocuscmp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mi_helpfocuscmpActionPerformed(evt);
+            }
+        });
+        menu_help.add(mi_helpfocuscmp);
+
+        menubar.add(menu_help);
+
+        menu_about.setText("About");
+        menubar.add(menu_about);
+
+        setJMenuBar(menubar);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -252,7 +398,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(p_sidebar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(sp_textarea, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE))
+                    .addComponent(sp_textarea, javax.swing.GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -339,7 +485,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
     
     private void importPxlCSV()
     {
-    	Function<File, File> onFileSelected = (file) -> {
+    	final Function<File, File> onFileSelected = (file) -> {
 			executeFocusScript(file);
 			if (file == null)
 				Debug.out("[DEBUG] Script executed with null csv.");
@@ -349,7 +495,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
 		};
     	
     	
-    	Function<Void, Void> onCancel = (obj) -> {
+    	final Function<Void, Void> onCancel = (obj) -> {
     		enableAllComponents();
     		return null;
     	};
@@ -378,10 +524,12 @@ public class ImportDataFrame extends javax.swing.JFrame {
 			@Override
 			protected void done()
 			{
-				System.out.println("W1 done");
 				try {
+					Debug.out("[DEBUG] {executeFocusScript | done} finished nominally");
 					afterSetFocusData(get());
 				} catch (InterruptedException | ExecutionException e1) {
+					Debug.out("[DEBUG] {executeFocusScript | done} finished with exception");
+					e1.printStackTrace();
 					afterSetFocusData(UnityToolCommon.FAILED);
 				}
 			}
@@ -394,12 +542,12 @@ public class ImportDataFrame extends javax.swing.JFrame {
     		pbdb.setLocationRelativeTo(ImportDataFrame.this);
     		
     		fe.addPropertyChangeListener((e) -> {
-        		if (e.getPropertyName().equals(FocusCompareScript.PC_PROGRESS))
+        		if (e.getPropertyName() == StdPropertyChangeEvent.PropertyType.PROGRESS)
         		{
         			//Debug.out("[DEBUG] {executeFocusScript} set value");
         			bar.setValue((Integer)e.getNewValue() * 100 / (Integer)e.getOldValue());
         		}
-        		else if (e.getPropertyName().equals(FocusCompareScript.PC_DONE))
+        		else if (e.getPropertyName() == StdPropertyChangeEvent.PropertyType.DONE)
         		{
         			SwingUtilities.invokeLater(() -> {
 						pbdb.setVisible(false);
@@ -423,7 +571,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
 				
 				String s = IOUtils.readFromFile(f);
 				
-				Debug.out("[DEBUG] {doInBackground} CSV file readout: " + s);
+//				Debug.out("[DEBUG] {doInBackground} CSV file readout: " + s);
 				
 				int res = ClubInventory.parse(s);
 				
@@ -457,13 +605,12 @@ public class ImportDataFrame extends javax.swing.JFrame {
     	Debug.out("[DEBUG] {afterSetFocusData} method call");
     	if (x == UnityToolCommon.FAILED)
         {
-        	int res = JOptionPane.showOptionDialog(this, "Invalid data.", "ERROR", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
+        	JOptionPane.showOptionDialog(this, "Focus Compare failed.", "ERROR", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
 					null, null, null);
 
-			if (res != 4) {
-				enableAllComponents();
-				return;
-			}
+			enableAllComponents();
+			return;
+			
         }
         else if (x == UnityToolCommon.SUCCESSFUL)
         {
@@ -485,8 +632,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
         			catch (ExecutionException | InterruptedException e)
         			{
         				e.printStackTrace();
-        				output = e.getStackTrace().toString();
-        				//output = "Operation failed for some reason. Run this again through Powershell with the command \".\\UnityTool.exe --debug\" and send Caleb the generated log.";
+        				output = "Operation failed for some reason. Run this again through Powershell with the command \"debug=true UnityTool.exe --debug\" and send me the generated log through Slack.";
         			}
         			afterFocusScriptOperation(output);
         		}
@@ -498,7 +644,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
 
 	private void afterFocusScriptOperation(String s)
     {
-		fe.firePropertyChangeEvent(FocusCompareScript.PC_DONE, null, null);
+		fe.firePropertyChangeEvent(StdPropertyChangeEvent.PropertyType.DONE, null, null);
     	SwingUtilities.invokeLater(() -> {
     		new FocusOutputFrame(s).setVisible(true);
     	});
@@ -518,11 +664,11 @@ public class ImportDataFrame extends javax.swing.JFrame {
     	
     	disableAllComponents();
         
-        ProgressBarDialogBox bar = new ProgressBarDialogBox(this);
+        final ProgressBarDialogBox bar = new ProgressBarDialogBox(this);
         //bar.setVisible(true);
         bar.setAlwaysOnTop(true);
         
-        MultiviewerTagScript mts = new MultiviewerTagScript(this);
+        final MultiviewerTagScript mts = new MultiviewerTagScript(this);
         
         
         
@@ -533,11 +679,11 @@ public class ImportDataFrame extends javax.swing.JFrame {
         final int total = placeholderTextArea1.getLineCount();
         
         mts.addPropertyChangeListener((e) -> {
-        	if (e.getPropertyName().equals(UnityToolCommon.PropertyChangeType.DONE.toString())) 
+        	if (e.getPropertyName().equals(StdPropertyChangeEvent.PropertyType.DONE.toString())) 
         	{
         		afterMultiviewerOperation();
         	}
-        	else if (e.getPropertyName().equals(UnityToolCommon.PropertyChangeType.PROGRESS.toString()))
+        	else if (e.getPropertyName().equals(StdPropertyChangeEvent.PropertyType.PROGRESS.toString()))
         	{
         		bar.getProgressBar().setValue((Integer)e.getNewValue() * 100 / total);
         	}
@@ -554,7 +700,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
         //TODO figure out loading bar
         SwingUtilities.invokeLater(() -> {
         	SSOLogin.showLoginDialog(
-        			SwingUtilities.windowForComponent(this),
+        			SwingUtilities.windowForComponent(ImportDataFrame.this),
         			(v) -> {
         				sw.execute();
         	        	bar.setVisible(true);
@@ -563,6 +709,14 @@ public class ImportDataFrame extends javax.swing.JFrame {
         });
         
     }//GEN-LAST:event_button_mviewerActionPerformed
+
+    private void mi_helpfocuscmpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mi_helpfocuscmpActionPerformed
+        SwingUtilities.invokeLater(() -> {
+            dialog_helpPopup.setLocationRelativeTo(ImportDataFrame.this);
+            Debug.out("Focus Help clicked.");
+            dialog_helpPopup.setVisible(true);
+        });
+    }//GEN-LAST:event_mi_helpfocuscmpActionPerformed
     
     
     private void afterMultiviewerOperation()
@@ -595,7 +749,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
     	placeholderTextArea1.setEnabled(true);
     	this.button_focuscompare.setEnabled(true);
     	this.button_import.setEnabled(true);
-    	this.button_mviewer.setEnabled(true);
+    	this.button_mviewer.setEnabled(true); //TODO
     	this.sp_textarea.setEnabled(true);
     }
     
@@ -603,50 +757,34 @@ public class ImportDataFrame extends javax.swing.JFrame {
     
     
     
+   
     
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Windows".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ImportDataFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ImportDataFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ImportDataFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ImportDataFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        
-        
-        
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-			public void run() {
-                new ImportDataFrame().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton button_focuscompare;
     private javax.swing.JButton button_import;
     private javax.swing.JButton button_mviewer;
+    private javax.swing.JDialog dialog_helpPopup;
+    private com.nfhsnetwork.unitytool.ui.components.HyperlinkLabel hyperlinkLabel1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel l_quickactions;
+    private javax.swing.JMenu menu_about;
+    private javax.swing.JMenu menu_help;
+    private javax.swing.JMenuBar menubar;
+    private javax.swing.JMenuItem mi_helpfocuscmp;
     private javax.swing.JPanel p_buttonscontainer;
     private javax.swing.JPanel p_importbuttoncontainer;
     private javax.swing.JPanel p_importtypecontainer;

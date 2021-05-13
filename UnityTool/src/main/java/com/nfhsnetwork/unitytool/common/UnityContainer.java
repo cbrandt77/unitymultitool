@@ -16,12 +16,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.protobuf.ByteString;
-import com.nfhsnetwork.unitytool.common.UnityToolCommon.PropertyChangeType;
+import com.nfhsnetwork.unitytool.common.StdPropertyChangeEvent.PropertyType;
 import com.nfhsnetwork.unitytool.exceptions.GameNotFoundException;
 import com.nfhsnetwork.unitytool.exceptions.InvalidContentTypeException;
+import com.nfhsnetwork.unitytool.logging.Debug;
 import com.nfhsnetwork.unitytool.types.NFHSGameObject;
 import com.nfhsnetwork.unitytool.types.NullNFHSObject;
-import com.nfhsnetwork.unitytool.utils.Debug;
 import com.nfhsnetwork.unitytool.utils.Util;
 import com.nfhsnetwork.unitytool.utils.Util.StringUtils;
 
@@ -164,7 +164,7 @@ public final class UnityContainer {
 					{
 						if (completedTaskCounter.intValue() >= totalTasks)
 						{
-							firePropertyChangeEvent(UnityContainer.this, PropertyChangeType.PARSE_COMPLETE, null, null);
+							firePropertyChangeEvent(UnityContainer.this, StdPropertyChangeEvent.PropertyType.PARSE_COMPLETE, null, null);
 							
 							Debug.out("[DEBUG] [UC] All games added to list.");
 							Debug.out("[DEBUG] [UC] Size of map: " + eventMap.size());
@@ -340,7 +340,7 @@ public final class UnityContainer {
 		
 		private static Integer parseClubCSV(List<String> csv)
 		{
-			Debug.out("[DEBUG] {parseClubCSV} passed in CSV: " + csv.size());
+			Debug.out("[DEBUG] {parseClubCSV} passed in CSV with size: " + csv.size());
 			
 			if (!ClubInventory.csv_fetchHeaderIndices(csv.get(0)))
 			{
@@ -374,17 +374,18 @@ public final class UnityContainer {
 						
 						
 						
-						Debug.out("[DEBUG] {parseClubCSV} put " + StringUtils.stripQuotes(items[csv_sysid_index])
-									+ " into map.");
-						for (String s : details) {
-							Debug.out("[DEBUG] {parseClubCSV} \t-" + s);
-						}
+//						Debug.out("[DEBUG] {parseClubCSV} put " + StringUtils.stripQuotes(items[csv_sysid_index])
+//									+ " into map.");
+//						for (String s : details) {
+//							Debug.out("[DEBUG] {parseClubCSV} \t-" + s);
+//						}
 						
 						
 						
 						clubInventoryMap.put(systemID, details);
 					} catch (Exception e) {
 						e.printStackTrace();
+						Debug.out("[DEBUG] {parseClubCSV} line that threw exception: " + line);
 					}
 				});
 				
@@ -459,17 +460,17 @@ public final class UnityContainer {
 	
 	
 	
-	private Set<PropertyChangeListener> listeners_propertyChange = new CopyOnWriteArraySet<>();
+	private Set<StdPropertyChangeListener> listeners_propertyChange = new CopyOnWriteArraySet<>();
 	
-	public UnityContainer addPropertyChangeListener(PropertyChangeListener listener) 
+	public UnityContainer addPropertyChangeListener(StdPropertyChangeListener listener) 
 	{
 		listeners_propertyChange.add(listener);
 		return this;
 	}
 	
-	public void firePropertyChangeEvent(Object source, PropertyChangeType type, Object oldValue, Object newValue) 
+	public void firePropertyChangeEvent(Object source, StdPropertyChangeEvent.PropertyType type, Object oldValue, Object newValue) 
 	{
-		PropertyChangeEvent evt = new PropertyChangeEvent(source, type.toString(), oldValue, newValue);
+		StdPropertyChangeEvent evt = new StdPropertyChangeEvent(source, type, oldValue, newValue);
 		
 		this.listeners_propertyChange.forEach(
 				el -> el.propertyChange(evt));

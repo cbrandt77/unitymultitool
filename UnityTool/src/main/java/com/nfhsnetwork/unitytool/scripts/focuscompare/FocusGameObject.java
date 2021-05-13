@@ -10,8 +10,8 @@ import com.nfhsnetwork.unitytool.exceptions.GameNotFoundException;
 import com.nfhsnetwork.unitytool.exceptions.InvalidContentTypeException;
 import com.nfhsnetwork.unitytool.exceptions.NullFieldException;
 import com.nfhsnetwork.unitytool.io.UnityInterface;
+import com.nfhsnetwork.unitytool.logging.Debug;
 import com.nfhsnetwork.unitytool.types.NFHSGameObject;
-import com.nfhsnetwork.unitytool.utils.Debug;
 
 public class FocusGameObject {
 	
@@ -129,7 +129,11 @@ public class FocusGameObject {
 	}
 
 	protected boolean isDeleted() {
-		return this.getGameJson().getBoolean("is_deleted");
+		try {
+			return this.getGameJson().getBoolean("is_deleted");
+		} catch (JSONException | NullPointerException e) {
+			throw new NullFieldException("is_pixellot", e);
+		}
 	}
 	
 }

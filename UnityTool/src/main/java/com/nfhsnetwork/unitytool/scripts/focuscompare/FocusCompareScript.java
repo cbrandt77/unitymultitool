@@ -5,8 +5,10 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -14,17 +16,25 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.nfhsnetwork.unitytool.common.Config;
+import com.nfhsnetwork.unitytool.common.StdPropertyChangeEvent;
+import com.nfhsnetwork.unitytool.common.StdPropertyChangeEvent.PropertyType;
+import com.nfhsnetwork.unitytool.common.StdPropertyChangeListener;
 import com.nfhsnetwork.unitytool.common.UnityToolCommon;
 import com.nfhsnetwork.unitytool.common.UnityContainer.ClubInventory;
 import com.nfhsnetwork.unitytool.exceptions.NullFieldException;
+import com.nfhsnetwork.unitytool.logging.Debug;
 import com.nfhsnetwork.unitytool.types.NFHSGameObject;
-import com.nfhsnetwork.unitytool.utils.Debug;
+import com.nfhsnetwork.unitytool.ui.ImportDataFrame;
+import com.nfhsnetwork.unitytool.utils.IOUtils;
 import com.nfhsnetwork.unitytool.utils.Util;
 import com.nfhsnetwork.unitytool.utils.Util.TimeUtils;
 
 import java.time.format.DateTimeFormatter;
+import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -35,10 +45,10 @@ import java.util.LinkedList;
 
 public class FocusCompareScript
 {
-	private List<FocusGameObject> deletedGames;
-	private List<FocusGameObject> gamesWithAlteredDatesOrTimes;
-	private List<FocusGameObject> gamesWithErrors;
-	private List<FocusGameObject> gamesWithBadPixellots;
+	private Stream<FocusGameObject> deletedGames;
+	private Stream<FocusGameObject> gamesWithAlteredDatesOrTimes;
+	private Stream<FocusGameObject> gamesWithErrors;
+	private Stream<FocusGameObject> gamesWithBadPixellots;
 	private final Queue<FocusGameObject> gameQueue;
 	
 	public static final int NUM_COLUMNS_FROM_FEL = 7;
@@ -161,7 +171,7 @@ public class FocusCompareScript
 			
 			gameQueue.add(game);
 			
-			this.firePropertyChangeEvent(PC_PROGRESS, length, i);
+			this.firePropertyChangeEvent(PropertyType.PROGRESS, length, i);
 			//Debug.out("[DEBUG] {setFocusData} Game added, pc progress = " + i);
 		}
 		
@@ -176,18 +186,14 @@ public class FocusCompareScript
 			return null;
 		
 	    try {
-			
-	    	
 	    	String[] details = ClubInventory.get(Util.hexStringToByteString(search));
 	    	
 	    	Debug.checkNull(details, "[DEBUG] {getSysIDDetails} details null for " + search + ". key exists: " + ClubInventory.containsKey(Util.hexStringToByteString(search)));
 	    	
 			return details;
-	    	
-	    	
-	    } catch (NullPointerException e) {
+	    } 
+	    catch (NullPointerException e) {
 	    	Debug.out("[DEBUG] {getSysIDDetails} NullPointerException for " + search);
-	    	
 	    	
 	    	return null;
 	    }
@@ -200,7 +206,7 @@ public class FocusCompareScript
 	
 	private boolean hasBadPxlStatus(FocusGameObject f)
 	{
-		String pixellot_key = f.getPxlId();
+		final String pixellot_key = f.getPxlId();
 		
 		if (pixellot_key == null)
 			return true;
@@ -211,13 +217,13 @@ public class FocusCompareScript
 		
 		
 		try {
-			String[] details = getSysIDDetails(pixellot_key);
+			final String[] details = getSysIDDetails(pixellot_key);
 			
 			if (details == null)
 				return true;
 			
 			
-			String pixellotStatus = details[ClubInventory.STATUS];
+			final String pixellotStatus = details[ClubInventory.STATUS];
 			
 			if (pixellotStatus.toUpperCase().equals("OFFLINE") || pixellotStatus.toUpperCase().equals("RESET")) 
 			{
@@ -235,7 +241,7 @@ public class FocusCompareScript
 	
 	private boolean compareDateTime(FocusGameObject f)
 	{
-		LocalDateTime unityDT = TimeUtils.convertDateTimeToEST(f.getGameJson().getString("start_time"));
+		final LocalDateTime unityDT = TimeUtils.convertDateTimeToEST(f.getGameJson().getString("start_time"));
 		//Debug.out("[DEBUG] unityDT for " + f.getGameID() + ": " + unityDT.toString() + ", focus: " + f.getDt().toString());
 		f.setUnityDT(unityDT);
 		//Debug.out("[DEBUG] unityDT = focusDT for " + f.getGameID() + ": " + unityDT.equals(f.getDt()));
@@ -245,7 +251,7 @@ public class FocusCompareScript
 	
 	private boolean hasErrors(FocusGameObject f)
 	{
-		JSONObject currentBroadcast = NFHSGameObject.getFirstBroadcast(f.getGameJson());
+		final JSONObject currentBroadcast = NFHSGameObject.getFirstBroadcast(f.getGameJson());
 		
 		if (!currentBroadcast.isNull("errors"))
 		{
@@ -260,16 +266,13 @@ public class FocusCompareScript
 		
 	}
 	
-	private boolean isDeleted(FocusGameObject f)
-	{
-		return f.isDeleted();
-	}
+	
 	
 	public String compareFocus() throws IOException
 	{
 //		gameQueue.forEach(e -> System.out.println(e.getGameID()));
 		
-		List<FocusGameObject> filteredGameList = gameQueue.parallelStream()
+		final List<FocusGameObject> filteredGameList = gameQueue.parallelStream()
 													  .filter(el -> !el.getStatus().toLowerCase().equals("deleted") && !el.getStatus().toLowerCase().equals("cancelled"))
 													  .collect(Collectors.toUnmodifiableList());
 		
@@ -277,8 +280,8 @@ public class FocusCompareScript
 //		filteredGameList.forEach(e -> System.out.println(e.getGameID()));
 		
 		deletedGames = filteredGameList.parallelStream()
-											 .filter(this::isDeleted)
-											 .collect(Collectors.toUnmodifiableList());
+											 .filter(FocusGameObject::isDeleted);
+//											 .collect(Collectors.toUnmodifiableList());
 		
 //		Debug.out("[DEBUG] deletedgames:");
 //		deletedGames.forEach(e -> {
@@ -288,8 +291,8 @@ public class FocusCompareScript
 		
 		gamesWithErrors = filteredGameList.parallelStream()
 											 .filter(e -> !e.isDeleted())
-											 .filter(this::hasErrors)
-											 .collect(Collectors.toUnmodifiableList());
+											 .filter(this::hasErrors);
+//											 .collect(Collectors.toUnmodifiableList());
 		
 //		Debug.out("[DEBUG] gameswitherrors:");
 //		gamesWithErrors.forEach(e -> System.out.println(e.getGameID()));
@@ -297,8 +300,8 @@ public class FocusCompareScript
 		
 		gamesWithAlteredDatesOrTimes = filteredGameList.parallelStream()
 						 					 .filter(e -> !e.isDeleted())
-											 .filter(this::compareDateTime)
-											 .collect(Collectors.toUnmodifiableList());
+											 .filter(this::compareDateTime);
+//											 .collect(Collectors.toUnmodifiableList());
 
 //		Debug.out("[DEBUG] gamesWithAlteredDatesOrTimes:");
 //		gamesWithAlteredDatesOrTimes.forEach(e -> System.out.println(e.getGameID()));
@@ -314,42 +317,43 @@ public class FocusCompareScript
 													return false;
 												}
 											 })
-											 .filter(this::hasBadPxlStatus)
-											 .collect(Collectors.toUnmodifiableList());
+											 .filter(this::hasBadPxlStatus);
+											 //.collect(Collectors.toUnmodifiableList());
 		}
 
 		
-		String output = buildOutputText();
+		final String output = buildOutputText();
 		
 		try {
 			printOutputToFile(output); //TODO show "failed to print" window
-		} catch (IOException e) {
-			JOptionPane.showOptionDialog(null, "Failed to print to file.", "Print Failed", JOptionPane.DEFAULT_OPTION,
+		} catch (Exception e) {
+			JOptionPane.showOptionDialog(UnityToolCommon.getActiveWindow(), "Failed to print to file.", "Print Failed", JOptionPane.DEFAULT_OPTION,
 					JOptionPane.ERROR_MESSAGE, null, null, null);
+			Debug.out("[DEBUG] {compareFocus} ");
 		}
 		
-		firePropertyChangeEvent(PC_DONE, null, null);
+		firePropertyChangeEvent(PropertyType.DONE, null, null);
 		
 		return output;
 	}
 	
 	private String buildOutputText()
 	{
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		
-		if (deletedGames.size() == 0) {
-			sb.append("No deleted events.");
-		}
-		else 
-		{
-			sb.append("Deleted events:");
+		
+		sb.append("Deleted events:");
+		
+		deletedGames.map(f -> "\n-" + f.getGameID())
+					.sequential()
+					.forEach(sb::append);
+		
+//		for (FocusGameObject f : deletedGames)
+//		{
+//			sb.append("\n-" + f.getGameID());
+//		}
 			
-			for (FocusGameObject f : deletedGames)
-			{
-				sb.append("\n-" + f.getGameID());
-			}
-			
-		}
+		
 		
 		sb.append("\n");
 		sb.append("\n");
@@ -359,20 +363,19 @@ public class FocusCompareScript
 		
 		
 		
-		if (gamesWithAlteredDatesOrTimes.size() == 0) 
-		{
-			sb.append("No games with altered dates or times.");
-		} 
-		else {
-			sb.append("Games with altered dates and/or times:");
-			
-			for (FocusGameObject f : gamesWithAlteredDatesOrTimes) 
-			{
-				sb.append("\n- " + f.getGameID());
-				sb.append("\n\t-Focus Start Time: " + f.getDt().format(dtf_output));
-				sb.append("\n\t-Console Start Time: " + f.getUnityDT().format(dtf_output));
-			}
-		}
+		
+		sb.append("Games with altered dates and/or times:");
+		
+		this.gamesWithAlteredDatesOrTimes.map(f -> {
+			return "\n- " + f.getGameID()
+				 + "\n\t-Focus Start Time: " + f.getDt().format(dtf_output)
+				 + "\n\t-Console Start Time: " + f.getUnityDT().format(dtf_output);
+		})
+		.sequential()
+		.forEach(sb::append);
+		
+		
+		
 		
 		sb.append("\n");
 		sb.append("\n");
@@ -380,34 +383,44 @@ public class FocusCompareScript
 		sb.append("\n");
 		sb.append("\n");
 		
-		if (gamesWithErrors.size() == 0)
-		{
-			sb.append("No games with Console scheduling errors.");
-		} else {
-			List<String> errorsList = new LinkedList<>();
-			gamesWithErrors.forEach(f -> {
-				errorsList.add("\n-" + f.getGameID() + " | " + f.getBdcID()
-									 + "\n\t-Producer Name: " + NFHSGameObject.getFirstBroadcast(f.getGameJson()).getString("producer_name")
-									 + "\n\t-Error: " + f.getError());
-			});
+		
+		
+		sb.append("Games with Console scheduling errors:");
+
 			
-			Collections.sort(errorsList, new Comparator<String>() {
-				@Override public int compare(String str1, String str2)
-				{
-					String substr1 = str1.substring(str1.indexOf("Error:"));
-					String substr2 = str2.substring(str2.indexOf("Error:"));
-					
-					return substr1.compareTo(substr2);
-				}
-			});
+		gamesWithErrors.sorted((f1, f2) -> f1.getError().compareTo(f2.getError()))
+					   .map(f -> {
+						   return "\n-" + f.getGameID() + " | " + f.getBdcID()
+							 + "\n\t-Producer Name: " + NFHSGameObject.getFirstBroadcast(f.getGameJson()).getString("producer_name")
+							 + "\n\t-Error: " + f.getError();
+					   })
+					   .sequential()
+					   .forEach(sb::append);
+		
+//		final List<String> errorsList = new LinkedList<>();
+//			gamesWithErrors.forEach(f -> {
+//				errorsList.add("\n-" + f.getGameID() + " | " + f.getBdcID()
+//									 + "\n\t-Producer Name: " + NFHSGameObject.getFirstBroadcast(f.getGameJson()).getString("producer_name")
+//									 + "\n\t-Error: " + f.getError());
+//			});
+//			
+//			Collections.sort(errorsList, new Comparator<String>() {
+//				@Override public int compare(String str1, String str2)
+//				{
+//					String substr1 = str1.substring(str1.indexOf("Error:"));
+//					String substr2 = str2.substring(str2.indexOf("Error:"));
+//					
+//					return substr1.compareTo(substr2);
+//				}
+//			});
 			
-			sb.append("Games with Console scheduling errors:");
-			
-			for (String s : errorsList)
-			{
-				sb.append(s);
-			}
-		}
+//			sb.append("Games with Console scheduling errors:");
+//			
+//			for (final String s : errorsList)
+//			{
+//				sb.append(s);
+//			}
+		
 		
 		
 
@@ -418,49 +431,72 @@ public class FocusCompareScript
 		sb.append("\n");
 		
 		if (ClubInventory.exists()) {
-			if (gamesWithBadPixellots.size() == 0)
-			{
-				sb.append("All Focus Pixellots are online.");
-				//sb.append("Focus Pixellot functionality temporarily disabled.");
-			} 
-			else 
-			{
-				List<String> l = new LinkedList<>();
+			
+			//final List<String> l = new LinkedList<>();
+			
+			sb.append("Focus Pixellots that are OFFLINE/RESET:");
+			
+			gamesWithBadPixellots.map(g -> {
+				final String[] details = getSysIDDetails(g.getPxlId());
 				
-				gamesWithBadPixellots.forEach(game -> {
-					String[] details = getSysIDDetails(game.getPxlId());
-					if (details == null)
-					{
-						Debug.out("[DEBUG] {buildOutputText} details is null for " + game.getPxlId() + " | game id: " + game.getGameID());
-						return;
-					}
-					
-					
-					l.add("\n" + game.getGameID() + " | " + game.getBdcID()
-							+ "\n\t-Club Name: " + details[ClubInventory.SYSNAME]
-							+ "\n\t-Producer name: " + NFHSGameObject.getFirstBroadcast(game.getGameJson()).getString("producer_name")
-							+ "\n\t-Unit Status: " + details[ClubInventory.STATUS]
-							+ "\n\t-Version: " + details[ClubInventory.VERSION]);
-				});
+				if (details == null)
+					return null;
 				
-				Collections.sort(l, new Comparator<String>() {
-					@Override public int compare(String str1, String str2)
-					{
-						
-						String substr1 = str1.substring(str1.indexOf("Status: "), str1.indexOf("Version: "));
-						String substr2 = str2.substring(str2.indexOf("Status: "), str2.indexOf("Version: "));
-						
-						return substr1.compareTo(substr2);
-					}
-				});
-				
-				sb.append("Focus Pixellots that are OFFLINE/RESET:");
-				
-				for (String s : l)
-				{
-					sb.append(s);
-				}
-			}
+				return new String[] {
+						g.getGameID(),
+						g.getBdcID(),
+						details[ClubInventory.SYSNAME],
+						NFHSGameObject.getFirstBroadcast(g.getGameJson()).getString("producer_name"),
+						details[ClubInventory.STATUS],
+						details[ClubInventory.VERSION]
+				};
+			})
+			.filter(details -> details != null)
+			.sorted((d1, d2) -> d1[4].compareTo(d2[4]))
+			.map(d -> {
+				return "\n" + d[0] + " | " + d[1]
+				+ "\n\t-Club Name: " + d[2]
+				+ "\n\t-Producer name: " + d[3]
+				+ "\n\t-Unit Status: " + d[4]
+				+ "\n\t-Version: " + d[5];
+			})
+			.sequential()
+			.forEach(sb::append);;
+			
+//			gamesWithBadPixellots.forEach(game -> {
+//				final String[] details = getSysIDDetails(game.getPxlId());
+//				if (details == null)
+//				{
+//					Debug.out("[DEBUG] {buildOutputText} details is null for " + game.getPxlId() + " | game id: " + game.getGameID());
+//					return;
+//				}
+//				
+//				
+//				l.add("\n" + game.getGameID() + " | " + game.getBdcID()
+//						+ "\n\t-Club Name: " + details[ClubInventory.SYSNAME]
+//						+ "\n\t-Producer name: " + NFHSGameObject.getFirstBroadcast(game.getGameJson()).getString("producer_name")
+//						+ "\n\t-Unit Status: " + details[ClubInventory.STATUS]
+//						+ "\n\t-Version: " + details[ClubInventory.VERSION]);
+//			});
+//			
+//			Collections.sort(l, new Comparator<String>() {
+//				@Override public int compare(String str1, String str2)
+//				{
+//					
+//					final String substr1 = str1.substring(str1.indexOf("Status: "), str1.indexOf("Version: "));
+//					final String substr2 = str2.substring(str2.indexOf("Status: "), str2.indexOf("Version: "));
+//					
+//					return substr1.compareTo(substr2);
+//				}
+//			});
+			
+			
+			
+//			for (final String s : l)
+//			{
+//				sb.append(s);
+//			}
+			
 		}
 		
 		
@@ -476,20 +512,43 @@ public class FocusCompareScript
 	{
 		Debug.out("[DEBUG] {printOutputToFile} Print output");
 		
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm-ss");
-		LocalDateTime now = LocalDateTime.now();
+		final LocalDateTime now = LocalDateTime.now();
 		
 		String fileName = Util.getCurrentDirectory() + File.separator + "outputs" + File.separator;
-		File file = new File(fileName);
+		final File file = new File(fileName);
 		
-		fileName = "Output " + dtf.format(now).toString() + ".txt";
+		String formattedTime;
+		try {
+			final DateTimeFormatter dtf = Config.getOutputDTF();
+			formattedTime = dtf.format(now).toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			formattedTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm-ss").format(now);
+			
+		}
 		
-		return Util.IOUtils.createFolderPrintFile(s, file, fileName);
+		
+		String prefix;
+		try {
+			prefix = Config.getOutputPrefix();
+		} catch (JSONException e) {
+			prefix = "Output-";
+		}
+		
+		fileName = prefix + formattedTime + ".txt";
+		
+		try {
+			IOUtils.createAndPrintToFile(s, file, fileName);
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 	
-	List<PropertyChangeListener> pclisteners = new LinkedList<>();
+	private final List<StdPropertyChangeListener> pclisteners = new LinkedList<>();
 	
-	public void addPropertyChangeListener(PropertyChangeListener e)
+	public void addPropertyChangeListener(StdPropertyChangeListener e)
 	{
 		pclisteners.add(e);
 	}
@@ -504,212 +563,10 @@ public class FocusCompareScript
 	 * @param total
 	 * @param newValue
 	 */
-	public void firePropertyChangeEvent(String name, Object total, Object newValue)
+	public void firePropertyChangeEvent(PropertyType name, Object total, Object newValue)
 	{
-		pclisteners.forEach(e -> e.propertyChange(new PropertyChangeEvent(this, name, total, newValue)));
+		pclisteners.forEach(e -> e.propertyChange(new StdPropertyChangeEvent(this, name, total, newValue)));
 	}
-	
-	
-	
-	
-	
-	
-//	@Deprecated
-//	private boolean checkErrors(NFHSGameObject n) throws NullFieldException 
-//	{
-//		JSONObject currentBroadcast = n.getFirstBroadcast();
-//		if (!currentBroadcast.isNull("errors"))
-//		{
-//			String error;
-//			try {
-//				error = currentBroadcast.get("errors").toString();
-//			} catch (JSONException e) {
-//				throw new NullFieldException("errors", e);
-//			}
-//			addError(n, error);
-//			
-//			if (error.equals("Unlisted (Pending Pixellot Venue ID)"))
-//				return true;
-//		}
-//		
-//		return false;
-//	}
-//	
-//	@Deprecated
-//	private void addError(NFHSGameObject n, String error)
-//	{
-//		String producerName = n.getProducerName();
-//		
-//		gamesWithErrors.add(n.getGameID() + " | " + n.getBdcIDs()[0]
-//				   + "\r\n"
-//				   + "\t-Producer Name: "
-//				   + ((producerName == null) ? "null" : producerName)
-//				   + "\r\n"
-//				   + "\t-Error: "
-//				   + error);
-//	}
-//	
-//	/*
-//	 * @param currentIndex = current index in the focusData_split array from iterator
-//	 * @param currentBroadcast = JSONObject from the current broadcast
-//	 */
-//	@Deprecated
-//	private void retrieveAndCompareDateTime(NFHSGameObject n) throws NullFieldException
-//	{
-//		LocalDateTime focusDT = n.getFocusDateTime();
-//		
-//		
-//		String unityTime;
-//		try {
-//			unityTime = n.getJSONObject().getString("start_time");
-//		} 
-//		catch (JSONException e)
-//		{
-//			throw new NullFieldException("start_time", e);
-//		}
-//		
-//		
-//		LocalDateTime unityDT = Util.convertDateTimeToEST(unityTime);
-//		
-//		Debug.out("[DEBUG] DateTime of " + n.getGameID() + ": " + unityDT.toString());
-//		
-//		
-//		//Output
-//		String x, y;
-//		
-//		
-//		if (!(x = dtf_output.format(unityDT)).equals(y = dtf_output.format(focusDT)))
-//		{
-//			gamesWithAlteredDatesOrTimes.add(n.getGameID() + " is " + x + " on Focus Events List, is " + y + " on Console.");
-//		}
-//	}
-//	
-//	
-//	// edited for use with Club CSV
-//	@Deprecated
-//	private void readPixellotStatus(NFHSGameObject game)
-//	{
-//		String pixellot_key;
-//		try {
-//			pixellot_key = game.getJSONObject().getString("pixellot_id");
-//		} catch (JSONException e1) {
-//			return;
-//		}
-//		
-//		// no need for an if statement here cause it won't get this far if pixellot_key is null
-//		try
-//		{
-//			int index = getIndexOfSystemID(pixellot_key);
-//			if (index == -1)
-//			{
-//				addError(game, "System ID mismatch between Console and Club.");
-//				return;
-//			}
-//			
-//			String pixellotStatus = clubCSV_split[index][CLUBARRAY_INDEX_STATUS];
-//			
-//			if (pixellotStatus.toUpperCase().equals("OFFLINE") || pixellotStatus.toUpperCase().equals("RESET")) 
-//			{
-//				gamesWithBadPixellots.add(game.getGameID() + " | " + game.getBdcIDs()[0]
-//											+ "\r\n"
-//											+ "\t-Unit status: " 
-//											+ pixellotStatus 
-//											+ "\r\n"
-//											+ "\t-LMI name: " 
-//											+ clubCSV_split[index][CLUBARRAY_INDEX_SYSTEMNAME]
-//											+ "\r\n" 
-//											+ "\t-Producer name: " 
-//											+ game.getProducerName());
-//			}
-//		} catch (Exception e) {
-//			gamesWithBadPixellots.add("Failed to fetch Pixellot Status from Unity/Pixellots for game " + game.getBdcIDs()[0]);
-//		}
-//	}
-//	
-//	@Deprecated
-//	private void oldCompareFocus()
-//	{
-//		// For each broadcast key:
-//		UnityContainer.getContainer().getEventMap().entrySet().stream()
-//				.forEach((k) -> {
-//					NFHSGameObject g = k.getValue();
-//					
-//					
-//					if (g.getFocusStatus().equals("Deleted")
-//							|| g.getFocusStatus().equals("Cancelled"))
-//					{
-//						//count.incrementAndGet();
-//						return;
-//					}
-//					
-//					if (!isNFHS(k.getKey()))
-//					{
-//						//count.incrementAndGet();
-//						Debug.out("[DEBUG] " + k + " is not NFHS.");
-//						return;
-//					}
-//					
-//					if (g.getIsDeleted())
-//					{
-//						this.deletedGames.add(k.getKey());
-//						Debug.out("[DEBUG] {compareFocus} Deleted game detected - " + k);
-//						//count.incrementAndGet();
-//						return;
-//					}
-//						
-//					
-//					try 
-//					{
-//						try {
-//							retrieveAndCompareDateTime(g);
-//						} catch (NullFieldException e) {
-//							e.printStackTrace();
-//							addError(g, "no start time listed.");
-//						}
-//						
-//						boolean isPending = false;
-//						try {
-//							isPending = checkErrors(g);
-//						} catch (NullFieldException e) {
-//							e.printStackTrace();
-//						}
-//						
-//						if (!isPending && g.getFirstBroadcast().getString("producer_type").equals("pixellot"))
-//						{
-//							readPixellotStatus(g);
-//						}
-//					} 
-//					catch (JSONException e) {
-//						e.printStackTrace();
-//					} catch (NullFieldException e) {
-//						e.printStackTrace();
-//					}
-//					
-//					//count.incrementAndGet();
-//				});
-//	}
-//	
-//	@Deprecated
-//	private int setFocusData_old(String focusData_raw)
-//	{
-//		String[] focusData_splitOnce = focusData_raw.split("\\r\\n|\\n|\\r");
-//		
-//		if (focusData_splitOnce[0].split("\\t", -1).length < NUM_COLUMNS_FROM_FEL ||
-//				focusData_raw.charAt(0) == ' ') {
-//			return FAILED;
-//		}
-//		
-//		UnityContainer.makeNewContainer()
-//					  .importData(focusData_raw, UnityContainer.ImportTypes.FOCUS);
-//		
-//		UnityContainer.getContainer().getEventMap().keySet().forEach(e -> {
-//			Debug.out("[DEBUG] " + e + ": " + UnityContainer.getContainer().getEventMap().get(e));
-//		});
-//		
-//		Debug.out("[DEBUG] EventMap Size: " + UnityContainer.getContainer().getEventMap().size());
-//		
-//		return SUCCESSFUL;
-//	}
 }
 	
 	

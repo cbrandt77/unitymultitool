@@ -4,9 +4,9 @@ import java.util.List;
 
 import com.nfhsnetwork.unitytool.common.UnityContainer;
 import com.nfhsnetwork.unitytool.common.UnityContainer.ClubInventory;
+import com.nfhsnetwork.unitytool.logging.Debug;
 import com.nfhsnetwork.unitytool.types.NFHSGameObject;
 import com.nfhsnetwork.unitytool.types.NullNFHSObject;
-import com.nfhsnetwork.unitytool.utils.Debug;
 
 public class UIController //TODO merge UIController and MainWindowFields
 {

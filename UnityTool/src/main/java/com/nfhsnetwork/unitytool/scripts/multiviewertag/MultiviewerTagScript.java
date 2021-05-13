@@ -25,13 +25,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.nfhsnetwork.unitytool.common.StdPropertyChangeEvent;
+import com.nfhsnetwork.unitytool.common.StdPropertyChangeListener;
 import com.nfhsnetwork.unitytool.common.UnityContainer;
-import com.nfhsnetwork.unitytool.common.UnityToolCommon;
 import com.nfhsnetwork.unitytool.exceptions.GameNotFoundException;
 import com.nfhsnetwork.unitytool.exceptions.InvalidContentTypeException;
+import com.nfhsnetwork.unitytool.io.UnityInterface;
+import com.nfhsnetwork.unitytool.logging.Debug;
 import com.nfhsnetwork.unitytool.types.NFHSGameObject;
 import com.nfhsnetwork.unitytool.ui.components.ProgressBarDialogBox;
-import com.nfhsnetwork.unitytool.utils.Debug;
+import com.nfhsnetwork.unitytool.utils.ManipJSON;
 
 public class MultiviewerTagScript {
 	
@@ -110,7 +113,7 @@ public class MultiviewerTagScript {
 	}
 	
 	private final BlockingQueue<String> workQueue = new LinkedBlockingQueue<>();
-	private final BlockingQueue<NFHSGameObject> putQueue = new LinkedBlockingQueue<>();
+	private final BlockingQueue<JSONObjectWithID> putQueue = new LinkedBlockingQueue<>();
 	
 	
 //	private static final int NUM_THREADS = 4;
@@ -134,17 +137,24 @@ public class MultiviewerTagScript {
 		public void run() {
 			try {
 				Debug.out("[DEBUG] Started background task.");
-				String s = workQueue.take();
+				final String s = workQueue.take();
 				
 				if (s.length() < 13) {
 					Debug.out("[DEBUG] {MTS} length less than 13: " + s);
 					return;
 				}
-					
 				
-				NFHSGameObject n = NFHSGameObject.buildFromIdOrUrl(s);
+				final JSONObject get;
+				try {
+					get = UnityInterface.fetchEventFromUnity(s);
+				} catch (IOException e) {
+					e.printStackTrace();
+					return;
+				}
 				
-				putQueue.add(n);
+				JSONObjectWithID jwid = new JSONObjectWithID(s, get);
+				
+				putQueue.add(jwid);
 				Debug.out("[DEBUG] Added " + s + " to Put Queue!");
 				
 			} catch (InterruptedException e) {
@@ -181,7 +191,7 @@ public class MultiviewerTagScript {
 				if (taskCompleteCounter.get() >= totalTasks)
 				{
 					Debug.out("[DEBUG] All puts done!");
-					firePropertyChangeEvent(UnityToolCommon.PropertyChangeType.DONE);
+					firePropertyChangeEvent(StdPropertyChangeEvent.PropertyType.DONE);
 					return;
 				}
 				if (!putQueue.isEmpty())
@@ -192,9 +202,9 @@ public class MultiviewerTagScript {
 						
 						Thread.sleep(1000);
 						
-						NFHSGameObject j = putQueue.take();
+						final JSONObjectWithID j = putQueue.take();
 						
-						JSONArray ja = j.getEventTags();
+						final JSONArray ja = ManipJSON.getEventTags(j.getJson());
 						
 						for (int i = 0, length = ja.length(); i < length; i++)
 						{
@@ -211,7 +221,7 @@ public class MultiviewerTagScript {
 						JSONObject out = new JSONObject();
 						out.put("event_tags", ja);
 						
-						sendJSONToUnity(out, j.getGameID());
+						sendJSONToUnity(out, j.getJson().getString("key"));
 					} 
 					catch (IOException | InterruptedException e) {
 						e.printStackTrace();
@@ -325,41 +335,12 @@ public class MultiviewerTagScript {
 	
 	private void sendJSONToUnity(JSONObject jsonIn, String id) throws IOException
 	{
-		String jsonText = jsonIn.toString();
-		byte[] out = jsonText.getBytes(StandardCharsets.UTF_8);
+		final boolean succeeded = UnityInterface.sendJSONToUnity(jsonIn, String.format(unityPUTAddress, id));
 		
-		URL url = new URL(String.format(unityPUTAddress, id));
-		URLConnection con = url.openConnection();
-		
-		HttpURLConnection http = (HttpURLConnection)con;
-		http.setRequestMethod("PUT");
-		http.setDoOutput(true);
-		http.setDoInput(true);
-		
-		addRequestHeaders(http);
-		http.addRequestProperty("Content-Length", jsonText.length() + "");
-		
-		http.addRequestProperty("Authorization", UnityContainer.getAuthToken());
-		
-		http.setFixedLengthStreamingMode(out.length);
-		
-		//http.connect(); // actually redundant in java apparently
-		
-		try (OutputStream os = http.getOutputStream())
-		{
-			os.write(out);
-		}
-		
-		
-		//InputStream response = http.getInputStream();
-		
-		if (http.getResponseCode() != 200)
+		if (!succeeded)
 		{
 			failedToUpdate.add(id); //TODO
 		}
-		
-		
-		http.disconnect();
 		
 	}
 	
@@ -393,24 +374,25 @@ public class MultiviewerTagScript {
 	
 	
 	
-	Set<PropertyChangeListener> listeners = new CopyOnWriteArraySet<>();
+	Set<StdPropertyChangeListener> listeners = new CopyOnWriteArraySet<>();
 	
-	public MultiviewerTagScript addPropertyChangeListener(PropertyChangeListener e)
+	public MultiviewerTagScript addPropertyChangeListener(StdPropertyChangeListener e)
 	{
 		listeners.add(e);
 		
 		return this;
 	}
 	
-	public void firePropertyChangeEvent(UnityToolCommon.PropertyChangeType type)
+	public void firePropertyChangeEvent(StdPropertyChangeEvent.PropertyType type)
 	{
 		Debug.out("[DEBUG] {firePropertyChangeEvent} change event fired of type " + type.name() + ": " + type.toString());
-		listeners.forEach(e -> e.propertyChange(new PropertyChangeEvent(this, type.toString(), null, null))); //TODO progress bar and CHANGED
-	}
+		final StdPropertyChangeEvent evt = new StdPropertyChangeEvent(this, type, null, null);
+		listeners.forEach(e -> e.propertyChange(evt)); //TODO progress bar and CHANGED
+	} //TODO hook this up to the progress bar because rn it doesn't work
 	
-	public void firePropertyChangeEvent(Object source, UnityToolCommon.PropertyChangeType type, Object oldValue, Object newValue)
+	public void firePropertyChangeEvent(Object source, StdPropertyChangeEvent.PropertyType type, Object oldValue, Object newValue)
 	{
-		PropertyChangeEvent evt = new PropertyChangeEvent(source, type.toString(), oldValue, newValue);
+		final StdPropertyChangeEvent evt = new StdPropertyChangeEvent(source, type, oldValue, newValue);
 		listeners.forEach(e -> e.propertyChange(evt));
 	}
 	

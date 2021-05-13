@@ -32,7 +32,7 @@ import com.nfhsnetwork.unitytool.utils.LocalFileHelper.Version;
 public class UpdateManager {
 	
 
-	private static final String DOWNLOAD_URL = "https://api.github.com/repos/ByThePowerOfScience/unitymultitool/releases/latest";
+	private static final String DOWNLOAD_URL = "https://api.github.com/repos/cbrandt77/unitymultitool/releases/latest";
 	
 	private static JSONObject checksumObject = null;
 	

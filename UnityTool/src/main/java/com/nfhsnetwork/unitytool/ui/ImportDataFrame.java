@@ -5,17 +5,22 @@
  */
 package com.nfhsnetwork.unitytool.ui;
 
+import java.awt.*;
 import java.awt.Dialog;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
+import javax.swing.*;
+import javax.swing.GroupLayout;
 
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
+import javax.swing.LayoutStyle;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.border.*;
 
 import com.nfhsnetwork.unitytool.common.StdPropertyChangeEvent;
 import com.nfhsnetwork.unitytool.common.UnityContainer;
@@ -27,6 +32,7 @@ import com.nfhsnetwork.unitytool.logging.Debug;
 import com.nfhsnetwork.unitytool.scripts.focuscompare.FocusCompareScript;
 import com.nfhsnetwork.unitytool.scripts.focuscompare.FocusOutputFrame;
 import com.nfhsnetwork.unitytool.scripts.multiviewertag.MultiviewerTagScript;
+import com.nfhsnetwork.unitytool.ui.components.*;
 import com.nfhsnetwork.unitytool.ui.components.ProgressBarDialogBox;
 import com.nfhsnetwork.unitytool.ui.pixellotcsv.DragNDropCSV;
 import com.nfhsnetwork.unitytool.utils.IOUtils;
@@ -420,43 +426,45 @@ public class ImportDataFrame extends javax.swing.JFrame {
     
     
     
-    private boolean hasEnoughText()
+    private boolean hasEnoughText(final JTextArea textArea)
     {
-    	return placeholderTextArea1.getText().length() >= 13;
+    	return textArea.getText().length() >= 13;
     }
     
     
     private void button_importActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_importActionPerformed
     	
-    	if (!hasEnoughText())
+    	if (!hasEnoughText(placeholderTextArea1))
     	{
     		JOptionPane.showOptionDialog(this, "No data entered.", "Invalid Import", JOptionPane.DEFAULT_OPTION,
 					JOptionPane.ERROR_MESSAGE, null, null, null);
     		return;
     	}
-    	
-    	UnityContainer.makeOrGetInstance();
-    	
-    	SwingWorker<Void, Void> importWorker = new SwingWorker<Void, Void>() {
-			@Override
-			protected Void doInBackground() throws Exception {
-				UnityContainer.getInstance().importEventData(placeholderTextArea1.getText(), ImportDataFrame.this.importType);
-				return null;
-			}
-    	};
-    	
-    	SwingUtilities.invokeLater(() -> {
-    		disableAllComponents();
-    		
-    		UnityContainer.getInstance().addPropertyChangeListener((e) -> {
-    			Debug.out("[DEBUG] {button_importActionPerformed} action event fired");
-    			ImportDataFrame.this.setVisible(false);
-    			new MainWindow().setVisible(true);
-    			ImportDataFrame.this.dispose();
-    		});
-    		
-    		importWorker.execute();
-    	});
+
+        UnityContainer.makeOrGetInstance();
+
+        SwingWorker<Void, Void> importWorker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                UnityContainer.getInstance().importEventData(placeholderTextArea1.getText(), ImportDataFrame.this.importType);
+                return null;
+            }
+        };
+
+        //TODO show a Loading... dialog box that appears and then disappears
+
+        SwingUtilities.invokeLater(() -> {
+            disableAllComponents();
+
+            UnityContainer.getInstance().addPropertyChangeListener((e) -> {
+                Debug.out("[DEBUG] {button_importActionPerformed} action event fired");
+                ImportDataFrame.this.setVisible(false);
+                new MainWindow().setVisible(true);
+                ImportDataFrame.this.dispose();
+            });
+
+            importWorker.execute();
+        });
     }//GEN-LAST:event_button_importActionPerformed
 
     
@@ -467,7 +475,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
     private FocusCompareScript fe;
     
     private void button_focuscompareActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_focuscompareActionPerformed
-    	if (!hasEnoughText())
+    	if (!hasEnoughText(this.placeholderTextArea1))
     	{
     		JOptionPane.showOptionDialog(this, "No data entered.", "Invalid Import", JOptionPane.DEFAULT_OPTION,
 					JOptionPane.ERROR_MESSAGE, null, null, null);
@@ -654,7 +662,7 @@ public class ImportDataFrame extends javax.swing.JFrame {
 	
     private void button_mviewerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_mviewerActionPerformed
     	
-    	if (!hasEnoughText())
+    	if (!hasEnoughText(this.placeholderTextArea1))
     	{
     		JOptionPane.showOptionDialog(this, "No data entered.", "Invalid Import", JOptionPane.DEFAULT_OPTION,
 					JOptionPane.ERROR_MESSAGE, null, null, null);

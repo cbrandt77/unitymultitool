@@ -11,3 +11,5 @@
 Test.java
 *.bak
 /install.sh
+/.settings/
+/.idea/

@@ -1,10 +1,13 @@
 package com.nfhsnetwork.unitytool;
 
 import com.nfhsnetwork.unitytool.common.Config;
+import com.nfhsnetwork.unitytool.common.Endpoints;
 import com.nfhsnetwork.unitytool.logging.Debug;
 import com.nfhsnetwork.unitytool.ui.ImportDataFrame;
 import com.nfhsnetwork.unitytool.updater.UpdateManager;
 import com.nfhsnetwork.unitytool.utils.Util;
+
+import javax.swing.*;
 
 public class Wrapper 
 {
@@ -16,25 +19,21 @@ public class Wrapper
 		
 		Config.init();
 		
-		
-		
 		Debug.out("[DEBUG] {main} Current directory: " + Util.getCurrentDirectory());
 		Debug.out("[DEBUG] {main} GetClass directory: " + Wrapper.class.getProtectionDomain().getCodeSource().getLocation());
 		
-		
 		UpdateManager.update();
+
+        Endpoints.genEndpoints();
 		
 		//createFiles(); //TODO check if required folders exist and, if not, create them (e.g. outputs and other potential folders)
 				//TODO make config.json that saves configuration settings between sessions
 		
 		
 		
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-			public void run() {
-            	setLookAndFeel();
-                new ImportDataFrame().setVisible(true);
-            }
+        SwingUtilities.invokeLater(() -> {
+            setLookAndFeel();
+            new ImportDataFrame().setVisible(true);
         });
 	}
 	

@@ -1,8 +1,17 @@
 package com.nfhsnetwork.unitytool.utils;
 
+import com.nfhsnetwork.unitytool.logging.Debug;
+import org.jetbrains.annotations.Nullable;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class LocalFileHelper {
 	
@@ -72,6 +81,35 @@ public final class LocalFileHelper {
 		private static String parseEmailFile(final String emailFile)
 		{
 			return emailFile;
+		}
+	}
+	
+	public static class Assets
+	{
+		private static final String ASSETS_PATH = Util.getAbsoluteDir("bin/assets").toString();
+		private static final String ICONS_PATH = ASSETS_PATH + File.separator + "icons" + File.separator;
+		
+		static Map<String, ImageIcon> iconCache = new HashMap<>();
+		
+		@Nullable
+		public static Icon getIconForComponent(final Component user, final String iconName) {
+			ImageIcon icon = iconCache.get(iconName);
+			if (icon == null) {
+				try {
+					final File f = new File(ICONS_PATH + iconName);
+					Debug.out(f.toString());
+					Debug.out("[DEBUG] " + user.getWidth());
+					final BufferedImage img = ImageIO.read(f);
+					final int size = user.getPreferredSize().height - 4;
+					final Image resized = img.getScaledInstance(size, size, Image.SCALE_SMOOTH);
+					icon = new ImageIcon(resized);
+				} catch (IOException e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+			iconCache.put(iconName, icon);
+			return icon;
 		}
 	}
 	

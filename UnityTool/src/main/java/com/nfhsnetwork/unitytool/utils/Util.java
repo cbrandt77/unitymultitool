@@ -84,6 +84,19 @@ public final class Util
 		{
 			return input.replaceAll("^" + toStrip, "");
 		}
+
+		public static String capitalize(final String in) {
+			final char[] arr = in.toCharArray();
+			final char first = arr[0];
+			
+			if (first >= 'A' && first <= 'Z')
+			{
+				arr[0] = (char) (first + ' ');
+				return new String(arr);
+			}
+			else 
+				return in;
+		}
 		
 	}
 	

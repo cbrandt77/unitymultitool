@@ -5,8 +5,25 @@
  */
 package com.nfhsnetwork.unitytool.ui;
 
+import java.awt.*;
+import java.awt.FlowLayout;
+import java.awt.Insets;
+import java.awt.Rectangle;
+import javax.swing.*;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.LayoutStyle;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.border.*;
+import javax.swing.border.EmptyBorder;
+import com.nfhsnetwork.unitytool.ui.components.*;
+
+import com.nfhsnetwork.unitytool.ui.components.HyperlinkLabel;
 
 /**
  *
@@ -38,20 +55,21 @@ public class EventDetailsPane extends javax.swing.JPanel {
         label_broadcastKey_tag = new javax.swing.JLabel();
         label_focusType_tag = new javax.swing.JLabel();
         panel_general_fields = new javax.swing.JPanel();
-        tf_bdcID_field = new javax.swing.JTextField();
-        label_eventID_data = new javax.swing.JLabel();
         label_producerType_data = new javax.swing.JLabel();
         label_status_field = new javax.swing.JLabel();
         label_focusType_field = new javax.swing.JLabel();
+        gil_eventID = new com.nfhsnetwork.unitytool.ui.components.IDLabel();
+        gil_bdcID = new com.nfhsnetwork.unitytool.ui.components.IDLabel();
         panel_miscDetails = new javax.swing.JPanel();
         label_startTime_tag = new javax.swing.JLabel();
         label_startTime_data = new javax.swing.JLabel();
         label_location_tag = new javax.swing.JLabel();
         label_location_data = new javax.swing.JLabel();
         label_redirect_tag = new javax.swing.JLabel();
-        label_redirect_data = new javax.swing.JTextField();
         tag_eventtags = new javax.swing.JLabel();
         data_eventtags = new com.nfhsnetwork.unitytool.ui.components.EditableLabel();
+        b_otherGames = new javax.swing.JButton();
+        gil_redirectID = new com.nfhsnetwork.unitytool.ui.components.IDLabel();
         panel_competitionDetails = new javax.swing.JPanel();
         label_sport_tag = new javax.swing.JLabel();
         tag_comptype = new javax.swing.JLabel();
@@ -104,16 +122,6 @@ public class EventDetailsPane extends javax.swing.JPanel {
                 .addComponent(label_focusType_tag))
         );
 
-        tf_bdcID_field.setEditable(false);
-        tf_bdcID_field.setText("bdc1234567890");
-        tf_bdcID_field.setAutoscrolls(false);
-        tf_bdcID_field.setBorder(null);
-        tf_bdcID_field.setDoubleBuffered(true);
-        tf_bdcID_field.setOpaque(true);
-        tf_bdcID_field.setRequestFocusEnabled(false);
-
-        label_eventID_data.setText("gam1234567890");
-
         label_producerType_data.setText("Producer");
 
         label_status_field.setText("Scheduled");
@@ -125,20 +133,20 @@ public class EventDetailsPane extends javax.swing.JPanel {
         panel_general_fieldsLayout.setHorizontalGroup(
             panel_general_fieldsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel_general_fieldsLayout.createSequentialGroup()
-                .addGroup(panel_general_fieldsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(label_status_field, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(tf_bdcID_field)
-                    .addComponent(label_producerType_data, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(label_focusType_field, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(label_eventID_data, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE))
-                .addContainerGap())
+                .addGroup(panel_general_fieldsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(label_focusType_field, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(label_status_field, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(label_producerType_data, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(gil_bdcID, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(gil_eventID, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panel_general_fieldsLayout.setVerticalGroup(
             panel_general_fieldsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel_general_fieldsLayout.createSequentialGroup()
-                .addComponent(label_eventID_data, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tf_bdcID_field, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(gil_eventID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(gil_bdcID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(label_producerType_data)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -168,7 +176,7 @@ public class EventDetailsPane extends javax.swing.JPanel {
                 .addGap(13, 13, 13))
         );
 
-        panel_miscDetails.setBorder(javax.swing.BorderFactory.createTitledBorder("idk"));
+        panel_miscDetails.setBorder(javax.swing.BorderFactory.createTitledBorder("Event Details"));
         panel_miscDetails.setMinimumSize(new java.awt.Dimension(269, 122));
 
         label_startTime_tag.setText("Start Time:");
@@ -181,13 +189,16 @@ public class EventDetailsPane extends javax.swing.JPanel {
 
         label_redirect_tag.setText("Redirect:");
 
-        label_redirect_data.setEditable(false);
-        label_redirect_data.setText("gam1234567890");
-        label_redirect_data.setBorder(null);
-
         tag_eventtags.setText("Tags:");
 
         data_eventtags.setText("placeholder");
+
+        b_otherGames.setText("Other Games from this Producer");
+        b_otherGames.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                b_otherGamesActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panel_miscDetailsLayout = new javax.swing.GroupLayout(panel_miscDetails);
         panel_miscDetails.setLayout(panel_miscDetailsLayout);
@@ -196,22 +207,26 @@ public class EventDetailsPane extends javax.swing.JPanel {
             .addGroup(panel_miscDetailsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panel_miscDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panel_miscDetailsLayout.createSequentialGroup()
-                        .addComponent(label_startTime_tag)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(label_startTime_data))
-                    .addGroup(panel_miscDetailsLayout.createSequentialGroup()
-                        .addComponent(label_location_tag)
-                        .addGap(18, 18, 18)
-                        .addComponent(label_location_data))
+                    .addComponent(b_otherGames, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(panel_miscDetailsLayout.createSequentialGroup()
                         .addGroup(panel_miscDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(label_redirect_tag)
                             .addComponent(tag_eventtags))
-                        .addGap(18, 18, 18)
+                        .addGap(22, 22, 22)
                         .addGroup(panel_miscDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(label_redirect_data)
-                            .addComponent(data_eventtags, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(data_eventtags, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(panel_miscDetailsLayout.createSequentialGroup()
+                                .addComponent(gil_redirectID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))))
+                    .addGroup(panel_miscDetailsLayout.createSequentialGroup()
+                        .addGroup(panel_miscDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(label_startTime_tag)
+                            .addComponent(label_location_tag))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(panel_miscDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(label_startTime_data, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(label_location_data, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         panel_miscDetailsLayout.setVerticalGroup(
@@ -226,13 +241,15 @@ public class EventDetailsPane extends javax.swing.JPanel {
                     .addComponent(label_location_tag)
                     .addComponent(label_location_data))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panel_miscDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(panel_miscDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(label_redirect_tag)
-                    .addComponent(label_redirect_data, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(gil_redirectID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_miscDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tag_eventtags)
                     .addComponent(data_eventtags, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 64, Short.MAX_VALUE)
+                .addComponent(b_otherGames)
                 .addContainerGap())
         );
 
@@ -304,7 +321,7 @@ public class EventDetailsPane extends javax.swing.JPanel {
             p_participantsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(p_participantsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabpane_participants, javax.swing.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
+                .addComponent(tabpane_participants)
                 .addContainerGap())
         );
         p_participantsLayout.setVerticalGroup(
@@ -325,12 +342,12 @@ public class EventDetailsPane extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(panel_miscDetails, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(p_participants, javax.swing.GroupLayout.PREFERRED_SIZE, 283, Short.MAX_VALUE))
+                        .addComponent(p_participants, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(subPanel_generalDetails, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(panel_competitionDetails, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(116, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -339,7 +356,7 @@ public class EventDetailsPane extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(subPanel_generalDetails, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panel_competitionDetails, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(panel_miscDetails, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(p_participants, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -347,15 +364,22 @@ public class EventDetailsPane extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void b_otherGamesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b_otherGamesActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_b_otherGamesActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    javax.swing.JButton b_otherGames;
     com.nfhsnetwork.unitytool.ui.components.EditableLabel data_eventtags;
+    com.nfhsnetwork.unitytool.ui.components.IDLabel gil_bdcID;
+    com.nfhsnetwork.unitytool.ui.components.IDLabel gil_eventID;
+    com.nfhsnetwork.unitytool.ui.components.IDLabel gil_redirectID;
     javax.swing.JLabel l_gender_data;
     javax.swing.JLabel l_level_data;
     javax.swing.JLabel l_sport_data;
     javax.swing.JLabel l_type_data;
     javax.swing.JLabel label_broadcastKey_tag;
-    javax.swing.JLabel label_eventID_data;
     javax.swing.JLabel label_eventID_tag;
     javax.swing.JLabel label_eventStatus_tag;
     javax.swing.JLabel label_focusType_field;
@@ -366,7 +390,6 @@ public class EventDetailsPane extends javax.swing.JPanel {
     javax.swing.JLabel label_location_tag;
     javax.swing.JLabel label_producerType_data;
     javax.swing.JLabel label_producerType_tag;
-    javax.swing.JTextField label_redirect_data;
     javax.swing.JLabel label_redirect_tag;
     javax.swing.JLabel label_sport_tag;
     javax.swing.JLabel label_startTime_data;
@@ -381,68 +404,122 @@ public class EventDetailsPane extends javax.swing.JPanel {
     javax.swing.JTabbedPane tabpane_participants;
     javax.swing.JLabel tag_comptype;
     javax.swing.JLabel tag_eventtags;
-    javax.swing.JTextField tf_bdcID_field;
     // End of variables declaration//GEN-END:variables
 
-
-    
-    public void addParticipant(String name, String loc, String assoc, String tabName)
+    private static final String placeholder = "-----";
+    private static final String schoolUnityEndpoint = "http://console.nfhsnetwork.com/organizations/#/schools/%s";
+    public void addParticipant(final String name, final String loc, final String assoc, final String tabName, final String key)
     {
-        JLabel tag_name = new JLabel("Name:");
-
-        JLabel data_name = new JLabel(name);
-
-        JLabel tag_assoc = new JLabel("Assoc:");
-
-        JLabel data_assoc = new JLabel(assoc);
-
-        JLabel tag_location = new JLabel("Location:");
-
-        JLabel data_loc = new JLabel(loc);
-        
-        JPanel participantTemplate = new JPanel();
-        
-        javax.swing.GroupLayout participantTemplateLayout = new javax.swing.GroupLayout(participantTemplate);
-        participantTemplateLayout.setHorizontalGroup(
-            participantTemplateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(participantTemplateLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(participantTemplateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(participantTemplateLayout.createSequentialGroup()
-                        .addGroup(participantTemplateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(tag_name, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(tag_assoc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(25, 25, 25)
-                        .addGroup(participantTemplateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(data_name, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
-                            .addComponent(data_assoc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(participantTemplateLayout.createSequentialGroup()
-                        .addComponent(tag_location)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(data_loc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
-        participantTemplateLayout.setVerticalGroup(
-            participantTemplateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(participantTemplateLayout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addGroup(participantTemplateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(data_name)
-                    .addComponent(tag_name, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(participantTemplateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tag_assoc)
-                    .addComponent(data_assoc))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(participantTemplateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tag_location)
-                    .addComponent(data_loc))
-                .addContainerGap(62, Short.MAX_VALUE))
-        );
-        participantTemplate.setLayout(participantTemplateLayout);
-        
-        this.tabpane_participants.add(participantTemplate, tabName);
+    	final JLabel l_name;
+    	if (name != null)
+    		l_name = new JLabel("Name: " + name);
+    	else
+    		l_name = new JLabel("Name: " + placeholder);
+    	
+    	
+    	final JLabel l_assoc;
+    	if (assoc != null)
+    		l_assoc = new JLabel("Assoc: " + assoc);
+    	else 
+    		l_assoc = new JLabel("Assoc: " + placeholder);
+    	
+    	
+    	final JLabel l_loc;
+    	if (loc != null)
+    		l_loc = new JLabel("Location: " + assoc);
+    	else
+    		l_loc = new JLabel("Location: " + placeholder);
+    	
+    	
+    	final HyperlinkLabel link_key = new HyperlinkLabel("School Link", SwingConstants.CENTER);
+    	if (key != null) {
+    		link_key.setAddress(String.format(schoolUnityEndpoint, key));
+    	}
+    	else {
+    		link_key.setAddress("");
+    	}
+    	
+    	
+    	l_loc.setAlignmentX(CENTER_ALIGNMENT);
+    	l_assoc.setAlignmentX(CENTER_ALIGNMENT);
+    	l_name.setAlignmentX(CENTER_ALIGNMENT);
+    	link_key.setAlignmentX(CENTER_ALIGNMENT);
+    	
+    	l_loc.setBorder(new EmptyBorder(new Insets(5, 0, 5, 0)));
+    	l_assoc.setBorder(new EmptyBorder(new Insets(5, 0, 5, 0)));
+    	l_name.setBorder(new EmptyBorder(new Insets(5, 0, 5, 0)));
+    	link_key.setBorder(new EmptyBorder(new Insets(5, 0, 5, 0)));
+    	
+    	
+    	final JPanel participant_container = new JPanel();
+    	participant_container.setLayout(new BoxLayout(participant_container, BoxLayout.Y_AXIS));
+    	
+    	participant_container.add(l_name);
+    	participant_container.add(l_assoc);
+    	participant_container.add(l_loc);
+    	participant_container.add(link_key);
+    	
+    	this.tabpane_participants.add(participant_container, tabName);
     }
+    
+    
+//    public void addParticipant(final String name, final String loc, final String assoc, final String tabName, final String key)
+//    {
+//    	final JLabel tag_name = new JLabel("Name:");
+//    	
+//    	final JLabel data_name = new JLabel(name);
+//
+//    	final JLabel tag_assoc = new JLabel("Assoc:");
+//
+//    	final JLabel data_assoc = new JLabel(assoc);
+//
+//    	final JLabel tag_location = new JLabel("Location:");
+//
+//    	final JLabel data_loc = new JLabel(loc);
+//        
+//    	final JPanel participantTemplate = new JPanel();
+//        
+//        javax.swing.GroupLayout participantTemplateLayout = new javax.swing.GroupLayout(participantTemplate);
+//        participantTemplateLayout.setHorizontalGroup(
+//            participantTemplateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+//            .addGroup(participantTemplateLayout.createSequentialGroup()
+//                .addContainerGap()
+//                .addGroup(participantTemplateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+//                    .addGroup(participantTemplateLayout.createSequentialGroup()
+//                        .addGroup(participantTemplateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+//                            .addComponent(tag_name, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+//                            .addComponent(tag_assoc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+//                        .addGap(25, 25, 25)
+//                        .addGroup(participantTemplateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+//                            .addComponent(data_name, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
+//                            .addComponent(data_assoc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+//                    .addGroup(participantTemplateLayout.createSequentialGroup()
+//                        .addComponent(tag_location)
+//                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+//                        .addComponent(data_loc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+//                .addContainerGap())
+//        );
+//        participantTemplateLayout.setVerticalGroup(
+//            participantTemplateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+//            .addGroup(participantTemplateLayout.createSequentialGroup()
+//                .addGap(15, 15, 15)
+//                .addGroup(participantTemplateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+//                    .addComponent(data_name)
+//                    .addComponent(tag_name, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
+//                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+//                .addGroup(participantTemplateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+//                    .addComponent(tag_assoc)
+//                    .addComponent(data_assoc))
+//                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+//                .addGroup(participantTemplateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+//                    .addComponent(tag_location)
+//                    .addComponent(data_loc))
+//                .addContainerGap(62, Short.MAX_VALUE))
+//        );
+//        participantTemplate.setLayout(participantTemplateLayout);
+//        
+//        this.tabpane_participants.add(participantTemplate, tabName);
+//    }
     
     public void clearParticipants()
     {

@@ -5,25 +5,35 @@
  */
 package com.nfhsnetwork.unitytool.ui;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.function.Function;
+import javax.swing.*;
+import javax.swing.GroupLayout;
 
 import javax.swing.JOptionPane;
+import javax.swing.LayoutStyle;
 import javax.swing.SwingUtilities;
+import javax.swing.border.*;
+
+import com.nfhsnetwork.unitytool.common.Endpoints;
+import com.nfhsnetwork.unitytool.ui.components.*;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.nfhsnetwork.unitytool.common.UnityContainer;
+import com.nfhsnetwork.unitytool.common.UnityToolCommon;
 import com.nfhsnetwork.unitytool.logging.Debug;
 import com.nfhsnetwork.unitytool.types.NullNFHSObject;
 import com.nfhsnetwork.unitytool.ui.pixellotcsv.DragNDropCSV;
 import com.nfhsnetwork.unitytool.utils.IOUtils;
+import com.nfhsnetwork.unitytool.utils.Util.StringUtils;
 
 /**
  *
@@ -140,7 +150,7 @@ class MainWindow extends javax.swing.JFrame {
         panel_title.setVerifyInputWhenFocusTarget(false);
 
         label_gameTitle.setFont(new java.awt.Font("Trebuchet MS", 1, 14)); // NOI18N
-        label_gameTitle.setText("Varsity Football | Loyola Academy vs. St. Rita High School");
+        label_gameTitle.setText("title");
 
         javax.swing.GroupLayout panel_titleLayout = new javax.swing.GroupLayout(panel_title);
         panel_title.setLayout(panel_titleLayout);
@@ -201,8 +211,7 @@ class MainWindow extends javax.swing.JFrame {
 
         menuItem_dologin.setText("Login to Unity");
         menuItem_dologin.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItem_dologinActionPerformed(evt);
             }
         });
@@ -210,18 +219,15 @@ class MainWindow extends javax.swing.JFrame {
 
         menuItem_importNewData.setText("Import New Data");
         menuItem_importNewData.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItem_importNewDataActionPerformed(evt);
             }
         });
-        menuItem_importNewData.setVisible(false);
         menu_file.add(menuItem_importNewData);
 
         menuItem_openPixellotCSV.setText("Import Pixellot CSV");
         menuItem_openPixellotCSV.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItem_openPixellotCSVActionPerformed(evt);
             }
         });
@@ -230,8 +236,7 @@ class MainWindow extends javax.swing.JFrame {
 
         menuItem_exportToFocus.setText("Export as Focus List Sheet");
         menuItem_exportToFocus.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItem_exportToFocusActionPerformed(evt);
             }
         });
@@ -244,8 +249,7 @@ class MainWindow extends javax.swing.JFrame {
 
         menuItemCB_enableEditing.setText("Enable Editing");
         menuItemCB_enableEditing.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItemCB_enableEditingActionPerformed(evt);
             }
         });
@@ -262,8 +266,7 @@ class MainWindow extends javax.swing.JFrame {
         view_gameList_eventID.setSelected(true);
         view_gameList_eventID.setText("Event ID");
         view_gameList_eventID.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 view_gameList_eventIDActionPerformed(evt);
             }
         });
@@ -272,8 +275,7 @@ class MainWindow extends javax.swing.JFrame {
         view_gameList_bdcID.setSelected(true);
         view_gameList_bdcID.setText("Broadcast ID");
         view_gameList_bdcID.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 view_gameList_bdcIDActionPerformed(evt);
             }
         });
@@ -282,8 +284,7 @@ class MainWindow extends javax.swing.JFrame {
         view_gameList_title.setSelected(true);
         view_gameList_title.setText("Title");
         view_gameList_title.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 view_gameList_titleActionPerformed(evt);
             }
         });
@@ -293,8 +294,7 @@ class MainWindow extends javax.swing.JFrame {
 
         menuItem_refresh.setText("Refresh Data");
         menuItem_refresh.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItem_refreshActionPerformed(evt);
             }
         });
@@ -327,7 +327,9 @@ class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_menuItem_refreshActionPerformed
 
     private void menuItem_importNewDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItem_importNewDataActionPerformed
-        // TODO add your handling code here:
+        SwingUtilities.invokeLater(() -> {
+			new ImportDataFrame().setVisible(true);
+		});
     }//GEN-LAST:event_menuItem_importNewDataActionPerformed
 
     private void menuItem_openPixellotCSVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItem_openPixellotCSVActionPerformed
@@ -449,7 +451,7 @@ class MainWindow extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
-			public void run() {
+            public void run() {
                 new MainWindow().setVisible(true);
             }
         });
@@ -508,12 +510,12 @@ class MainWindow extends javax.swing.JFrame {
     	//TODO remove all of these variables cause I really don't even need them
     	
     	
-    	protected void setTitle(String title)
+    	protected void setTitle(final String title)
     	{
     		MainWindow.this.label_gameTitle.setText(title);
     	}
 
-    	protected void setEventTags(JSONArray eventTags)
+    	protected void setEventTags(final JSONArray eventTags)
     	{
     		if (eventTags == null)
     		{
@@ -521,7 +523,7 @@ class MainWindow extends javax.swing.JFrame {
     			return;
     		}
     		
-    		StringBuilder sb = new StringBuilder();
+    		final StringBuilder sb = new StringBuilder();
     		sb.append("[ ");
     		for (int i = 0, length = eventTags.length(); i < length; i++)
     		{
@@ -534,37 +536,39 @@ class MainWindow extends javax.swing.JFrame {
     		eventDetailsPane1.data_eventtags.setText(sb.toString());
     	}
     	
-		protected void setGender(String gender) {
+		protected void setGender(final String gender) {
 			this.gender = gender;
 			eventDetailsPane1.l_gender_data.setText(gender);
 		}
 
 		protected void setProdType(String prodType) {
 			this.prodType = prodType;
-			
+			prodType = StringUtils.capitalize(prodType);
 			eventDetailsPane1.label_producerType_data.setText(prodType);
 		}
 
-		protected void setOnairstatus(String onairstatus) {
+		protected void setOnairstatus(final String onairstatus) {
 			this.onairstatus = onairstatus;
 			eventDetailsPane1.label_status_field.setText(onairstatus);
 			productionTabPane1.l_onAirStatus_data.setText(onairstatus);
 		}
 
-		protected void setGameid(String gameid) {
+		protected void setGameid(final String gameid) {
 			this.gameid = gameid;
-			eventDetailsPane1.label_eventID_data.setText(gameid);
-			pixellotTabPane1.data_consoleEventID.setText(gameid);
+			final String url = Endpoints.getUnityGameOrEventLink(gameid);
+			eventDetailsPane1.gil_eventID.set(gameid, url);
+			pixellotTabPane1.data_consoleEventID.set(gameid, url);
 		}
 
-		protected void setBdcid(String bdcid) {
+		protected void setBdcid(final String bdcid) {
 			this.bdcid = bdcid;
 			Debug.out("[DEBUG] {setBdcid} Setting BDC id to " + bdcid);
-			eventDetailsPane1.tf_bdcID_field.setText(bdcid);
+			eventDetailsPane1.gil_bdcID.set(bdcid, Endpoints.getUnityBroadcastLink(bdcid));
 			
 		}
 		
-		protected void setStarttime(LocalDateTime localDateTime) {
+		final DateTimeFormatter dtf_starttime = DateTimeFormatter.ofPattern(startTimeDTFPattern);
+		protected void setStarttime(final LocalDateTime localDateTime) {
 			if (localDateTime == null)
 			{
 				eventDetailsPane1.label_startTime_data.setText("");
@@ -573,18 +577,16 @@ class MainWindow extends javax.swing.JFrame {
 			
 			this.starttime = localDateTime;
 			
-			DateTimeFormatter dtf = DateTimeFormatter.ofPattern(startTimeDTFPattern);
-			
-			eventDetailsPane1.label_startTime_data.setText(localDateTime.format(dtf));
+			eventDetailsPane1.label_startTime_data.setText(localDateTime.format(dtf_starttime));
 			
 		}
 
-		protected void setEd_level(String ed_level) {
+		protected void setEd_level(final String ed_level) {
 			this.ed_level = ed_level;
 			eventDetailsPane1.l_level_data.setText(ed_level);
 		}
 
-		protected void setParticipants(JSONArray list)
+		protected void setParticipants(final JSONArray list)
 		{
 			eventDetailsPane1.clearParticipants();
 			
@@ -593,27 +595,27 @@ class MainWindow extends javax.swing.JFrame {
 			
 			for (int i = 0, length = list.length(); i < length; i++)
 			{
-				JSONObject team = list.getJSONObject(i);
+				final JSONObject team = list.getJSONObject(i);
 				
 				String name = null;
 				try {
 					name = team.getString("name");
 				} catch (JSONException e3) {
-					e3.printStackTrace();
+					//e3.printStackTrace();
 				}
 				
 				String city = null;
 				try {
 					city = team.getString("city");
 				} catch (JSONException e2) {
-					e2.printStackTrace();
+					//e2.printStackTrace();
 				}
 				
 				String state = null;
 				try {
 					state = team.getString("state_code");
 				} catch (JSONException e1) {
-					e1.printStackTrace();
+					//e1.printStackTrace();
 				}
 				
 				String assoc = null;
@@ -623,124 +625,126 @@ class MainWindow extends javax.swing.JFrame {
 					//e.printStackTrace();
 				}
 				
-				eventDetailsPane1.addParticipant(name, city + ", " + state, assoc, "P" + (i + 1));
+				String key = null;
+				try {
+					key = team.getString("key");
+				} catch (JSONException e) {
+					//e.printStackTrace();
+				}
+				
+				eventDetailsPane1.addParticipant(name, city + ", " + state, assoc, "P" + (i + 1), key);
 			}
 			//eventDetailsPane1.p_participants_container.repaint();
 		}
 
-		protected void setEd_sport(String ed_sport) {
+		protected void setEd_sport(final String ed_sport) {
 			this.ed_sport = ed_sport;
 			eventDetailsPane1.l_sport_data.setText(ed_sport);
 			
 		}
 
-		protected void setEd_type(String ed_type) {
+		protected void setEd_type(final String ed_type) {
 			this.ed_type = ed_type;
 			eventDetailsPane1.l_type_data.setText(ed_type);
 			
 		}
 
-		protected void setEd_location(String ed_location) {
+		protected void setEd_location(final String ed_location) {
 			this.ed_location = ed_location;
 			eventDetailsPane1.label_location_data.setText(ed_location);
 		}
 
-		protected void setEd_redirect(String ed_redirect) {
+		protected void setEd_redirect(final String ed_redirect) {
 			this.ed_redirect = ed_redirect;
-			eventDetailsPane1.label_redirect_data.setText(ed_redirect);
+			eventDetailsPane1.gil_redirectID.set(ed_redirect, Endpoints.getUnityGameOrEventLink(ed_redirect));
 		}
 
-		protected void setPxl_status(String pxl_status) {
+		protected void setPxl_status(final String pxl_status) {
 			this.pxl_status = pxl_status;
 			pixellotTabPane1.data_unitStatus.setText(pxl_status);
 		}
 
-		protected void setPxl_lminame(String pxl_lminame) {
+		protected void setPxl_lminame(final String pxl_lminame) {
 			this.pxl_lminame = pxl_lminame;
 			pixellotTabPane1.data_lminame.setText(pxl_lminame);
 		}
 		
-		protected void setPxl_version(String pxl_version) {
+		protected void setPxl_version(final String pxl_version) {
 			pixellotTabPane1.data_version.setText(pxl_version);
 		}
 
-		protected void setPxl_clubname(String pxl_clubname) {
+		protected void setPxl_clubname(final String pxl_clubname) {
 			this.pxl_clubname = pxl_clubname;
 			pixellotTabPane1.data_clubname.setText(pxl_clubname);
 		}
 
-		protected void setPxl_sfname(String pxl_sfname) {
+		protected void setPxl_sfname(final String pxl_sfname) {
 			this.pxl_sfname = pxl_sfname;
 			pixellotTabPane1.data_sfname.setText(pxl_sfname);
 		}
 
-		protected void setPxl_currentCal(String pxl_currentCal) {
+		protected void setPxl_currentCal(final String pxl_currentCal) {
 			this.pxl_currentCal = pxl_currentCal;
 			//TODO
 		}
 
-		protected void setPxl_acctmgr(String pxl_acctmgr) {
+		protected void setPxl_acctmgr(final String pxl_acctmgr) {
 			this.pxl_acctmgr = pxl_acctmgr;
 			//TODO don't have sf integration yet
 		}
 
-		protected void setPxl_clubeventurl(String pxl_clubeventurl) {
+		protected void setPxl_clubeventurl(final String pxl_clubeventurl) {
 			this.pxl_clubeventurl = pxl_clubeventurl;
 			pixellotTabPane1.data_clubEventLink.setText(pxl_clubeventurl);
 		}
 
-		protected void setPxl_clubsystemurl(String pxl_clubsystemurl) {
+		protected void setPxl_clubsystemurl(final String pxl_clubsystemurl) {
 			this.pxl_clubsystemurl = pxl_clubsystemurl;
 			//TODO
 		}
 
-		protected void setPxl_clubeventstatus(String pxl_clubeventstatus) {
+		protected void setPxl_clubeventstatus(final String pxl_clubeventstatus) {
 			this.pxl_clubeventstatus = pxl_clubeventstatus;
 			pixellotTabPane1.data_clubEventStatus.setText(pxl_clubeventstatus);
 		}
 
-		protected void setPxl_clubeventid(String pxl_clubeventid) {
+		protected void setPxl_clubeventid(final String pxl_clubeventid) {
 			this.pxl_clubeventid = pxl_clubeventid;
 			pixellotTabPane1.data_clubEventID.setText(pxl_clubeventid);
 		}
 
-		protected void setProd_hlsstatus(String prod_hlsstatus) {
+		protected void setProd_hlsstatus(final String prod_hlsstatus) {
 			this.prod_hlsstatus = prod_hlsstatus;
 			productionTabPane1.l_hlsStatus_data.setText(prod_hlsstatus);
 		}
 
-		protected void setProd_producer(String prod_producer) {
+		protected void setProd_producer(final String prod_producer) {
 			this.prod_producer = prod_producer;
 			//TODO
 			pixellotTabPane1.data_prodname.setText(prod_producer);
 			
 		}
 
-		protected void setProd_publisher(String prod_publisher) {
+		protected void setProd_publisher(final String prod_publisher) {
 			this.prod_publisher = prod_publisher;
 			//TODO
 		}
 
-		protected void setProd_mgr_name(String prod_mgr_name) {
+		protected void setProd_mgr_name(final String prod_mgr_name) {
 			this.prod_mgr_name = prod_mgr_name;
 			productionTabPane1.label_tm_name.setText(prod_mgr_name);
 		}
 
-		protected void setProd_mgr_phone(String prod_mgr_phone) {
+		protected void setProd_mgr_phone(final String prod_mgr_phone) {
 			this.prod_mgr_phone = prod_mgr_phone;
 			productionTabPane1.label_tm_number.setText(prod_mgr_phone);
 		}
 
-		protected void setProd_focustype(String prod_focustype) {
+		protected void setProd_focustype(final String prod_focustype) {
 			this.prod_focustype = prod_focustype;
 			productionTabPane1.l_focusType_data.setText(prod_focustype);
 			eventDetailsPane1.label_focusType_field.setText(prod_focustype);
 		}
-
-		
-    	
-    	
-    	
     }
 }
 	

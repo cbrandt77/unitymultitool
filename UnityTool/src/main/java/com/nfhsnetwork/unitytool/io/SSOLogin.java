@@ -13,6 +13,7 @@ import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ import java.util.zip.GZIPInputStream;
 
 import javax.swing.SwingUtilities;
 
+import com.nfhsnetwork.unitytool.common.Endpoints;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -31,7 +33,7 @@ import com.nfhsnetwork.unitytool.utils.IOUtils;
 
 public final class SSOLogin
 {
-	private static final String SSO_ENDPOINT = "https://sso.nfhsnetwork.com/users/sign_in";
+	private static final String SSO_ENDPOINT = Endpoints.getSSOLoginEndpoint();
 	
 	
 	private static final String RAWPOSTDATA = "utf8=%%E2%%9C%%93&authenticity_token=" + "%s" + "&user%%5Bemail%%5D=" + "%s" + "&user%%5Bpassword%%5D=" + "%s" + "&commit=Sign+in+%%3E";
@@ -61,13 +63,13 @@ public final class SSOLogin
 	
 	
 	
-	public static String loginToUnity(String email, char[] cs) throws IOException
+	public static String loginToUnity(final String email, final char[] cs) throws IOException
 	{
 		cm = new CookieManager();
 		CookieHandler.setDefault(cm);
 		cm.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
 		
-		final String csrfToken = URLEncoder.encode(getCSRFToken(), "UTF-8");
+		final String csrfToken = URLEncoder.encode(getCSRFToken(), StandardCharsets.UTF_8);
 		
 		final String dataRaw = String.format(RAWPOSTDATA, csrfToken, email, new String(cs));
 		final byte[] out = dataRaw.getBytes();
@@ -102,7 +104,7 @@ public final class SSOLogin
 		
 		Debug.out("[DEBUG] response code: " + http.getResponseCode());
 		
-		cm.getCookieStore().getCookies().stream().forEach(System.out::println); //[DEBUG]
+		cm.getCookieStore().getCookies().forEach(System.out::println); //[DEBUG]
 		
 		final List<HttpCookie> l = cm.getCookieStore().getCookies().stream().filter(e -> e.toString().contains("sso_access_token"))
 							.collect(Collectors.toList());
@@ -128,7 +130,7 @@ public final class SSOLogin
 		http.setRequestMethod("GET");
 		http.connect();
 		
-		String siteBody = null;
+		final String siteBody;
 		if (http.getResponseCode() == 200) {
 			try (final InputStream is = http.getInputStream())
 			{
@@ -177,9 +179,9 @@ public final class SSOLogin
 	}
 	
 	
-	private static boolean shouldSaveLoginInfo = Config.shouldSaveToken();
+	private static final boolean shouldSaveLoginInfo = Config.shouldSaveToken();
 	
-	public static final void saveTokenToFile(final String token)
+	public static void saveTokenToFile(final String token)
 	{
 		final String raw = token.split("=")[1];
 		

@@ -199,7 +199,10 @@
                           <Component id="data_clubEventID" pref="197" max="32767" attributes="0"/>
                           <Component id="data_clubEventStatus" alignment="0" max="32767" attributes="0"/>
                           <Component id="data_clubEventLink" alignment="0" max="32767" attributes="0"/>
-                          <Component id="data_consoleEventID" alignment="0" max="32767" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Component id="data_consoleEventID" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -209,9 +212,9 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="tag_consoleEventID" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="data_consoleEventID" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="tag_consoleEventID" min="-2" max="-2" attributes="0"/>
+                          <Component id="data_consoleEventID" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -254,14 +257,9 @@
                 <Property name="text" type="java.lang.String" value="Club Event Link:"/>
               </Properties>
             </Component>
-            <Component class="com.nfhsnetwork.unitytool.ui.components.EditableLabel" name="data_consoleEventID">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="gam123456789"/>
-              </Properties>
-            </Component>
             <Component class="com.nfhsnetwork.unitytool.ui.components.EditableLabel" name="data_clubEventID">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Req. CSV Import"/>
+                <Property name="text" type="java.lang.String" value="Coming Soon!"/>
               </Properties>
             </Component>
             <Component class="com.nfhsnetwork.unitytool.ui.components.EditableLabel" name="data_clubEventStatus">
@@ -273,6 +271,8 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Coming soon!"/>
               </Properties>
+            </Component>
+            <Component class="com.nfhsnetwork.unitytool.ui.components.IDLabel" name="data_consoleEventID">
             </Component>
           </SubComponents>
         </Container>

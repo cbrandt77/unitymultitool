@@ -29,10 +29,10 @@ public class UnityInterface
 		try 
 		{
 			if (NFHSContentType.GAME.is(contentID))
-				return IOUtils.readJSONFromURL(NFHSContentType.GAME.getEndpointURL() + contentID);
+				return IOUtils.readJSONFromURL(NFHSContentType.GAME.getUnityEndpoint() + contentID);
 			
 			if (NFHSContentType.EVENT.is(contentID))
-				return IOUtils.readJSONFromURL(NFHSContentType.EVENT.getEndpointURL() + contentID);
+				return IOUtils.readJSONFromURL(NFHSContentType.EVENT.getUnityEndpoint() + contentID);
 			
 		} 
 		catch (JSONException e) {

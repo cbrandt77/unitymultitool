@@ -8,9 +8,16 @@ import com.nfhsnetwork.unitytool.logging.Debug;
 import com.nfhsnetwork.unitytool.types.NFHSGameObject;
 import com.nfhsnetwork.unitytool.types.NullNFHSObject;
 
+import javax.swing.*;
+
 public class UIController //TODO merge UIController and MainWindowFields
 {
 	private MainWindow mw;
+	
+	UIController()
+	{
+		this.mw = null;
+	}
 	
 	UIController(MainWindow mw)
 	{
@@ -20,6 +27,9 @@ public class UIController //TODO merge UIController and MainWindowFields
 	
 	protected void onNoneSelected() 
 	{
+		if (mw == null)
+			return;
+		
 		// TODO change all fields to blank and/or disable all fields
 		updateAllLabels(new NullNFHSObject());
 		updateAllEditableLabels(new NullNFHSObject());
@@ -27,6 +37,9 @@ public class UIController //TODO merge UIController and MainWindowFields
 	
 	protected void onMultipleSelected(List<NFHSGameObject> l) 
 	{
+		if (mw == null)
+			return;
+		
 		// TODO display the first game selected, enable editing of only batch-viable fields
 		updateAllLabels(l.get(0));
 		updateAllEditableLabels(l);
@@ -35,6 +48,9 @@ public class UIController //TODO merge UIController and MainWindowFields
 	protected void onOneSelected(NFHSGameObject n) 
 	{
 		// TODO display all info, change all labels to the info
+		
+		if (mw == null)
+			return;
 		
 		updateAllLabels(n);
 		updateAllEditableLabels(n);

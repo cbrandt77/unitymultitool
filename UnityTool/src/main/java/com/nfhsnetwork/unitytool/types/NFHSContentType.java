@@ -16,17 +16,17 @@ public enum NFHSContentType {
 		unity_endpoint = endpoint;
 	}
 	
-	public String getContentPrefix()
+	public String getContentIDPrefix()
 	{
 		return content_prefix;
 	}
 	
-	public String getEndpointExt()
+	public String getUnityEndpointExt()
 	{
 		return unity_endpoint;
 	}
 	
-	public String getEndpointURL()
+	public String getUnityEndpoint()
 	{
 		return UNITY_BASE_URL + unity_endpoint;
 	}

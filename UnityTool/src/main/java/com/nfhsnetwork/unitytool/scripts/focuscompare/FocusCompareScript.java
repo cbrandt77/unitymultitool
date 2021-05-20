@@ -327,9 +327,7 @@ public class FocusCompareScript
 		try {
 			printOutputToFile(output); //TODO show "failed to print" window
 		} catch (Exception e) {
-			JOptionPane.showOptionDialog(UnityToolCommon.getActiveWindow(), "Failed to print to file.", "Print Failed", JOptionPane.DEFAULT_OPTION,
-					JOptionPane.ERROR_MESSAGE, null, null, null);
-			Debug.out("[DEBUG] {compareFocus} ");
+			Debug.out("[DEBUG] {compareFocus} failed to print to file");
 		}
 		
 		firePropertyChangeEvent(PropertyType.DONE, null, null);

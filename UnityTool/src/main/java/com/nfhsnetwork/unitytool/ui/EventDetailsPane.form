@@ -22,7 +22,7 @@
                   <Group type="102" attributes="0">
                       <Component id="panel_miscDetails" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="p_participants" pref="283" max="32767" attributes="0"/>
+                      <Component id="p_participants" pref="0" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
                       <Component id="subPanel_generalDetails" min="-2" max="-2" attributes="0"/>
@@ -30,7 +30,7 @@
                       <Component id="panel_competitionDetails" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace pref="116" max="32767" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -42,7 +42,7 @@
                   <Component id="subPanel_generalDetails" max="32767" attributes="0"/>
                   <Component id="panel_competitionDetails" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Component id="panel_miscDetails" alignment="0" max="32767" attributes="0"/>
                   <Component id="p_participants" alignment="0" max="32767" attributes="0"/>
@@ -156,23 +156,23 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="label_status_field" alignment="0" max="32767" attributes="0"/>
-                          <Component id="tf_bdcID_field" alignment="0" max="32767" attributes="0"/>
-                          <Component id="label_producerType_data" alignment="1" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
                           <Component id="label_focusType_field" alignment="0" max="32767" attributes="0"/>
-                          <Component id="label_eventID_data" alignment="0" pref="168" max="32767" attributes="0"/>
+                          <Component id="label_status_field" alignment="0" max="32767" attributes="0"/>
+                          <Component id="label_producerType_data" alignment="0" max="32767" attributes="0"/>
+                          <Component id="gil_bdcID" alignment="0" max="32767" attributes="0"/>
+                          <Component id="gil_eventID" alignment="0" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="label_eventID_data" min="-2" pref="17" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="tf_bdcID_field" min="-2" max="-2" attributes="0"/>
+                      <Component id="gil_eventID" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                      <Component id="gil_bdcID" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="label_producerType_data" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -184,24 +184,6 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JTextField" name="tf_bdcID_field">
-              <Properties>
-                <Property name="editable" type="boolean" value="false"/>
-                <Property name="text" type="java.lang.String" value="bdc1234567890"/>
-                <Property name="autoscrolls" type="boolean" value="false"/>
-                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                  <Border info="null"/>
-                </Property>
-                <Property name="doubleBuffered" type="boolean" value="true"/>
-                <Property name="opaque" type="boolean" value="true"/>
-                <Property name="requestFocusEnabled" type="boolean" value="false"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JLabel" name="label_eventID_data">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="gam1234567890"/>
-              </Properties>
-            </Component>
             <Component class="javax.swing.JLabel" name="label_producerType_data">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Producer"/>
@@ -217,6 +199,10 @@
                 <Property name="text" type="java.lang.String" value="Req. Focus List Import"/>
               </Properties>
             </Component>
+            <Component class="com.nfhsnetwork.unitytool.ui.components.IDLabel" name="gil_eventID">
+            </Component>
+            <Component class="com.nfhsnetwork.unitytool.ui.components.IDLabel" name="gil_bdcID">
+            </Component>
           </SubComponents>
         </Container>
       </SubComponents>
@@ -225,7 +211,7 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="idk"/>
+            <TitledBorder title="Event Details"/>
           </Border>
         </Property>
         <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -236,29 +222,35 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="label_startTime_tag" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="label_startTime_data" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="label_location_tag" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="label_location_data" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="b_otherGames" max="32767" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="label_redirect_tag" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="tag_eventtags" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <EmptySpace min="22" pref="22" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="label_redirect_data" max="32767" attributes="0"/>
                               <Component id="data_eventtags" max="32767" attributes="0"/>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="gil_redirectID" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                              </Group>
                           </Group>
+                      </Group>
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="label_startTime_tag" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="label_location_tag" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="label_startTime_data" max="32767" attributes="0"/>
+                              <Component id="label_location_data" max="32767" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -279,15 +271,17 @@
                       <Component id="label_location_data" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="label_redirect_tag" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="label_redirect_data" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="label_redirect_tag" min="-2" max="-2" attributes="0"/>
+                      <Component id="gil_redirectID" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="tag_eventtags" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="data_eventtags" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
+                  <EmptySpace pref="64" max="32767" attributes="0"/>
+                  <Component id="b_otherGames" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -319,15 +313,6 @@
             <Property name="text" type="java.lang.String" value="Redirect:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="label_redirect_data">
-          <Properties>
-            <Property name="editable" type="boolean" value="false"/>
-            <Property name="text" type="java.lang.String" value="gam1234567890"/>
-            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-              <Border info="null"/>
-            </Property>
-          </Properties>
-        </Component>
         <Component class="javax.swing.JLabel" name="tag_eventtags">
           <Properties>
             <Property name="text" type="java.lang.String" value="Tags:"/>
@@ -337,6 +322,16 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="placeholder"/>
           </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="b_otherGames">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Other Games from this Producer"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="b_otherGamesActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="com.nfhsnetwork.unitytool.ui.components.IDLabel" name="gil_redirectID">
         </Component>
       </SubComponents>
     </Container>
@@ -459,7 +454,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="tabpane_participants" pref="0" max="32767" attributes="0"/>
+                  <Component id="tabpane_participants" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>

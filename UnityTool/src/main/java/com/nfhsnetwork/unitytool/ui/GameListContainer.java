@@ -5,13 +5,18 @@
  */
 package com.nfhsnetwork.unitytool.ui;
 
+import java.awt.*;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import javax.swing.*;
 
 import javax.swing.AbstractListModel;
+import javax.swing.GroupLayout;
 import javax.swing.JList;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.border.*;
 import javax.swing.event.ListSelectionEvent;
 
 import com.nfhsnetwork.unitytool.common.UnityContainer;
@@ -19,7 +24,7 @@ import com.nfhsnetwork.unitytool.logging.Debug;
 import com.nfhsnetwork.unitytool.types.NFHSGameObject;
 
 import java.awt.Component;
-import java.awt.Dimension;
+import java.awt.Insets;
 
 /**
  *
@@ -30,19 +35,31 @@ public class GameListContainer extends javax.swing.JPanel {
     //private Map<String, NFHSGameObject> eventMap;
 
     private UIController c;
+    private final UnityListModel model;
     
     
-   
-    
-    
-	
+    public GameListContainer()
+    {
+        this.model = new UnityListModel();
+        this.c = c;
+        initComponents();
+    }
     
     
     public GameListContainer(UIController c)
     {
-    	initComponents();
+        this.model = new UnityListModel();
     	this.c = c;
+        initComponents();
     	this.list_gameIds.setSelectedIndex(0);
+    }
+    
+    public GameListContainer(UIController c, Map<String, NFHSGameObject> eventMap)
+    {
+        this.model = new UnityListModel(eventMap);
+        this.c = c;
+        initComponents();
+        this.list_gameIds.setSelectedIndex(0);
     }
 
     /**
@@ -65,15 +82,15 @@ public class GameListContainer extends javax.swing.JPanel {
         scrollPane_gameIDs.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane_gameIDs.setAutoscrolls(true);
 
-        list_gameIds.setModel(new UnityListModel());
+        list_gameIds.setModel(model);
+        list_gameIds.setAutoscrolls(false);
         list_gameIds.setCellRenderer(new CustomListCellRenderer());
         list_gameIds.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         list_gameIds.setMaximumSize(new java.awt.Dimension(143, 32767));
         list_gameIds.setMinimumSize(new java.awt.Dimension(143, 20));
         list_gameIds.setPreferredSize(new java.awt.Dimension(143, 0));
         list_gameIds.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            @Override
-			public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 list_gameIdsValueChanged(evt);
             }
         });
@@ -85,13 +102,13 @@ public class GameListContainer extends javax.swing.JPanel {
             container_gameListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(container_gameListLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrollPane_gameIDs, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                .addComponent(scrollPane_gameIDs, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         container_gameListLayout.setVerticalGroup(
             container_gameListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(container_gameListLayout.createSequentialGroup()
-                .addComponent(scrollPane_gameIDs, javax.swing.GroupLayout.DEFAULT_SIZE, 468, Short.MAX_VALUE)
+                .addComponent(scrollPane_gameIDs, javax.swing.GroupLayout.PREFERRED_SIZE, 468, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -120,8 +137,8 @@ public class GameListContainer extends javax.swing.JPanel {
     	if (e.getValueIsAdjusting())
     		return;
     	
-    	
-    	JList<NFHSGameObject> source = (JList<NFHSGameObject>)e.getSource();
+    	@SuppressWarnings("unchecked")
+		JList<NFHSGameObject> source = (JList<NFHSGameObject>)e.getSource();
     	
     	List<NFHSGameObject> selected = source.getSelectedValuesList();
     	
@@ -151,13 +168,23 @@ public class GameListContainer extends javax.swing.JPanel {
 
     private class UnityListModel extends AbstractListModel<NFHSGameObject> 
     {
-    	private final String[] strings;
+    	//TODO figure out how not to store the keys twice
+        private final String[] strings;
+        private final Map<String, NFHSGameObject> map;
     	
     	UnityListModel() 
     	{
-    		Set<String> keys = UnityContainer.getInstance().getEventMap().keySet();
+    	    this.map = UnityContainer.getInstance().getEventMap();
+    		final Set<String> keys = map.keySet();
     		strings = keys.toArray(new String[keys.size()]);
     	}
+    	
+    	UnityListModel(Map<String, NFHSGameObject> map)
+        {
+            this.map = map;
+            final Set<String> keys = map.keySet();
+            strings = keys.toArray(new String[keys.size()]);
+        }
     	
     	@Override
     	public int getSize() {
@@ -166,7 +193,7 @@ public class GameListContainer extends javax.swing.JPanel {
 
     	@Override
     	public NFHSGameObject getElementAt(int index) {
-    		return UnityContainer.getInstance().getEventMap().get(strings[index]);
+    		return map.get(strings[index]);
     	}
 
     }
@@ -181,52 +208,52 @@ public class GameListContainer extends javax.swing.JPanel {
      *
      * @author impro_000
      */
-    public class CustomListCellRenderer extends javax.swing.JPanel implements javax.swing.ListCellRenderer {
+    @SuppressWarnings("rawtypes")
+	public class CustomListCellRenderer extends javax.swing.JPanel implements javax.swing.ListCellRenderer {
 
-        private final int SCROLLBAR_WIDTH = ((Integer)UIManager.get("ScrollBar.width")).intValue();
+        private final int SCROLLBAR_WIDTH = ((Integer)UIManager.get("ScrollBar.width"));
         private VIEWTYPE viewType = VIEWTYPE.GAMEID;
-
-        /**
-         * Creates new form CustomListCellRenderer
-         */
+        
+        
         public CustomListCellRenderer() {
             initComponents();
         }
-
-        /**
-         * This method is called from within the constructor to initialize the form.
-         * WARNING: Do NOT modify this code. The content of this method is always
-         * regenerated by the Form Editor.
-         */
+        
+        
+        
         @SuppressWarnings("unchecked")
-                              
         private void initComponents() {
 
             label_gameID = new javax.swing.JLabel();
 
             setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
             
-            
-            
             label_gameID.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
             label_gameID.setHorizontalAlignment(SwingConstants.CENTER);
             label_gameID.setVerticalAlignment(SwingConstants.CENTER);
             
-            this.setPreferredSize(new Dimension(GameListContainer.this.scrollPane_gameIDs.getWidth() - 20, 32));
             add(label_gameID);
         }                       
-
+        
+        @Override
+        public Insets getInsets()
+        {
+        	return new Insets(0, 0, 0, SCROLLBAR_WIDTH);
+        }
+        
+        
+        @SuppressWarnings("rawtypes")
         @Override
         public Component getListCellRendererComponent(JList list,
                                                       Object value,
                                                       int index,
                                                       boolean isSelected,
                                                       boolean cellHasFocus) {
-            String labelText;
+            final String labelText;
 
             if (value instanceof NFHSGameObject)
             {
-                    NFHSGameObject nValue = (NFHSGameObject)value;
+                    final NFHSGameObject nValue = (NFHSGameObject)value;
                     switch (viewType)
                     {
                             case GAMEID:
@@ -267,7 +294,7 @@ public class GameListContainer extends javax.swing.JPanel {
                 label_gameID.setBackground(list.getBackground());
                 label_gameID.setForeground(list.getForeground());
             }
-
+            
             setEnabled(list.isEnabled());
             label_gameID.setFont(list.getFont());
 

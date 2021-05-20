@@ -462,15 +462,15 @@ public final class UnityContainer {
 	
 	private Set<StdPropertyChangeListener> listeners_propertyChange = new CopyOnWriteArraySet<>();
 	
-	public UnityContainer addPropertyChangeListener(StdPropertyChangeListener listener) 
+	public UnityContainer addPropertyChangeListener(final StdPropertyChangeListener listener) 
 	{
 		listeners_propertyChange.add(listener);
 		return this;
 	}
 	
-	public void firePropertyChangeEvent(Object source, StdPropertyChangeEvent.PropertyType type, Object oldValue, Object newValue) 
+	public void firePropertyChangeEvent(final Object source, final StdPropertyChangeEvent.PropertyType type, final Object oldValue, final Object newValue) 
 	{
-		StdPropertyChangeEvent evt = new StdPropertyChangeEvent(source, type, oldValue, newValue);
+		final StdPropertyChangeEvent evt = new StdPropertyChangeEvent(source, type, oldValue, newValue);
 		
 		this.listeners_propertyChange.forEach(
 				el -> el.propertyChange(evt));

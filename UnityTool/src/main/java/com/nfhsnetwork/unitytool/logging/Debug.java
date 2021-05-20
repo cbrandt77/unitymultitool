@@ -7,7 +7,7 @@ public final class Debug {
 	
 	public static boolean IS_DEV_MODE = true; //TODO
 	
-	private static PrintStream DEBUGSTREAM = new DebugPrintStream(System.out);
+	private static final PrintStream DEBUGSTREAM = new DebugPrintStream(System.out);
 	
 	//TODO use Logger or output log to file
 	

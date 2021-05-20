@@ -1,5 +1,7 @@
 package com.nfhsnetwork.unitytool.utils;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -23,13 +25,15 @@ import com.nfhsnetwork.unitytool.exceptions.InvalidContentTypeException;
 import com.nfhsnetwork.unitytool.logging.Debug;
 import com.nfhsnetwork.unitytool.types.NFHSContentType;
 
+import javax.swing.*;
+
 public class IOUtils
 	{
 
 		public static class FetchID 
 		{
 			/**
-			 * Wrapper function for {@link fetchEventIDFromChild}.
+			 * Wrapper function for <code>{@link IOUtils.FetchID#fetchEventIDFromChild}</code>.
 			 * Checks if the input is a valid event ID, and if not, determines what type of child it is, fetches the child JSON, and retrieves the parent ID from that.
 			 * @param id Input child ID
 			 * @return parent event ID for the given child id, or returns the input if it is already a valid parent.
@@ -69,7 +73,7 @@ public class IOUtils
 			{
 				try
 				{
-					final JSONObject bdc_or_vod = readJSONFromURL(contentType.getEndpointURL() + id);
+					final JSONObject bdc_or_vod = readJSONFromURL(contentType.getUnityEndpoint() + id);
 					final String gameID = bdc_or_vod.getString("game_key");
 					
 					if (gameID == null)
@@ -256,5 +260,6 @@ public class IOUtils
 				printToFile(toPrint, new File(s + fileName));
 			
 		}
-		
+
+
 	}

@@ -5,6 +5,12 @@
  */
 package com.nfhsnetwork.unitytool.ui;
 
+import javax.swing.*;
+import javax.swing.GroupLayout;
+import javax.swing.LayoutStyle;
+import javax.swing.border.*;
+import com.nfhsnetwork.unitytool.ui.components.*;
+
 /**
  *
  * @author impro_000
@@ -42,10 +48,10 @@ public class PixellotTabPane extends javax.swing.JPanel {
         tag_clubEventID = new javax.swing.JLabel();
         tag_clubEventStatus = new javax.swing.JLabel();
         tag_clubEventLink = new javax.swing.JLabel();
-        data_consoleEventID = new com.nfhsnetwork.unitytool.ui.components.EditableLabel();
         data_clubEventID = new com.nfhsnetwork.unitytool.ui.components.EditableLabel();
         data_clubEventStatus = new com.nfhsnetwork.unitytool.ui.components.EditableLabel();
         data_clubEventLink = new com.nfhsnetwork.unitytool.ui.components.EditableLabel();
+        data_consoleEventID = new com.nfhsnetwork.unitytool.ui.components.IDLabel();
         p_sfinfo = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         p_unitinfo = new javax.swing.JPanel();
@@ -124,9 +130,7 @@ public class PixellotTabPane extends javax.swing.JPanel {
 
         tag_clubEventLink.setText("Club Event Link:");
 
-        data_consoleEventID.setText("gam123456789");
-
-        data_clubEventID.setText("Req. CSV Import");
+        data_clubEventID.setText("Coming Soon!");
 
         data_clubEventStatus.setText("Coming soon!");
 
@@ -149,14 +153,16 @@ public class PixellotTabPane extends javax.swing.JPanel {
                     .addComponent(data_clubEventID, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
                     .addComponent(data_clubEventStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(data_clubEventLink, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(data_consoleEventID, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(p_eventInfoLayout.createSequentialGroup()
+                        .addComponent(data_consoleEventID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         p_eventInfoLayout.setVerticalGroup(
             p_eventInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(p_eventInfoLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(p_eventInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(p_eventInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(tag_consoleEventID)
                     .addComponent(data_consoleEventID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -285,7 +291,7 @@ public class PixellotTabPane extends javax.swing.JPanel {
     com.nfhsnetwork.unitytool.ui.components.EditableLabel data_clubEventLink;
     com.nfhsnetwork.unitytool.ui.components.EditableLabel data_clubEventStatus;
     javax.swing.JLabel data_clubname;
-    com.nfhsnetwork.unitytool.ui.components.EditableLabel data_consoleEventID;
+    com.nfhsnetwork.unitytool.ui.components.IDLabel data_consoleEventID;
     javax.swing.JLabel data_lminame;
     javax.swing.JLabel data_prodname;
     javax.swing.JLabel data_sfname;

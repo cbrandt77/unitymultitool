@@ -36,9 +36,6 @@ public class UpdateManager {
 	
 	private static JSONObject checksumObject = null;
 	
-	
-	
-	
 	public static void update()
 	{
 		int endcode;
@@ -49,7 +46,9 @@ public class UpdateManager {
 			
 			if (endcode == UnityToolCommon.INTERRUPTED)
 			{
-				shouldRetry = showInterruptedDialog();
+				Debug.out("Update Interrupted");
+				shouldRetry = false;
+				//shouldRetry = showInterruptedDialog();
 			}
 		} while (shouldRetry);
 	}

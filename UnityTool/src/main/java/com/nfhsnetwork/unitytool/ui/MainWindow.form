@@ -85,9 +85,6 @@
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItem_importNewDataActionPerformed"/>
               </Events>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_AddingCodePre" type="java.lang.String" value="menuItem_importNewData.setVisible(false);"/>
-              </AuxValues>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuItem_openPixellotCSV">
               <Properties>
@@ -355,7 +352,7 @@
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Trebuchet MS" size="14" style="1"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="Varsity Football | Loyola Academy vs. St. Rita High School"/>
+                    <Property name="text" type="java.lang.String" value="title"/>
                   </Properties>
                 </Component>
               </SubComponents>

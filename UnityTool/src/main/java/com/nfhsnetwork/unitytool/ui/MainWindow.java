@@ -467,6 +467,7 @@ class MainWindow extends javax.swing.JFrame {
     
     private static final String startTimeDTFPattern = "MMM dd, yyyy - hh:mm a";
     
+    
     @SuppressWarnings("unused")
     class MainWindowFields
     {
@@ -520,6 +521,7 @@ class MainWindow extends javax.swing.JFrame {
     		if (eventTags == null)
     		{
     			eventDetailsPane1.data_eventtags.setText("");
+    			this.eventTags.clear();
     			return;
     		}
     		
@@ -532,6 +534,7 @@ class MainWindow extends javax.swing.JFrame {
     			sb.append(", ");
         		 //TODO fix extra comma
     		}
+    		
     		sb.append("]");
     		eventDetailsPane1.data_eventtags.setText(sb.toString());
     	}
@@ -555,7 +558,7 @@ class MainWindow extends javax.swing.JFrame {
 
 		protected void setGameid(final String gameid) {
 			this.gameid = gameid;
-			final String url = Endpoints.getUnityGameOrEventLink(gameid);
+			final String url = Endpoints.getConsoleGameEndpoint(gameid);
 			eventDetailsPane1.gil_eventID.set(gameid, url);
 			pixellotTabPane1.data_consoleEventID.set(gameid, url);
 		}
@@ -563,8 +566,7 @@ class MainWindow extends javax.swing.JFrame {
 		protected void setBdcid(final String bdcid) {
 			this.bdcid = bdcid;
 			Debug.out("[DEBUG] {setBdcid} Setting BDC id to " + bdcid);
-			eventDetailsPane1.gil_bdcID.set(bdcid, Endpoints.getUnityBroadcastLink(bdcid));
-			
+			eventDetailsPane1.gil_bdcID.set(bdcid, Endpoints.getConsoleBroadcastEndpoint(gameid, bdcid));
 		}
 		
 		final DateTimeFormatter dtf_starttime = DateTimeFormatter.ofPattern(startTimeDTFPattern);

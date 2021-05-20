@@ -30,14 +30,26 @@ public final class Endpoints {
        ENDPOINTS = json.getJSONObject("endpoints");
     }
     
+    private static final String PROTOCOL = "http:";
+    
     public static String getConsoleEndpoint()
     {
         final JSONObject j = ENDPOINTS.getJSONObject("console_home");
 
         if (isProd)
-            return j.getString("prod");
+            return PROTOCOL + j.getString("prod");
         else
-            return j.getString("stage");
+            return PROTOCOL + j.getString("stage");
+    }
+    
+    public static String getConsoleGameEndpoint(final String gameID)
+    {
+        return getConsoleEndpoint() + "/nfhs-events/#/events/" + gameID;
+    }
+    
+    public static String getConsoleBroadcastEndpoint(final String gameID, final String bdcID)
+    {
+        return getConsoleEndpoint() + "/nfhs-events/#/events/" + gameID + "/broadcasts/" + bdcID;
     }
     
     public static String getMConsoleEndpoint()
@@ -45,9 +57,9 @@ public final class Endpoints {
         final JSONObject j = ENDPOINTS.getJSONObject("mobile_console");
 
         if (isProd)
-            return j.getString("prod");
+            return PROTOCOL + j.getString("prod");
         else
-            return j.getString("stage");
+            return PROTOCOL + j.getString("stage");
     }
     
     public static String getSSOEndpoint()
